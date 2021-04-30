@@ -19,7 +19,7 @@ tasks.withType<KotlinCompile>() {
 
 application {
 //    mainModule.set("com.abysl.harryplotter")
-    mainClass.set("com.abysl.harryplotter.Main")
+    mainClass.set("com.abysl.harryplotter.HarryPlotter")
 }
 
 javafx {

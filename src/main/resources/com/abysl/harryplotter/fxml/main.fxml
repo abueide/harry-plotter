@@ -65,9 +65,9 @@
                      <children>
                         <HBox layoutY="10.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <VBox fx:id="jobsBox" maxWidth="350.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                              <VBox maxWidth="350.0" spacing="10.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <ListView fx:id="jobs" maxWidth="350.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    <ListView fx:id="jobsView" maxWidth="350.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
                               <VBox prefHeight="326.0" prefWidth="140.0" spacing="20.0">
@@ -76,7 +76,7 @@
                                     <Label text="* Temp Directory" />
                                     <Label text="* Destination Directory" />
                                     <Label text="Number of Threads" />
-                                    <Label text="Chia Key" />
+                                    <Label text="Chia Key to Use" />
                                  </children>
                               </VBox>
                               <VBox prefHeight="306.0" prefWidth="228.0" spacing="10.0" HBox.hgrow="ALWAYS">
@@ -101,9 +101,10 @@
                                           <TextField fx:id="ram" prefHeight="25.0" prefWidth="101.0" promptText="6750 MiB" HBox.hgrow="ALWAYS" />
                                        </children>
                                     </HBox>
-                                    <HBox>
+                                    <HBox spacing="10.0">
                                        <children>
-                                          <ComboBox fx:id="chiaKey" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="addKey" mnemonicParsing="false" onAction="#onAddKey" text="Add Key" />
+                                          <ComboBox fx:id="chiaKeys" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="BOTTOM_RIGHT" prefHeight="155.0" prefWidth="260.0" VBox.vgrow="ALWAYS">
@@ -128,9 +129,9 @@
                      <children>
                         <HBox layoutY="10.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <VBox fx:id="statusJobsBox" maxWidth="350.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                              <VBox maxWidth="350.0" spacing="10.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <ListView maxWidth="350.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    <ListView fx:id="statusJobsView" maxWidth="350.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                                     <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0">
                                        <children>
                                           <Button fx:id="stopAll" mnemonicParsing="false" text="Stop All" />

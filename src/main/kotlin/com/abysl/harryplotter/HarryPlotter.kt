@@ -9,7 +9,7 @@ import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 
 
-class Main: Application() {
+class HarryPlotter: Application() {
     override fun start(stage: Stage) {
         val loader = FXMLLoader(javaClass.getResource("fxml/main.fxml"))
         val root: Parent = loader.load();
