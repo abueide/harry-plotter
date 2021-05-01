@@ -4,6 +4,7 @@ import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.controller.AddKey
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.Job
+import com.abysl.harryplotter.data.Prefs
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
@@ -13,6 +14,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.VBox
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
+import javafx.stage.Stage
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -87,6 +89,11 @@ class MainController : Initializable {
     @FXML
     private lateinit var addKey: Button
 
+    @FXML
+    private lateinit var themeToggle: Button
+
+    lateinit var toggleTheme: () -> Unit
+
     val jobs: ObservableList<Job> = FXCollections.observableArrayList()
     val keys: ObservableList<ChiaKey> = FXCollections.observableArrayList()
 
@@ -97,7 +104,7 @@ class MainController : Initializable {
         chiaKeys.items = keys
         chiaKeys.items.addListener(ListChangeListener {
             // Auto Select key if you just added first one.
-            if(chiaKeys.items.size == 1) {
+            if (chiaKeys.items.size == 1) {
                 chiaKeys.selectionModel.selectFirst()
             }
         })
@@ -106,6 +113,8 @@ class MainController : Initializable {
     // Calls after the window is initialized so mainBox.scene.window isn't null
     fun initialized() {
         chia = ChiaCli(getExePath(), getConfigFile())
+        chiaKeys.items.addAll(chia.readKeys())
+        chiaKeys.selectionModel.selectFirst()
     }
 
     // User Actions ----------------------------------------------------------------------------------------------------
@@ -122,7 +131,36 @@ class MainController : Initializable {
         AddKey(keys).show()
     }
 
+    fun onToggleTheme(){
+        toggleTheme()
+    }
+
+    fun onExit(){
+//        if (jobs.any { it.running }) {
+
+            val alert = Alert(Alert.AlertType.CONFIRMATION)
+            alert.title = "Let plot jobs finish?"
+            alert.headerText = "Let plot jobs finish?"
+            alert.contentText = "Would you like to let plot jobs finish or close them?"
+            (alert.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Let them finish"
+            (alert.dialogPane.lookupButton(ButtonType.CANCEL) as Button).text = "Close them"
+            val answer = alert.showAndWait()
+            if(answer.get() != ButtonType.OK){
+                jobs.forEach {
+                    it.stop();
+                }
+            }
+//        }
+
+        close()
+    }
+
     // Utility Functions -----------------------------------------------------------------------------------------------
+
+    private fun close() {
+        val stage = mainBox.scene.window as Stage
+        stage.close()
+    }
 
     fun getConfigFile(): File {
         val configDir = File(System.getProperty("user.home") + "/.chia/mainnet/config/config.yaml")

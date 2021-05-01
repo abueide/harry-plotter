@@ -68,3 +68,7 @@
     -fx-border-color: transparent;
     -fx-table-cell-border-color:transparent;
 }
+
+#themeToggle {
+    -fx-background-color: #dce0d8;
+}
