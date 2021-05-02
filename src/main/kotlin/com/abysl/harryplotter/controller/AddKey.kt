@@ -2,6 +2,7 @@ package com.abysl.harryplotter.controller
 
 import com.abysl.harryplotter.HarryPlotter
 import com.abysl.harryplotter.data.ChiaKey
+import com.abysl.harryplotter.util.FxUtil
 import javafx.collections.ObservableList
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -33,6 +34,7 @@ class AddKey(val keys: ObservableList<ChiaKey>) {
             stage.title = "Add Key"
             stage.isAlwaysOnTop = true;
             stage.initModality(Modality.APPLICATION_MODAL)
+            FxUtil.setTheme(stage)
             stage.show()
         } catch (ex: IOException) {
             System.err.println(ex)

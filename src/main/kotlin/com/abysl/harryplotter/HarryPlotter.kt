@@ -1,12 +1,12 @@
 package com.abysl.harryplotter
 
-import com.abysl.harryplotter.data.Prefs
+import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.util.FxUtil
+import com.abysl.harryplotter.util.getResource
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.scene.control.Label
-import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 
 
@@ -14,15 +14,13 @@ class HarryPlotter: Application() {
     lateinit var mainStage: Stage
     override fun start(stage: Stage) {
         mainStage = stage
-        val loader = FXMLLoader(javaClass.getResource("fxml/main.fxml"))
+        val loader = FXMLLoader("fxml/main.fxml".getResource())
         val root: Parent = loader.load();
         val controller: MainController = loader.getController()
         val scene = Scene(root, 1080.0, 720.0)
 
         stage.scene = scene
-        if(Prefs.darkMode) {
-            mainStage.scene.stylesheets.add(javaClass.getResource("themes/Dark.css").toExternalForm())
-        }
+        FxUtil.setTheme(stage)
         stage.show()
         controller.toggleTheme = ::toggleTheme
         controller.initialized()
@@ -33,13 +31,7 @@ class HarryPlotter: Application() {
 
     fun toggleTheme(){
         Prefs.darkMode = !Prefs.darkMode
-        if (Prefs.darkMode){
-            mainStage.scene.stylesheets.clear()
-            mainStage.scene.stylesheets.add(javaClass.getResource("themes/Dark.css").toExternalForm())
-        }else {
-            mainStage.scene.stylesheets.clear()
-            mainStage.scene.stylesheets.add(javaClass.getResource("themes/Light.css").toExternalForm())
-        }
+        FxUtil.setTheme(mainStage)
     }
 
     fun main(){

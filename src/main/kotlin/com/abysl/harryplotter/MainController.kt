@@ -1,10 +1,11 @@
 package com.abysl.harryplotter
 
 import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.controller.AddKey
 import com.abysl.harryplotter.data.ChiaKey
-import com.abysl.harryplotter.data.Job
-import com.abysl.harryplotter.data.Prefs
+import com.abysl.harryplotter.data.JobDescription
+import com.abysl.harryplotter.data.JobProcess
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
@@ -27,10 +28,7 @@ class MainController : Initializable {
     private lateinit var mainBox: VBox
 
     @FXML
-    private lateinit var jobsView: ListView<Job>
-
-    @FXML
-    private lateinit var statusJobsView: ListView<Job>
+    private lateinit var jobsView: ListView<JobProcess>
 
     @FXML
     private lateinit var jobName: TextField
@@ -92,22 +90,42 @@ class MainController : Initializable {
     @FXML
     private lateinit var themeToggle: Button
 
+    @FXML
+    private lateinit var stopAfter: CheckBox
+
+    @FXML
+    private lateinit var numberPlots: TextField
+
+    lateinit var chia: ChiaCli
     lateinit var toggleTheme: () -> Unit
 
-    val jobs: ObservableList<Job> = FXCollections.observableArrayList()
+    val jobs: ObservableList<JobProcess> = FXCollections.observableArrayList()
     val keys: ObservableList<ChiaKey> = FXCollections.observableArrayList()
 
     // Initial State ---------------------------------------------------------------------------------------------------
-    lateinit var chia: ChiaCli
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         chiaKeys.items = keys
-        chiaKeys.items.addListener(ListChangeListener {
-            // Auto Select key if you just added first one.
-            if (chiaKeys.items.size == 1) {
-                chiaKeys.selectionModel.selectFirst()
+        keys.add(Config.devkey)
+        chiaKeys.selectionModel.selectFirst()
+
+        threads.textProperty().addListener { observable, oldValue, newValue ->
+            if (!newValue.matches(Regex("\\d*"))) {
+                threads.text = newValue.replace("[^\\d]".toRegex(), "")
             }
-        })
+        }
+
+        ram.textProperty().addListener { observable, oldValue, newValue ->
+            if (!newValue.matches(Regex("\\d*"))) {
+                ram.text = newValue.replace("[^\\d]".toRegex(), "")
+            }
+        }
+
+        numberPlots.textProperty().addListener { observable, oldValue, newValue ->
+            if (!newValue.matches(Regex("\\d*"))) {
+                numberPlots.text = newValue.replace("[^\\d]".toRegex(), "")
+            }
+        }
     }
 
     // Calls after the window is initialized so mainBox.scene.window isn't null
@@ -115,29 +133,113 @@ class MainController : Initializable {
         chia = ChiaCli(getExePath(), getConfigFile())
         chiaKeys.items.addAll(chia.readKeys())
         chiaKeys.selectionModel.selectFirst()
+        jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, it) })
+        jobs.addListener(ListChangeListener {
+            Config.savePlotJobs(jobs.map { it.jobDescription })
+        })
+
+        jobsView.items = jobs
+        jobsView.contextMenu = jobsMenu
     }
 
     // User Actions ----------------------------------------------------------------------------------------------------
 
     fun onStartAll() {
-
+        jobsView.items.forEach { it.start() }
     }
 
     fun onStart() {
-        chia.createPlot(statusJobsView.selectionModel.selectedItem)
+        jobsView.selectionModel.selectedItem.start()
+    }
+
+    fun onStop() {
+        val job = jobsView.selectionModel.selectedItem
+        if (showConfirmation("Stop Process", "Are you sure you want to stop ${job.jobDescription}?")) {
+            job.stop()
+        }
+    }
+
+    fun onStopAll() {
+        if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
+            jobs.forEach { it.stop() }
+        }
+    }
+
+    fun onTempBrowse() {
+        chooseDir("Select Temp Dir", false)?.let {
+            tempDir.text = it.absolutePath
+        }
+    }
+
+    fun onDestBrowse() {
+        chooseDir("Select Destination Dir", false)?.let {
+            destDir.text = it.absolutePath
+        }
+    }
+
+    fun onSave() {
+        if (tempDir.text.isBlank() || destDir.text.isBlank()) {
+            showAlert("Directory Not Selected", "Please make sure to select a destination & temporary directory.")
+            return
+        }
+        val temp = File(tempDir.text)
+        val dest = File(destDir.text)
+        if (!temp.exists()) {
+            showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
+            return
+        }
+        if (!dest.exists()) {
+            showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
+            return
+        }
+        if (!temp.isDirectory) {
+            showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
+            return
+        }
+        if (!dest.isDirectory) {
+            showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
+            return
+        }
+        val name = jobName.text.ifBlank { "Plot Job ${jobs.count() + 1}" }
+        val key = chiaKeys.selectionModel.selectedItem
+        jobs.add(
+            JobProcess(
+                chia,
+                JobDescription(
+                    name, File(tempDir.text), File(destDir.text),
+                    threads.text.ifBlank { "-1" }.toInt(),
+                    ram.text.ifBlank { "-1" }.toInt(),
+                    key,
+                    stopAfter.text.ifBlank { "-1" }.toInt()
+                )
+            )
+        )
+    }
+
+    fun onCancel() {
+        jobName.clear()
+        tempDir.clear()
+        destDir.clear()
+        threads.clear()
+        ram.clear()
+        chiaKeys.selectionModel.selectFirst()
+        jobsView.selectionModel.clearSelection()
     }
 
     fun onAddKey() {
         AddKey(keys).show()
     }
 
-    fun onToggleTheme(){
+    fun onToggleTheme() {
         toggleTheme()
     }
 
-    fun onExit(){
-//        if (jobs.any { it.running }) {
+    fun onStopAfter() {
+        numberPlots.disableProperty().value = !stopAfter.selectedProperty().value
+    }
 
+    fun onExit() {
+        if (jobs.any { it.running }) {
             val alert = Alert(Alert.AlertType.CONFIRMATION)
             alert.title = "Let plot jobs finish?"
             alert.headerText = "Let plot jobs finish?"
@@ -145,15 +247,35 @@ class MainController : Initializable {
             (alert.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Let them finish"
             (alert.dialogPane.lookupButton(ButtonType.CANCEL) as Button).text = "Close them"
             val answer = alert.showAndWait()
-            if(answer.get() != ButtonType.OK){
+            if (answer.get() != ButtonType.OK) {
                 jobs.forEach {
-                    it.stop();
+                    it.stop()
                 }
             }
-//        }
+        }
 
         close()
     }
+
+    // GUI Components --------------------------------------------------------------------------------------------------
+    val jobsMenu = ContextMenu()
+    val duplicate = MenuItem("Duplicate").also {
+        it.setOnAction {
+            val job = jobsView.selectionModel.selectedItem
+            jobs.add(JobProcess(chia, job.jobDescription))
+        }
+        jobsMenu.items.add(it)
+    }
+    val delete = MenuItem("Delete").also {
+        it.setOnAction {
+            val job = jobsView.selectionModel.selectedItem
+            if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.jobDescription}")) {
+                jobs.remove(job)
+            }
+        }
+        jobsMenu.items.add(it)
+    }
+
 
     // Utility Functions -----------------------------------------------------------------------------------------------
 
@@ -242,14 +364,15 @@ class MainController : Initializable {
         return chooseFile(title, *extensions)
     }
 
-    fun chooseDir(title: String): File {
+    fun chooseDir(title: String, required: Boolean = false): File? {
         val directoryChooser = DirectoryChooser()
         directoryChooser.title = title
         val directory: File? = directoryChooser.showDialog(mainBox.scene.window)
-        if (directory != null)
-            return directory
-        showAlert("Directory Not Selected", "Please try again.")
-        return chooseDir(title)
+        if (required) {
+            showAlert("Directory Not Selected", "Please try again.")
+            return chooseDir(title)
+        }
+        return directory
     }
 
     fun showAlert(title: String, content: String) {

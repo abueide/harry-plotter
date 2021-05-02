@@ -1,24 +1,17 @@
 package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.data.ChiaKey
-import com.abysl.harryplotter.data.Job
+import com.abysl.harryplotter.data.JobDescription
 import java.io.File
 import java.io.InputStream
-import java.io.OutputStream
 import java.util.concurrent.TimeUnit
 
 class ChiaCli(val exe: File, val config: File) {
 
     val chiaHome = config.parentFile.parentFile
-    val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
 
-    init {
-        if(!plotterHome.exists()){
-            plotterHome.mkdirs()
-        }
-    }
 
-    fun createPlot(job: Job){
+    fun createPlot(jobDescription: JobDescription){
 
     }
 
@@ -36,6 +29,12 @@ class ChiaCli(val exe: File, val config: File) {
         keys.forEach { _ -> println() }
         return keys
     }
+
+    /**
+     * Usage: runCommand("keys", "show") -> chia.exe keys show
+     * @param args
+     * @return
+     */
 
     fun runCommand(vararg args: String): List<String> {
         val command: List<String> = listOf(exe.name) + args.toList()
