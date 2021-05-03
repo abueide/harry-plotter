@@ -1,28 +1,68 @@
 package com.abysl.harryplotter.data
 
 import com.abysl.harryplotter.chia.ChiaCli
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.scene.control.TextArea
 
-class JobProcess(val chia: ChiaCli, val jobDescription: JobDescription) {
+class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDescription) {
     var status: String = STOPPED
     var running: Boolean = false
     var phase: Int = 1
     var subphase: String = ""
-    var result: JobResult = JobResult()
+    var currentResult: JobResult = JobResult()
+    val results: MutableList<JobResult> = mutableListOf()
     var percentage: Double = 0.0
     var stopwatch: Int = 0;
+    var plotsDone = 0
+    var proc: Process? = null
+    val logs: ObservableList<String> = FXCollections.observableArrayList()
+    var plotCount: Int = 0
+    var displayLogs = false
 
     fun start(){
         status = RUNNING
         running = true
+
+        proc = chia.runCommandAsync(
+            "plots",
+            "create",
+            "-k 32",
+            "-a ${jobDesc.key.fingerprint}",
+            "-b ${jobDesc.ram}",
+            "-r ${jobDesc.threads}",
+            "-t ${jobDesc.tempDir.canonicalPath}",
+            "-d ${jobDesc.destDir.canonicalPath}",
+            outputCallback = ::parseLine,
+            finishedCallBack = ::whenDone)
     }
 
-    fun stop(){
+    fun reset(){
         status = STOPPED
         running = false
+        proc?.destroyForcibly()
+        proc = null
         stopwatch = 0
+        currentResult = JobResult()
+        phase = 1
+        subphase = ""
+        percentage = 0.0
+        logs.clear()
+    }
+
+    fun whenDone(){
+        plotCount++
+        if(running && (plotCount < jobDesc.plotsToFinish || jobDesc.plotsToFinish == -1)){
+            reset()
+            start()
+        }
     }
 
     fun parseLine(line: String){
+        logs.add(line)
+        if(displayLogs) {
+            logWindow.appendText(line + "\n")
+        }
         if(line.contains("phase")){
             phase = line.split("Starting phase ")[0].toInt()
         }else if(line.contains("tables")){
@@ -33,25 +73,25 @@ class JobProcess(val chia: ChiaCli, val jobDescription: JobDescription) {
             val phase: Int  = line.split("phase ")[1].split(" =")[0].toInt()
             val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
             when(phase){
-                1 -> result = result.merge(JobResult(phaseOneTime = seconds))
-                2 -> result = result.merge(JobResult(phaseOneTime = seconds))
-                3 -> result = result.merge(JobResult(phaseOneTime = seconds))
-                4 -> result = result.merge(JobResult(phaseOneTime = seconds))
+                1 -> currentResult = currentResult.merge(JobResult(phaseOneTime = seconds))
+                2 -> currentResult = currentResult.merge(JobResult(phaseTwoTime = seconds))
+                3 -> currentResult = currentResult.merge(JobResult(phaseThreeTime = seconds))
+                4 -> currentResult = currentResult.merge(JobResult(phaseFourTime = seconds))
             }
         }else if(line.contains("Total time")){
             val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-            result = result.merge(JobResult(totalTime = seconds))
+            currentResult = currentResult.merge(JobResult(totalTime = seconds))
         }else if(line.contains("Copy time")){
             val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-            result = result.merge(JobResult(copyTime = seconds))
+            currentResult = currentResult.merge(JobResult(copyTime = seconds))
         }
     }
 
     override fun toString(): String {
         return if(running)
-            "$jobDescription - $percentage%"
+            "$jobDesc - $percentage%"
         else
-            jobDescription.toString()
+            jobDesc.toString()
     }
 
     companion object {

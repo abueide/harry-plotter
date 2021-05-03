@@ -12,10 +12,10 @@ data class JobDescription(
     val tempDir: File,
     @Serializable(with = FileSerializer::class)
     val destDir: File,
-    val threads: Int, // -1 = default
-    val ram: Int, // MiB -1 = default
-    val key: ChiaKey, // -1 = default
-    val stopAfter: Int,
+    val threads: Int,
+    val ram: Int,
+    val key: ChiaKey,
+    val plotsToFinish: Int, // -1  = keep going forever
 ){
     override fun toString(): String {
         return name

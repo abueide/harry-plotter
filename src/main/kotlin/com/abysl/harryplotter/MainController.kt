@@ -6,6 +6,7 @@ import com.abysl.harryplotter.controller.AddKey
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobProcess
+import com.abysl.harryplotter.util.FxUtil
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
@@ -91,10 +92,13 @@ class MainController : Initializable {
     private lateinit var themeToggle: Button
 
     @FXML
-    private lateinit var stopAfter: CheckBox
+    private lateinit var stopAfterCheckbox: CheckBox
 
     @FXML
-    private lateinit var numberPlots: TextField
+    private lateinit var plotsToFinish: TextField
+
+    @FXML
+    private lateinit var logsWindow: TextArea
 
     lateinit var chia: ChiaCli
     lateinit var toggleTheme: () -> Unit
@@ -121,9 +125,9 @@ class MainController : Initializable {
             }
         }
 
-        numberPlots.textProperty().addListener { observable, oldValue, newValue ->
+        plotsToFinish.textProperty().addListener { observable, oldValue, newValue ->
             if (!newValue.matches(Regex("\\d*"))) {
-                numberPlots.text = newValue.replace("[^\\d]".toRegex(), "")
+                plotsToFinish.text = newValue.replace("[^\\d]".toRegex(), "")
             }
         }
     }
@@ -133,13 +137,22 @@ class MainController : Initializable {
         chia = ChiaCli(getExePath(), getConfigFile())
         chiaKeys.items.addAll(chia.readKeys())
         chiaKeys.selectionModel.selectFirst()
-        jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, it) })
+        jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, logsWindow, it) })
         jobs.addListener(ListChangeListener {
-            Config.savePlotJobs(jobs.map { it.jobDescription })
+            Config.savePlotJobs(jobs.map { it.jobDesc })
         })
 
         jobsView.items = jobs
         jobsView.contextMenu = jobsMenu
+        jobsView.selectionModel.selectedItemProperty().addListener {observable, oldvalue, newvalue ->
+            oldvalue?.displayLogs = false
+            logsWindow.clear()
+            newvalue?.displayLogs = true
+            newvalue?.let {
+                loadJob(it.jobDesc)
+            }
+        }
+        jobsView.selectionModel.selectFirst()
     }
 
     // User Actions ----------------------------------------------------------------------------------------------------
@@ -149,19 +162,23 @@ class MainController : Initializable {
     }
 
     fun onStart() {
-        jobsView.selectionModel.selectedItem.start()
+        if(jobs.isEmpty()){
+            showAlert("No plot jobs found!", "You must save & select your plot job before you run it.")
+        }else {
+            jobsView.selectionModel.selectedItem.start()
+        }
     }
 
     fun onStop() {
         val job = jobsView.selectionModel.selectedItem
-        if (showConfirmation("Stop Process", "Are you sure you want to stop ${job.jobDescription}?")) {
-            job.stop()
+        if (showConfirmation("Stop Process", "Are you sure you want to stop ${job.jobDesc}?")) {
+            job.reset()
         }
     }
 
     fun onStopAll() {
         if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
-            jobs.forEach { it.stop() }
+            jobs.forEach { it.reset() }
         }
     }
 
@@ -204,13 +221,13 @@ class MainController : Initializable {
         val key = chiaKeys.selectionModel.selectedItem
         jobs.add(
             JobProcess(
-                chia,
+                chia, logsWindow,
                 JobDescription(
                     name, File(tempDir.text), File(destDir.text),
-                    threads.text.ifBlank { "-1" }.toInt(),
-                    ram.text.ifBlank { "-1" }.toInt(),
+                    threads.text.ifBlank { "2" }.toInt(),
+                    ram.text.ifBlank { "4608" }.toInt(),
                     key,
-                    stopAfter.text.ifBlank { "-1" }.toInt()
+                    plotsToFinish.text.ifBlank { "-1" }.toInt()
                 )
             )
         )
@@ -235,7 +252,7 @@ class MainController : Initializable {
     }
 
     fun onStopAfter() {
-        numberPlots.disableProperty().value = !stopAfter.selectedProperty().value
+        plotsToFinish.disableProperty().value = !stopAfterCheckbox.selectedProperty().value
     }
 
     fun onExit() {
@@ -249,7 +266,7 @@ class MainController : Initializable {
             val answer = alert.showAndWait()
             if (answer.get() != ButtonType.OK) {
                 jobs.forEach {
-                    it.stop()
+                    it.reset()
                 }
             }
         }
@@ -261,15 +278,15 @@ class MainController : Initializable {
     val jobsMenu = ContextMenu()
     val duplicate = MenuItem("Duplicate").also {
         it.setOnAction {
-            val job = jobsView.selectionModel.selectedItem
-            jobs.add(JobProcess(chia, job.jobDescription))
+            val jobProc = jobsView.selectionModel.selectedItem
+            jobs.add(JobProcess(chia, logsWindow, jobProc.jobDesc))
         }
         jobsMenu.items.add(it)
     }
     val delete = MenuItem("Delete").also {
         it.setOnAction {
             val job = jobsView.selectionModel.selectedItem
-            if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.jobDescription}")) {
+            if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.jobDesc}")) {
                 jobs.remove(job)
             }
         }
@@ -380,6 +397,7 @@ class MainController : Initializable {
         alert.title = title
         alert.headerText = title
         alert.contentText = content
+        FxUtil.setTheme(alert.dialogPane.scene)
         alert.showAndWait()
     }
 
@@ -388,8 +406,14 @@ class MainController : Initializable {
         alert.title = title
         alert.headerText = title
         alert.contentText = content
+        FxUtil.setTheme(alert.dialogPane.scene)
         val answer = alert.showAndWait()
         return answer.get() == ButtonType.OK
+    }
+
+    fun loadJob(jobDesc: JobDescription){
+        tempDir.text = jobDesc.tempDir.path
+        destDir.text = jobDesc.tempDir.path
     }
 }
 
