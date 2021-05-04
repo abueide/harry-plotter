@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import java.io.File
 
 @Serializable
-@JvmRecord
 data class JobDescription(
     val name: String,
     @Serializable(with = FileSerializer::class)

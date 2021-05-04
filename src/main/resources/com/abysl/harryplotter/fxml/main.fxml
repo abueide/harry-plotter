@@ -139,7 +139,7 @@
                                     <HBox spacing="10.0">
                                        <children>
                                           <Button fx:id="addKey" minWidth="65.0" mnemonicParsing="false" onAction="#onAddKey" prefWidth="65.0" text="Add Key" />
-                                          <ComboBox fx:id="chiaKeys" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <ComboBox fx:id="chiaKeysCombo" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" spacing="10.0">

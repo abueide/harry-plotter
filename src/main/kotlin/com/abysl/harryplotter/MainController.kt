@@ -50,7 +50,7 @@ class MainController : Initializable {
     private lateinit var ram: TextField
 
     @FXML
-    private lateinit var chiaKeys: ComboBox<ChiaKey>
+    private lateinit var chiaKeysCombo: ComboBox<ChiaKey>
 
     @FXML
     private lateinit var save: Button
@@ -92,7 +92,7 @@ class MainController : Initializable {
     private lateinit var themeToggle: Button
 
     @FXML
-    private lateinit var stopAfterCheckbox: CheckBox
+    private lateinit var stopAfterCheckBox: CheckBox
 
     @FXML
     private lateinit var plotsToFinish: TextField
@@ -109,9 +109,9 @@ class MainController : Initializable {
     // Initial State ---------------------------------------------------------------------------------------------------
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        chiaKeys.items = keys
+        chiaKeysCombo.items = keys
         keys.add(Config.devkey)
-        chiaKeys.selectionModel.selectFirst()
+        chiaKeysCombo.selectionModel.selectFirst()
 
         threads.textProperty().addListener { observable, oldValue, newValue ->
             if (!newValue.matches(Regex("\\d*"))) {
@@ -135,8 +135,8 @@ class MainController : Initializable {
     // Calls after the window is initialized so mainBox.scene.window isn't null
     fun initialized() {
         chia = ChiaCli(getExePath(), getConfigFile())
-        chiaKeys.items.addAll(chia.readKeys())
-        chiaKeys.selectionModel.selectFirst()
+        chiaKeysCombo.items.addAll(chia.readKeys())
+        chiaKeysCombo.selectionModel.selectFirst()
         jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, logsWindow, it) })
         jobs.addListener(ListChangeListener {
             Config.savePlotJobs(jobs.map { it.jobDesc })
@@ -218,7 +218,7 @@ class MainController : Initializable {
             return
         }
         val name = jobName.text.ifBlank { "Plot Job ${jobs.count() + 1}" }
-        val key = chiaKeys.selectionModel.selectedItem
+        val key = chiaKeysCombo.selectionModel.selectedItem
         jobs.add(
             JobProcess(
                 chia, logsWindow,
@@ -227,7 +227,7 @@ class MainController : Initializable {
                     threads.text.ifBlank { "2" }.toInt(),
                     ram.text.ifBlank { "4608" }.toInt(),
                     key,
-                    plotsToFinish.text.ifBlank { "-1" }.toInt()
+                    plotsToFinish.text.ifBlank { "0" }.toInt()
                 )
             )
         )
@@ -239,7 +239,7 @@ class MainController : Initializable {
         destDir.clear()
         threads.clear()
         ram.clear()
-        chiaKeys.selectionModel.selectFirst()
+        chiaKeysCombo.selectionModel.selectFirst()
         jobsView.selectionModel.clearSelection()
     }
 
@@ -252,7 +252,7 @@ class MainController : Initializable {
     }
 
     fun onStopAfter() {
-        plotsToFinish.disableProperty().value = !stopAfterCheckbox.selectedProperty().value
+        plotsToFinish.disableProperty().value = !stopAfterCheckBox.selectedProperty().value
     }
 
     fun onExit() {
@@ -412,8 +412,13 @@ class MainController : Initializable {
     }
 
     fun loadJob(jobDesc: JobDescription){
+        jobName.text = jobDesc.name
         tempDir.text = jobDesc.tempDir.path
-        destDir.text = jobDesc.tempDir.path
+        destDir.text = jobDesc.destDir.path
+        threads.text = jobDesc.threads.toString()
+        ram.text = jobDesc.ram.toString()
+        plotsToFinish.text = jobDesc.plotsToFinish.toString()
+        chiaKeysCombo.selectionModel.select(jobDesc.key)
     }
 }
 

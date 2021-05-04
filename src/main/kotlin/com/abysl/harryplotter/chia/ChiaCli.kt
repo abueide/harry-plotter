@@ -55,10 +55,13 @@ class ChiaCli(val exe: File, val config: File) {
 
     fun runCommandAsync(vararg args: String, outputCallback: (line: String) -> Unit, finishedCallBack: () -> Unit): Process {
         val command: List<String> = listOf(exe.name) + args.toList()
-        println(command.unlines())
         val proc = ProcessBuilder(command)
             .directory(exe.parentFile)
             .start()
+        println(proc.info())
+        println(proc.toString())
+        println(proc.toHandle())
+        println(proc.toHandle().info())
         val input  = BufferedReader(InputStreamReader(proc.inputStream))
         val err  = BufferedReader(InputStreamReader(proc.errorStream))
 

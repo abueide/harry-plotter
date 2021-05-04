@@ -3,7 +3,6 @@ package com.abysl.harryplotter.data
 import kotlinx.serialization.Serializable
 
 @Serializable
-@JvmRecord
 data class JobResult(
     // Time in Seconds
     val phaseOneTime: Int = 0,
