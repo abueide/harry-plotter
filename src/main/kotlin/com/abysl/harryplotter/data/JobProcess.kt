@@ -20,24 +20,25 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
     var plotCount: Int = 0
     var displayLogs = false
 
-    fun start(){
+    fun start() {
         status = RUNNING
         running = true
 
         proc = chia.runCommandAsync(
             "plots",
             "create",
-            "-k 32",
-            "-a ${jobDesc.key.fingerprint}",
-            "-b ${jobDesc.ram}",
-            "-r ${jobDesc.threads}",
+            "-k", "32",
+            "-a", jobDesc.key.fingerprint,
+            "-b", jobDesc.ram.toString(),
+            "-r", jobDesc.threads.toString(),
             "-t", jobDesc.tempDir.toString(),
             "-d", jobDesc.destDir.toString(),
             outputCallback = ::parseLine,
-            finishedCallBack = ::whenDone)
+            finishedCallBack = ::whenDone
+        )
     }
 
-    fun reset(){
+    fun reset() {
         status = STOPPED
         running = false
         proc?.destroyForcibly()
@@ -50,48 +51,49 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
         logs.clear()
     }
 
-    fun whenDone(){
+    fun whenDone() {
         plotCount++
-        if(running && (plotCount < jobDesc.plotsToFinish || jobDesc.plotsToFinish == 0)){
+        if (running && (plotCount < jobDesc.plotsToFinish || jobDesc.plotsToFinish == 0)) {
             reset()
             start()
         }
     }
 
-    fun parseLine(line: String){
+    fun parseLine(line: String) {
         logs.add(line)
-        if(displayLogs) {
+        if (displayLogs) {
             logWindow.appendText(line + "\n")
         }
 
-        if(line.isNotBlank()) {
-            if (line.contains("Starting phase")) {
-                phase = line.split("Starting phase ")[0].toInt()
-            } else if (line.contains("tables")) {
-                subphase = line.split("tables ")[1]
-            } else if (line.contains("table")) {
-                subphase = line.split("table ")[1]
-            } else if (line.contains("Time for phase")) {
-                val phase: Int = line.split("phase ")[1].split(" =")[0].toInt()
-                val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-                when (phase) {
-                    1 -> currentResult = currentResult.merge(JobResult(phaseOneTime = seconds))
-                    2 -> currentResult = currentResult.merge(JobResult(phaseTwoTime = seconds))
-                    3 -> currentResult = currentResult.merge(JobResult(phaseThreeTime = seconds))
-                    4 -> currentResult = currentResult.merge(JobResult(phaseFourTime = seconds))
-                }
-            } else if (line.contains("Total time")) {
-                val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-                currentResult = currentResult.merge(JobResult(totalTime = seconds))
-            } else if (line.contains("Copy time")) {
-                val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-                currentResult = currentResult.merge(JobResult(copyTime = seconds))
+        if (line.contains("Starting phase")) {
+            phase = line
+                .split("Starting phase ")[1]
+                .split("/")[0]
+                .toInt()
+        } else if (line.contains("tables")) {
+            subphase = line.split("tables ")[1]
+        } else if (line.contains("table")) {
+            subphase = line.split("table ")[1]
+        } else if (line.contains("Time for phase")) {
+            val phase: Int = line.split("phase ")[1].split(" =")[0].toInt()
+            val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
+            when (phase) {
+                1 -> currentResult = currentResult.merge(JobResult(phaseOneTime = seconds))
+                2 -> currentResult = currentResult.merge(JobResult(phaseTwoTime = seconds))
+                3 -> currentResult = currentResult.merge(JobResult(phaseThreeTime = seconds))
+                4 -> currentResult = currentResult.merge(JobResult(phaseFourTime = seconds))
             }
+        } else if (line.contains("Total time")) {
+            val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
+            currentResult = currentResult.merge(JobResult(totalTime = seconds))
+        } else if (line.contains("Copy time")) {
+            val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
+            currentResult = currentResult.merge(JobResult(copyTime = seconds))
         }
     }
 
     override fun toString(): String {
-        return if(running)
+        return if (running)
             "$jobDesc - $percentage%"
         else
             jobDesc.toString()
