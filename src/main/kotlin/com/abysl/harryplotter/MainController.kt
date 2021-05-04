@@ -149,7 +149,7 @@ class MainController : Initializable {
             logsWindow.clear()
             newvalue?.displayLogs = true
             newvalue?.let {
-                loadJob(it.jobDesc)
+                loadJob(it)
             }
         }
         jobsView.selectionModel.selectFirst()
@@ -411,7 +411,8 @@ class MainController : Initializable {
         return answer.get() == ButtonType.OK
     }
 
-    fun loadJob(jobDesc: JobDescription){
+    fun loadJob(jobProc: JobProcess){
+        val jobDesc = jobProc.jobDesc
         jobName.text = jobDesc.name
         tempDir.text = jobDesc.tempDir.path
         destDir.text = jobDesc.destDir.path
@@ -419,6 +420,9 @@ class MainController : Initializable {
         ram.text = jobDesc.ram.toString()
         plotsToFinish.text = jobDesc.plotsToFinish.toString()
         chiaKeysCombo.selectionModel.select(jobDesc.key)
+        jobProc.logs.forEach {
+            logsWindow.appendText(it + "\n")
+        }
     }
 }
 
