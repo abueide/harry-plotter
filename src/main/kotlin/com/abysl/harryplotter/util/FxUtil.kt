@@ -3,8 +3,6 @@ package com.abysl.harryplotter.util
 import com.abysl.harryplotter.config.Prefs
 import javafx.scene.Scene
 import javafx.stage.Stage
-import javax.swing.event.ChangeEvent
-import javax.swing.event.ChangeListener
 
 object FxUtil {
 

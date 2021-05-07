@@ -2,7 +2,6 @@ package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
-import javafx.application.Platform
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
 import java.io.BufferedReader
@@ -44,12 +43,12 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
      * @return
      */
 
-    fun runCommand(vararg args: String): List<String> {
-        val command: List<String> = listOf(exe.name) + args.toList()
+    fun runCommand(vararg commandArgs: String): List<String> {
+        val command: List<String> = listOf(exe.name) + commandArgs.toList()
         val proc: Process = ProcessBuilder(command)
             .directory(exe.parentFile)
             .start()
-        proc.waitFor(10, TimeUnit.SECONDS)
+        proc.waitFor(100, TimeUnit.SECONDS)
         val input: InputStream = proc.inputStream
         val err: InputStream = proc.errorStream
         return input.reader().readLines()
@@ -58,7 +57,7 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
     private val fx = CoroutineScope(Dispatchers.JavaFx)
     private val io = CoroutineScope(Job() + Dispatchers.IO)
 
-    fun runCommandAsync(
+    fun runCommandAsyncc(
         vararg commandArgs: String,
         outputCallback: (line: String) -> Unit,
         finishedCallBack: () -> Unit

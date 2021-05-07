@@ -4,56 +4,55 @@ import com.abysl.harryplotter.chia.ChiaCli
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.TextArea
+import java.lang.Thread.sleep
 
 class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDescription) {
-    var status: String = STOPPED
-    var running: Boolean = false
-    var phase: Int = 1
-    var subphase: String = ""
-    var currentResult: JobResult = JobResult()
-    val results: MutableList<JobResult> = mutableListOf()
-    var percentage: Double = 0.0
-    var stopwatch: Int = 0;
-    var plotsDone = 0
     var proc: Process? = null
     val logs: ObservableList<String> = FXCollections.observableArrayList()
-    var plotCount: Int = 0
-    var displayLogs = false
+
+    var state: JobState = JobState()
 
     fun start() {
-        status = RUNNING
-        running = true
+        if(proc == null) {
+            state.status = RUNNING
+            state.running = true
 
-        proc = chia.runCommandAsync(
-            "plots",
-            "create",
-            "-k", "32",
-            "-a", jobDesc.key.fingerprint,
-            "-b", jobDesc.ram.toString(),
-            "-r", jobDesc.threads.toString(),
-            "-t", jobDesc.tempDir.toString(),
-            "-d", jobDesc.destDir.toString(),
-            outputCallback = ::parseLine,
-            finishedCallBack = ::whenDone
-        )
+            proc = chia.runCommandAsyncc(
+                "plots",
+                "create",
+                "-k", "32",
+                "-a", jobDesc.key.fingerprint,
+                "-b", jobDesc.ram.toString(),
+                "-r", jobDesc.threads.toString(),
+                "-t", jobDesc.tempDir.toString(),
+                "-d", jobDesc.destDir.toString(),
+                outputCallback = ::parseLine,
+                finishedCallBack = ::whenDone
+            )
+        }
     }
 
     fun reset() {
-        status = STOPPED
-        running = false
         proc?.destroyForcibly()
-        proc = null
-        stopwatch = 0
-        currentResult = JobResult()
-        phase = 1
-        subphase = ""
-        percentage = 0.0
         logs.clear()
+        jobDesc.tempDir.listFiles()?.forEach {
+            if(it.toString().contains(state.plotId) && it.extension == "tmp"){
+                while(!it.delete()){
+                    println("Couldn't delete file, trying again in 100 ms")
+                    sleep(100)
+                }
+                print("DELETING: ")
+            }else {
+                print("KEEPING:")
+            }
+            println(" " + it.name)
+        }
+        state = JobState()
     }
 
     fun whenDone() {
-        plotCount++
-        if (running && (plotCount < jobDesc.plotsToFinish || jobDesc.plotsToFinish == 0)) {
+        state.plotCount++
+        if (state.running && (state.plotCount < jobDesc.plotsToFinish || jobDesc.plotsToFinish == 0)) {
             reset()
             start()
         }
@@ -61,17 +60,21 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
 
     fun parseLine(line: String) {
         logs.add(line)
-        if (displayLogs) {
+        if (state.displayLogs) {
             logWindow.appendText(line + "\n")
         }
-
+        if(line.contains("ID: ")){
+            state.plotId = line.split("ID: ")[1]
+            println(state.plotId)
+        }
+        /*
         if (line.contains("Starting phase")) {
             phase = line
                 .split("Starting phase ")[1]
                 .split("/")[0]
                 .toInt()
         } else if (line.contains("tables")) {
-            subphase = line.split("tables ")[1]
+//            subphase = line.split("tables ")[1]
         } else if (line.contains("table")) {
             subphase = line.split("table ")[1]
         } else if (line.contains("Time for phase")) {
@@ -90,11 +93,13 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
             val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
             currentResult = currentResult.merge(JobResult(copyTime = seconds))
         }
+
+         */
     }
 
     override fun toString(): String {
-        return if (running)
-            "$jobDesc - $percentage%"
+        return if (state.running)
+            "$jobDesc - ${state.percentage}%"
         else
             jobDesc.toString()
     }
@@ -103,10 +108,5 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
         val STOPPED = "Stopped"
         val RUNNING = "Running"
         val ERROR = "Error"
-
-        val PHASEONE = "PHASEONE"
-        val PHASETWO = "PHASETWO"
-        val PHASETHREE = "PHASETHREE"
-        val PHASEFOUR = "PHASEFOUR"
     }
 }
