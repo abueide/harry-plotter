@@ -18,10 +18,6 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
     val chiaHome = config.parentFile.parentFile
 
 
-    fun createPlot(jobDescription: JobDescription) {
-
-    }
-
     fun readKeys(): List<ChiaKey> {
         val keyInput = runCommand("keys", "show")
         val keys = mutableListOf<ChiaKey>()
@@ -33,7 +29,6 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
                 keys[keys.size - 1] = keys[keys.size - 1].parseLine(line)
             }
         }
-        keys.forEach { _ -> println() }
         return keys
     }
 
@@ -84,6 +79,8 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
                     }
                     delay(10)
                 }
+                input.close()
+                err.close()
                 fx.launch {
                     finishedCallBack()
                 }

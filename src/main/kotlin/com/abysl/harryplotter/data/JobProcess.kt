@@ -4,13 +4,16 @@ import com.abysl.harryplotter.chia.ChiaCli
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.TextArea
-import java.lang.Thread.sleep
+import kotlinx.coroutines.*
 
 class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDescription) {
+//    private val io = CoroutineScope(Job() + Dispatchers.IO)
     var proc: Process? = null
     val logs: ObservableList<String> = FXCollections.observableArrayList()
 
     var state: JobState = JobState()
+
+
 
     fun start() {
         if(proc == null) {
@@ -33,22 +36,28 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
     }
 
     fun reset() {
-        proc?.destroyForcibly()
+        proc?.destroy()
         logs.clear()
-        jobDesc.tempDir.listFiles()?.forEach {
-            if(it.toString().contains(state.plotId) && it.extension == "tmp"){
-                while(!it.delete()){
-                    println("Couldn't delete file, trying again in 100 ms")
-                    sleep(100)
-                }
-                print("DELETING: ")
-            }else {
-                print("KEEPING:")
-            }
-            println(" " + it.name)
-        }
+        GlobalScope.launch { deleteTempFiles() }
         state = JobState()
     }
+
+    suspend fun deleteTempFiles(){
+        val maxTries = 100
+        if(state.plotId.isNotBlank()) {
+            jobDesc.tempDir.listFiles()?.forEach {
+                if (it.toString().contains(state.plotId) && it.extension == "tmp") {
+                    var timeout = 0
+                    while (!it.delete() && timeout++ < maxTries) {
+                        println("Couldn't delete file, trying again in 100 ms")
+                        delay(100)
+                    }
+                }
+                println(" " + it.name)
+            }
+        }
+    }
+
 
     fun whenDone() {
         state.plotCount++
@@ -67,34 +76,34 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
             state.plotId = line.split("ID: ")[1]
             println(state.plotId)
         }
-        /*
+
         if (line.contains("Starting phase")) {
-            phase = line
+            state.phase = line
                 .split("Starting phase ")[1]
                 .split("/")[0]
                 .toInt()
         } else if (line.contains("tables")) {
-//            subphase = line.split("tables ")[1]
+            val split = line.split("tables ")
+            state.subphase = line.split("tables ")[1]
         } else if (line.contains("table")) {
-            subphase = line.split("table ")[1]
+            val split = line.split("table ")
+            state.subphase = line.split("table ")[1]
         } else if (line.contains("Time for phase")) {
             val phase: Int = line.split("phase ")[1].split(" =")[0].toInt()
             val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
             when (phase) {
-                1 -> currentResult = currentResult.merge(JobResult(phaseOneTime = seconds))
-                2 -> currentResult = currentResult.merge(JobResult(phaseTwoTime = seconds))
-                3 -> currentResult = currentResult.merge(JobResult(phaseThreeTime = seconds))
-                4 -> currentResult = currentResult.merge(JobResult(phaseFourTime = seconds))
+                1 -> state.currentResult = state.currentResult.merge(JobResult(phaseOneTime = seconds))
+                2 -> state.currentResult = state.currentResult.merge(JobResult(phaseTwoTime = seconds))
+                3 -> state.currentResult = state.currentResult.merge(JobResult(phaseThreeTime = seconds))
+                4 -> state.currentResult = state.currentResult.merge(JobResult(phaseFourTime = seconds))
             }
         } else if (line.contains("Total time")) {
             val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-            currentResult = currentResult.merge(JobResult(totalTime = seconds))
+            state.currentResult = state.currentResult.merge(JobResult(totalTime = seconds))
         } else if (line.contains("Copy time")) {
             val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-            currentResult = currentResult.merge(JobResult(copyTime = seconds))
+            state.currentResult = state.currentResult.merge(JobResult(copyTime = seconds))
         }
-
-         */
     }
 
     override fun toString(): String {
