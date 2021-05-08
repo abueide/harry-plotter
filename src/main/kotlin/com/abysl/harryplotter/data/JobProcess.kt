@@ -1,13 +1,13 @@
 package com.abysl.harryplotter.data
 
 import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.config.Config.io
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.TextArea
 import kotlinx.coroutines.*
 
 class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDescription) {
-//    private val io = CoroutineScope(Job() + Dispatchers.IO)
     var proc: Process? = null
     val logs: ObservableList<String> = FXCollections.observableArrayList()
 
@@ -38,7 +38,7 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
     fun reset() {
         proc?.destroy()
         logs.clear()
-        GlobalScope.launch { deleteTempFiles() }
+        io.launch { deleteTempFiles() }
         state = JobState()
     }
 

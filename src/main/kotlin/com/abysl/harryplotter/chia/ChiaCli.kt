@@ -1,5 +1,7 @@
 package com.abysl.harryplotter.chia
 
+import com.abysl.harryplotter.config.Config.fx
+import com.abysl.harryplotter.config.Config.io
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
 import kotlinx.coroutines.*
@@ -49,8 +51,6 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
         return input.reader().readLines()
     }
 
-    private val fx = CoroutineScope(Dispatchers.JavaFx)
-    private val io = CoroutineScope(Job() + Dispatchers.IO)
 
     fun runCommandAsyncc(
         vararg commandArgs: String,
@@ -61,30 +61,28 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
         val proc = ProcessBuilder(command)
             .directory(exe.parentFile)
             .start()
-
-
-            io.launch {
-                val input = BufferedReader(InputStreamReader(proc.inputStream))
-                val err = BufferedReader(InputStreamReader(proc.errorStream))
-                while (proc.isAlive) {
-                    if (input.ready()) {
-                        fx.launch {
-                            outputCallback(input.readLine())
-                        }
+        io.launch {
+            val input = BufferedReader(InputStreamReader(proc.inputStream))
+            val err = BufferedReader(InputStreamReader(proc.errorStream))
+            while (proc.isAlive) {
+                if (input.ready()) {
+                    fx.launch {
+                        outputCallback(input.readLine())
                     }
-                    if (err.ready()) {
-                        fx.launch {
-                            outputCallback(err.readLine())
-                        }
+                }
+                if (err.ready()) {
+                    fx.launch {
+                        outputCallback(err.readLine())
                     }
-                    delay(10)
                 }
-                input.close()
-                err.close()
-                fx.launch {
-                    finishedCallBack()
-                }
+                delay(10)
             }
+            input.close()
+            err.close()
+            fx.launch {
+                finishedCallBack()
+            }
+        }
         return proc
     }
 }

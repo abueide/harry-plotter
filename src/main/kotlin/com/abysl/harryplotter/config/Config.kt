@@ -3,6 +3,10 @@ package com.abysl.harryplotter.config
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -11,6 +15,10 @@ import java.io.File
 object Config {
     private val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
     private val jobsFile = File(plotterHome.path + "/jobs.json")
+
+    val io = CoroutineScope(Job() + Dispatchers.IO)
+    val fx = CoroutineScope(Dispatchers.JavaFx)
+
     val devkey = ChiaKey(
         nickname = "Developer Donation",
         fingerprint = "3639606261",
