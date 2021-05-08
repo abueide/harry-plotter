@@ -13,7 +13,7 @@ fun String.getResourceAsStream(): InputStream{
     return HarryPlotter::class.java.getResourceAsStream(this)
 }
 
-fun List<out String>.unlines(): String {
+fun List<String>.unlines(): String {
     val builder = StringBuilder()
     this.forEach {
         builder.append("$it ")

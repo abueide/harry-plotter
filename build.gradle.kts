@@ -21,10 +21,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
 }
 
+val jvmOptions = listOf("-Xms256m", "-Xmx2048m", "--illegal-access=permit")
+
 application {
     applicationName = "Harry Plotter"
     mainClass.set("com.abysl.harryplotter.HarryPlotter")
     mainModule.set("com.abysl.harryplotter")
+    applicationDefaultJvmArgs = jvmOptions
 }
 
 javafx {
@@ -35,7 +38,7 @@ javafx {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "16"
+        jvmTarget = "11"
     }
 }
 
@@ -47,7 +50,8 @@ jlink {
 
     launcher {
         name = project.application.applicationName
-        noConsole = true
+//        noConsole = true
+        jvmArgs = jvmOptions
     }
 
     jpackage {
@@ -59,7 +63,7 @@ jlink {
         }
         installerName = project.application.applicationName
         imageName = project.application.applicationName
-        imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.ico")//, "--win-console")
+        imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.ico", "--win-console")
         appVersion = project.version.toString()
     }
 }

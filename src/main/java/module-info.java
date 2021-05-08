@@ -12,5 +12,6 @@ module com.abysl.harryplotter {
 
     opens com.abysl.harryplotter.controller to javafx.fxml;
     opens com.abysl.harryplotter.data to kotlinx.serialization.core.jvm;
+    opens com.abysl.harryplotter to kotlin.stdlib, kotlinx.coroutines.core.jvm;
     exports com.abysl.harryplotter;
 }
