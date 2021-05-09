@@ -37,10 +37,4 @@ class HarryPlotter: Application() {
         Prefs.darkMode = !Prefs.darkMode
         FxUtil.setTheme(mainStage)
     }
-
-
-}
-
-fun main(){
-    Application.launch()
 }

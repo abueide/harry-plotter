@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version "1.5.0"
     kotlin("plugin.serialization") version "1.5.0"
     id("org.openjfx.javafxplugin") version "0.0.10"
-    id("org.beryx.jlink") version "2.23.8"
+    id("org.beryx.runtime") version "1.12.4"
 }
 
 group = "com.abysl"
@@ -21,12 +21,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
 }
 
-val jvmOptions = listOf("-Xms256m", "-Xmx2048m", "--illegal-access=permit")
+val jvmOptions = listOf("-Xms256m", "-Xmx2048m")//, "--illegal-access=permit")
 
 application {
     applicationName = "Harry Plotter"
-    mainClass.set("com.abysl.harryplotter.HarryPlotter")
-    mainModule.set("com.abysl.harryplotter")
+    mainClass.set("com.abysl.harryplotter.MainKt")
     applicationDefaultJvmArgs = jvmOptions
 }
 
@@ -38,21 +37,15 @@ javafx {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "16"
     }
 }
 
 val currentOs = org.gradle.internal.os.OperatingSystem.current()
 
-jlink {
+runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
-    addExtraDependencies("javafx")
-
-    launcher {
-        name = project.application.applicationName
-//        noConsole = true
-        jvmArgs = jvmOptions
-    }
+//    modules.set(listOf("java.desktop"))
 
     jpackage {
         installerOptions = listOf("--resource-dir", "src/main/resources", "--vendor", "Abysl")
@@ -65,5 +58,9 @@ jlink {
         imageName = project.application.applicationName
         imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.ico", "--win-console")
         appVersion = project.version.toString()
+    }
+
+    launcher {
+        noConsole = true
     }
 }
