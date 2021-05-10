@@ -53,6 +53,7 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
     fun runCommandAsync(
         outputCallback: (String) -> Unit,
         completedCallback: () -> Unit,
+        ioDelay: Long = 10,
         vararg commandArgs: String
     ): Process {
         val command: List<String> = listOf(exe.name) + commandArgs.toList()
@@ -69,6 +70,7 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
                 err.lines().forEach {
                     outputCallback(it)
                 }
+                delay(ioDelay)
             }
             input.close()
             err.close()
