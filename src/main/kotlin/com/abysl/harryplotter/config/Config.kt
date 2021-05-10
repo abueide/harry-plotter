@@ -16,9 +16,6 @@ object Config {
     private val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
     private val jobsFile = File(plotterHome.path + "/jobs.json")
 
-    val io = CoroutineScope(Job() + Dispatchers.IO)
-    val fx = CoroutineScope(Dispatchers.JavaFx)
-
     val devkey = ChiaKey(
         nickname = "Developer Donation",
         fingerprint = "3639606261",

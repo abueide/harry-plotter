@@ -1,9 +1,6 @@
 package com.abysl.harryplotter.chia
 
-import com.abysl.harryplotter.config.Config.fx
-import com.abysl.harryplotter.config.Config.io
 import com.abysl.harryplotter.data.ChiaKey
-import com.abysl.harryplotter.data.JobDescription
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
 import java.io.BufferedReader
@@ -12,6 +9,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
+import kotlin.reflect.KSuspendFunction0
 
 class ChiaCli(val exe: File, val config: File) : CoroutineScope {
     override val coroutineContext: CoroutineContext
@@ -52,37 +50,31 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
     }
 
 
-    fun runCommandAsyncc(
-        vararg commandArgs: String,
-        outputCallback: (line: String) -> Unit,
-        finishedCallBack: () -> Unit
+    fun runCommandAsync(
+        outputCallback: (String) -> Unit,
+        completedCallback: () -> Unit,
+        vararg commandArgs: String
     ): Process {
         val command: List<String> = listOf(exe.name) + commandArgs.toList()
-        val proc = ProcessBuilder(command)
+        val proc: Process = ProcessBuilder(command)
             .directory(exe.parentFile)
             .start()
-        io.launch {
-            val input = BufferedReader(InputStreamReader(proc.inputStream))
-            val err = BufferedReader(InputStreamReader(proc.errorStream))
+        val input = BufferedReader(InputStreamReader(proc.inputStream))
+        val err = BufferedReader(InputStreamReader(proc.errorStream))
+        CoroutineScope(Dispatchers.IO).launch {
             while (proc.isAlive) {
-                if (input.ready()) {
-                    fx.launch {
-                        outputCallback(input.readLine())
-                    }
+                input.lines().forEach {
+                    outputCallback(it)
                 }
-                if (err.ready()) {
-                    fx.launch {
-                        outputCallback(err.readLine())
-                    }
+                err.lines().forEach {
+                    outputCallback(it)
                 }
-                delay(10)
             }
             input.close()
             err.close()
-            fx.launch {
-                finishedCallBack()
-            }
+            completedCallback()
         }
         return proc
     }
+
 }

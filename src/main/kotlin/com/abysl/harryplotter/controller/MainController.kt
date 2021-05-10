@@ -16,6 +16,10 @@ import javafx.scene.layout.VBox
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -157,7 +161,11 @@ class MainController : Initializable {
     // User Actions ----------------------------------------------------------------------------------------------------
 
     fun onStartAll() {
-        jobsView.items.forEach { it.start() }
+        jobsView.items.forEach {
+            CoroutineScope(Dispatchers.Default).launch {
+                it.start()
+            }
+        }
     }
 
     fun onStart() {
@@ -171,13 +179,13 @@ class MainController : Initializable {
     fun onStop() {
         val job = jobsView.selectionModel.selectedItem
         if (showConfirmation("Stop Process", "Are you sure you want to stop ${job.jobDesc}?")) {
-            job.reset()
+            job.stop()
         }
     }
 
     fun onStopAll() {
         if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
-            jobs.forEach { it.reset() }
+            jobs.forEach { it.stop() }
         }
     }
 
@@ -265,7 +273,7 @@ class MainController : Initializable {
             val answer = alert.showAndWait()
             if (answer.get() != ButtonType.OK) {
                 jobs.forEach {
-                    it.reset()
+                    it.stop(true)
                 }
             }
         }

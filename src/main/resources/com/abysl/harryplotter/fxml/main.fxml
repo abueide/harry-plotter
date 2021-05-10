@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="mainBox" minHeight="400.0" minWidth="640.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.controller.MainController">
+<VBox fx:id="mainBox" minHeight="400.0" minWidth="640.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.controller.MainController">
   <children>
       <HBox>
          <children>
@@ -103,7 +103,8 @@
                                     <CheckBox fx:id="stopAfterCheckBox" mnemonicParsing="false" onAction="#onStopAfter" text="Stop after" />
                                     <VBox alignment="BOTTOM_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="20.0" VBox.vgrow="ALWAYS">
                                        <children>
-                                          <Label text="Current Status" />
+                                          <Label layoutX="10.0" layoutY="193.0" text="Current Status" />
+                                          <Label text="Plot ID" />
                                           <Label text="Last Plot Time" />
                                           <Label text="Average Plot Time" />
                                           <Label text="Total Plots Created" />
@@ -158,7 +159,8 @@
                                        <children>
                                           <VBox alignment="BOTTOM_LEFT" minWidth="100.0" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
                                              <children>
-                                                <Label fx:id="currentStatus" text="Not Running" />
+                                                <Label fx:id="currentStatus1" layoutX="10.0" layoutY="199.0" text="Not Running" />
+                                                <Label fx:id="plotId" />
                                                 <Label fx:id="lastPlotTime" text="6 hr 50 s (21650s)" />
                                                 <Label fx:id="averagePlotTime" text="6 hr 30 s (21630)" />
                                                 <Label fx:id="totalPlotsCreated" text="3" />
