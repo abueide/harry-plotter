@@ -23,8 +23,9 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
             state.running = true
 
             proc = chia.runCommandAsync(
+                ioDelay = 10,
                 outputCallback = ::parseLine,
-                completedCallback = { whenDone() },
+                completedCallback = ::whenDone,
                 "plots",
                 "create",
                 "-k", "32",

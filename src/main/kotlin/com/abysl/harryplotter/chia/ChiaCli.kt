@@ -39,9 +39,8 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
      */
 
     fun runCommand(vararg commandArgs: String): List<String> {
-        val command: List<String> = listOf(exe.name) + commandArgs.toList()
+        val command: List<String> = listOf(exe.path) + commandArgs.toList()
         val proc: Process = ProcessBuilder(command)
-            .directory(exe.parentFile)
             .start()
         proc.waitFor(100, TimeUnit.SECONDS)
         val input: InputStream = proc.inputStream
@@ -51,10 +50,10 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
 
 
     fun runCommandAsync(
+        ioDelay: Long = 10,
         outputCallback: (String) -> Unit,
         completedCallback: () -> Unit,
-        ioDelay: Long = 10,
-        vararg commandArgs: String
+        vararg commandArgs: String,
     ): Process {
         val command: List<String> = listOf(exe.name) + commandArgs.toList()
         val proc: Process = ProcessBuilder(command)

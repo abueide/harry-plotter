@@ -2,6 +2,7 @@ package com.abysl.harryplotter.controller
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobProcess
@@ -18,7 +19,6 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import java.net.URL
@@ -137,6 +137,8 @@ class MainController : Initializable {
 
     // Calls after the window is initialized so mainBox.scene.window isn't null
     fun initialized() {
+        val exePath = getExePath()
+        Prefs.exePath = exePath.path
         chia = ChiaCli(getExePath(), getConfigFile())
         chiaKeysCombo.items.addAll(chia.readKeys())
         chiaKeysCombo.selectionModel.selectFirst()
@@ -338,13 +340,19 @@ class MainController : Initializable {
     }
 
     fun getExePath(): File {
-        var chiaExe = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
+        val lastPath = File(Prefs.exePath)
+        if(lastPath.exists()) return lastPath
+        val macChiaExe = File("/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia")
+        if(macChiaExe.exists()) return macChiaExe
 
-        if (chiaExe.exists()) {
-            chiaExe.list().forEach {
+        var chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
+
+
+        if (chiaAppData.exists()) {
+            chiaAppData.list().forEach {
                 if (it.contains("app-")) {
-                    chiaExe = File(chiaExe.path + "/$it/resources/app.asar.unpacked/daemon/chia.exe")
-                    return chiaExe
+                    chiaAppData = File(chiaAppData.path + "/$it/resources/app.asar.unpacked/daemon/chia.exe")
+                    return chiaAppData
                 }
             }
         }
