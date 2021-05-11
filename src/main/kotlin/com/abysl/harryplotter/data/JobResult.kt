@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class JobResult(
     // Time in Seconds
-    val phaseOneTime: Int = 0,
-    val phaseTwoTime: Int = 0,
-    val phaseThreeTime: Int = 0,
-    val phaseFourTime: Int = 0,
-    val totalTime: Int = 0,
-    val copyTime: Int = 0,
+    val phaseOneTime: Double = 0.0,
+    val phaseTwoTime: Double = 0.0,
+    val phaseThreeTime: Double = 0.0,
+    val phaseFourTime: Double = 0.0,
+    val totalTime: Double = 0.0,
+    val copyTime: Double = 0.0,
 ){
     fun merge(other: JobResult): JobResult {
         return JobResult(
@@ -23,7 +23,7 @@ data class JobResult(
         )
     }
 
-    fun testTime(time: Int, other: Int): Int{
-        return if(time != 0) time else other
+    fun testTime(time: Double, other: Double): Double{
+        return if(time != 0.0) time else other
     }
 }

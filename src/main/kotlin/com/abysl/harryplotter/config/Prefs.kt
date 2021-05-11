@@ -9,7 +9,7 @@ object Prefs {
     private val prefs = Preferences.userRoot().node("com.abysl.harryplotter")
 
     var darkMode: Boolean
-        get() = prefs.getBoolean(DARK_MODE, true)
+        get() = prefs.getBoolean(DARK_MODE, false)
         set(value){ prefs.putBoolean(DARK_MODE, value) }
     var exePath: String
         get() = prefs.get(EXE_PATH, "PATH/TO/FILE")

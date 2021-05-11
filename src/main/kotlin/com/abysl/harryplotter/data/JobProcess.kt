@@ -89,42 +89,52 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
                 logWindow.appendText(line + "\n")
             }
         }
-        if (line.contains("ID: ")) {
-            state.plotId = line.split("ID: ")[1]
-        }
-
-        if (line.contains("Starting phase")) {
-            state.phase = line
-                .split("Starting phase ")[1]
-                .split("/")[0]
-                .toInt()
-            println(state.phase)
-        } else if (line.contains("tables")) {
-            val split = line.split("tables ")
-            state.subphase = line.split("tables ")[1]
-            println(state.subphase)
-        } else if (line.contains("table")) {
-            val split = line.split("table ")
-            state.subphase = line.split("table ")[1]
-            println(state.subphase)
-        } else if (line.contains("Time for phase")) {
-            val phase: Int = line.split("phase ")[1].split(" =")[0].toInt()
-            val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-            when (phase) {
-                1 -> state.currentResult = state.currentResult.merge(JobResult(phaseOneTime = seconds))
-                2 -> state.currentResult = state.currentResult.merge(JobResult(phaseTwoTime = seconds))
-                3 -> state.currentResult = state.currentResult.merge(JobResult(phaseThreeTime = seconds))
-                4 -> state.currentResult = state.currentResult.merge(JobResult(phaseFourTime = seconds))
+        try {
+            if (line.contains("ID: ")) {
+                state.plotId = line.split("ID: ")[1]
             }
-            println(state.currentResult)
-        } else if (line.contains("Total time")) {
-            val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-            state.currentResult = state.currentResult.merge(JobResult(totalTime = seconds))
-            println(state.currentResult)
-        } else if (line.contains("Copy time")) {
-            val seconds: Int = line.split("= ")[1].split(" seconds")[0].toInt()
-            state.currentResult = state.currentResult.merge(JobResult(copyTime = seconds))
-            println(state.currentResult)
+
+            when {
+                line.contains("Starting phase") -> {
+                    state.phase = line
+                        .split("Starting phase ")[1]
+                        .split("/")[0]
+                        .toInt()
+                    println(state.phase)
+                }
+                line.contains("tables") -> {
+                    state.subphase = line.split("tables ")[1]
+                    println(state.subphase)
+                }
+                line.contains("table") -> {
+                    val split = line.split("table ")
+                    state.subphase = line.split("table ")[1]
+                    println(state.subphase)
+                }
+                line.contains("Time for phase") -> {
+                    val phase: Int = line.split("phase ")[1].split(" =")[0].toInt()
+                    val seconds: Double = line.split("= ")[1].split(" seconds")[0].toDouble()
+                    when (phase) {
+                        1 -> state.currentResult = state.currentResult.merge(JobResult(phaseOneTime = seconds))
+                        2 -> state.currentResult = state.currentResult.merge(JobResult(phaseTwoTime = seconds))
+                        3 -> state.currentResult = state.currentResult.merge(JobResult(phaseThreeTime = seconds))
+                        4 -> state.currentResult = state.currentResult.merge(JobResult(phaseFourTime = seconds))
+                    }
+                    println(state.currentResult)
+                }
+                line.contains("Total time") -> {
+                    val seconds: Double = line.split("= ")[1].split(" seconds")[0].toDouble()
+                    state.currentResult = state.currentResult.merge(JobResult(totalTime = seconds))
+                    println(state.currentResult)
+                }
+                line.contains("Copy time") -> {
+                    val seconds: Double = line.split("= ")[1].split(" seconds")[0].toDouble()
+                    state.currentResult = state.currentResult.merge(JobResult(copyTime = seconds))
+                    println(state.currentResult)
+                }
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
         }
     }
 
