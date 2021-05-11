@@ -138,6 +138,12 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
         }
     }
 
+    fun getLogsAsString(): String {
+        val builder: StringBuilder = StringBuilder()
+        logs.forEach { builder.appendLine(it)  }
+        return builder.toString()
+    }
+
     override fun toString(): String {
         return if (state.running)
             "$jobDesc - ${state.percentage}%"

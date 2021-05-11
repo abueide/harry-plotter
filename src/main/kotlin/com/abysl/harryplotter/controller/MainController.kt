@@ -435,9 +435,7 @@ class MainController : Initializable {
         ram.text = jobDesc.ram.toString()
         plotsToFinish.text = jobDesc.plotsToFinish.toString()
         chiaKeysCombo.selectionModel.select(jobDesc.key)
-        jobProc.logs.forEach {
-            logsWindow.appendText(it + "\n")
-        }
+        logsWindow.text = jobProc.getLogsAsString()
     }
 }
 
