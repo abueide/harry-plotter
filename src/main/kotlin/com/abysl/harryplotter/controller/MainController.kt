@@ -151,7 +151,6 @@ class MainController : Initializable {
         jobsView.contextMenu = jobsMenu
         jobsView.selectionModel.selectedItemProperty().addListener {observable, oldvalue, newvalue ->
             oldvalue?.state?.displayLogs = false
-            logsWindow.clear()
             newvalue?.state?.displayLogs = true
             newvalue?.let {
                 loadJob(it)
@@ -436,6 +435,8 @@ class MainController : Initializable {
         plotsToFinish.text = jobDesc.plotsToFinish.toString()
         chiaKeysCombo.selectionModel.select(jobDesc.key)
         logsWindow.text = jobProc.getLogsAsString()
+        // Makes the textarea scroll to the bottom by default
+        logsWindow.appendText("")
     }
 }
 
