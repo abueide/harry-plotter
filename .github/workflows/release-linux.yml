@@ -14,7 +14,6 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: jpackage
-          build-root-directory: ~/harry-plotter
           wrapper-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
