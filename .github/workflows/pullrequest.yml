@@ -1,12 +1,19 @@
 name: Gradle Build
 
-on: [pull_request, push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
 
 jobs:
   gradle:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -14,6 +21,12 @@ jobs:
         with:
           java-version: 16
           distribution: 'adopt'
+      - uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: detekt
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+          configuration-cache-enabled: true
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: build

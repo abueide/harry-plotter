@@ -25,18 +25,17 @@ import javafx.stage.Stage
 
 object FxUtil {
 
-
-    fun setTheme(scene: Scene){
-        if (Prefs.darkMode){
+    fun setTheme(scene: Scene) {
+        if (Prefs.darkMode) {
             scene.stylesheets.clear()
             scene.stylesheets.add("themes/Dark.css".getResource().toExternalForm())
-        }else {
+        } else {
             scene.stylesheets.clear()
             scene.stylesheets.add("themes/Light.css".getResource().toExternalForm())
         }
     }
 
-    fun setTheme(stage: Stage){
+    fun setTheme(stage: Stage) {
         setTheme(stage.scene)
     }
 }

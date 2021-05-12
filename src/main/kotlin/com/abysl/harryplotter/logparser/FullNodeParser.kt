@@ -19,6 +19,4 @@
 
 package com.abysl.harryplotter.logparser
 
-class FullNodeParser {
-
-}
+class FullNodeParser

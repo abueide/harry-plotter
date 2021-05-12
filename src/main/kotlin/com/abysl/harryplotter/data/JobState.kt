@@ -19,9 +19,6 @@
 
 package com.abysl.harryplotter.data
 
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
-
 data class JobState(
     var running: Boolean = false,
     var phase: Int = 1,
@@ -34,4 +31,3 @@ data class JobState(
     var plotId: String = "",
     var status: String = JobProcess.STOPPED
 )
-

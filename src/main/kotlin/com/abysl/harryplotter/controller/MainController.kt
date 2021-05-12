@@ -31,7 +31,17 @@ import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.control.*
+import javafx.scene.control.Alert
+import javafx.scene.control.Button
+import javafx.scene.control.ButtonType
+import javafx.scene.control.CheckBox
+import javafx.scene.control.ComboBox
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.Label
+import javafx.scene.control.ListView
+import javafx.scene.control.MenuItem
+import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
@@ -41,9 +51,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.net.URL
-import java.util.*
+import java.util.ResourceBundle
 import kotlin.system.exitProcess
-
 
 class MainController : Initializable {
     // UI Components ---------------------------------------------------------------------------------------------------
@@ -162,13 +171,15 @@ class MainController : Initializable {
         chiaKeysCombo.items.addAll(chia.readKeys())
         chiaKeysCombo.selectionModel.selectFirst()
         jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, logsWindow, it) })
-        jobs.addListener(ListChangeListener {
-            Config.savePlotJobs(jobs.map { it.jobDesc })
-        })
+        jobs.addListener(
+            ListChangeListener {
+                Config.savePlotJobs(jobs.map { it.jobDesc })
+            }
+        )
 
         jobsView.items = jobs
         jobsView.contextMenu = jobsMenu
-        jobsView.selectionModel.selectedItemProperty().addListener {observable, oldvalue, newvalue ->
+        jobsView.selectionModel.selectedItemProperty().addListener { observable, oldvalue, newvalue ->
             oldvalue?.state?.displayLogs = false
             newvalue?.state?.displayLogs = true
             newvalue?.let {
@@ -189,9 +200,9 @@ class MainController : Initializable {
     }
 
     fun onStart() {
-        if(jobs.isEmpty()){
+        if (jobs.isEmpty()) {
             showAlert("No plot jobs found!", "You must save & select your plot job before you run it.")
-        }else {
+        } else {
             jobsView.selectionModel.selectedItem.start()
         }
     }
@@ -320,7 +331,6 @@ class MainController : Initializable {
         jobsMenu.items.add(it)
     }
 
-
     // Utility Functions -----------------------------------------------------------------------------------------------
 
     private fun close() {
@@ -359,12 +369,11 @@ class MainController : Initializable {
 
     fun getExePath(): File {
         val lastPath = File(Prefs.exePath)
-        if(lastPath.exists()) return lastPath
+        if (lastPath.exists()) return lastPath
         val macChiaExe = File("/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia")
-        if(macChiaExe.exists()) return macChiaExe
+        if (macChiaExe.exists()) return macChiaExe
 
         var chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
-
 
         if (chiaAppData.exists()) {
             chiaAppData.list().forEach {
@@ -444,7 +453,7 @@ class MainController : Initializable {
         return answer.get() == ButtonType.OK
     }
 
-    fun loadJob(jobProc: JobProcess){
+    fun loadJob(jobProc: JobProcess) {
         val jobDesc = jobProc.jobDesc
         jobName.text = jobDesc.name
         tempDir.text = jobDesc.tempDir.path
@@ -458,5 +467,3 @@ class MainController : Initializable {
         logsWindow.appendText("")
     }
 }
-
-

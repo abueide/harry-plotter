@@ -30,7 +30,7 @@ data class JobResult(
     val phaseFourTime: Double = 0.0,
     val totalTime: Double = 0.0,
     val copyTime: Double = 0.0,
-){
+) {
     fun merge(other: JobResult): JobResult {
         return JobResult(
             testTime(phaseOneTime, other.phaseOneTime),
@@ -42,7 +42,7 @@ data class JobResult(
         )
     }
 
-    fun testTime(time: Double, other: Double): Double{
-        return if(time != 0.0) time else other
+    fun testTime(time: Double, other: Double): Double {
+        return if (time != 0.0) time else other
     }
 }

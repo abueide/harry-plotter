@@ -34,7 +34,7 @@ data class JobDescription(
     val ram: Int,
     val key: ChiaKey,
     val plotsToFinish: Int, // -1  = keep going forever
-){
+) {
     override fun toString(): String {
         return name
     }

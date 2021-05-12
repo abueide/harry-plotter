@@ -20,22 +20,23 @@
 package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.data.ChiaKey
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
-import kotlin.reflect.KSuspendFunction0
 
 class ChiaCli(val exe: File, val config: File) : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.JavaFx
 
     val chiaHome = config.parentFile.parentFile
-
 
     fun readKeys(): List<ChiaKey> {
         val keyInput = runCommand("keys", "show")
@@ -67,7 +68,6 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
         return input.reader().readLines()
     }
 
-
     fun runCommandAsync(
         ioDelay: Long = 10,
         outputCallback: (String) -> Unit,
@@ -96,5 +96,4 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
         }
         return proc
     }
-
 }

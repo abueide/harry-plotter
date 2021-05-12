@@ -52,7 +52,7 @@ data class ChiaKey(
             return ChiaKey(farmerKey = line.split(": ")[1]).merge(this)
         } else if (line.contains("Pool public")) {
             return ChiaKey(poolKey = line.split(": ")[1]).merge(this)
-        }else {
+        } else {
             return this
         }
     }

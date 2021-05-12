@@ -22,10 +22,6 @@ package com.abysl.harryplotter.config
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobResult
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -43,26 +39,24 @@ object Config {
         poolKey = "967bb4d1bfc97c1960cdefa6b41ed8751fee9cba7b2ee8e8a02f922289edece5337d14c426d953e3bdcb7d093494d7cb"
     )
 
-
     init {
-        if(!plotterHome.exists()){
+        if (!plotterHome.exists()) {
             plotterHome.mkdirs()
         }
     }
 
-    fun savePlotJobs(jobs: List<JobDescription>){
+    fun savePlotJobs(jobs: List<JobDescription>) {
         jobsFile.writeText(Json.encodeToString(jobs))
     }
 
-    fun getPlotJobs(): List<JobDescription>{
-        if(!jobsFile.exists()){
+    fun getPlotJobs(): List<JobDescription> {
+        if (!jobsFile.exists()) {
             return emptyList()
         }
         return Json.decodeFromString(jobsFile.readText())
     }
 
-    fun saveTime(desc: JobDescription, result: JobResult){
-
+    fun saveTime(desc: JobDescription, result: JobResult) {
     }
 
     fun loadTimes(desc: JobDescription): List<JobResult> {

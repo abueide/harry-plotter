@@ -23,8 +23,13 @@ import com.abysl.harryplotter.chia.ChiaCli
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.TextArea
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDescription) {
@@ -33,7 +38,6 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
 
     var state: JobState = JobState()
     var stats: JobStats = JobStats()
-
 
     fun start() {
         if (state.running || proc?.isAlive == true) {
@@ -46,22 +50,15 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
                 ioDelay = 10,
                 outputCallback = ::parseLine,
                 completedCallback = ::whenDone,
-                "keys",
-                "show",
+                "plots",
+                "create",
+                "-k", "32",
+                "-a", jobDesc.key.fingerprint,
+                "-b", jobDesc.ram.toString(),
+                "-r", jobDesc.threads.toString(),
+                "-t", jobDesc.tempDir.toString(),
+                "-d", jobDesc.destDir.toString(),
             )
-//            proc = chia.runCommandAsync(
-//                ioDelay = 10,
-//                outputCallback = ::parseLine,
-//                completedCallback = ::whenDone,
-//                "plots",
-//                "create",
-//                "-k", "32",
-//                "-a", jobDesc.key.fingerprint,
-//                "-b", jobDesc.ram.toString(),
-//                "-r", jobDesc.threads.toString(),
-//                "-t", jobDesc.tempDir.toString(),
-//                "-d", jobDesc.destDir.toString(),
-//            )
         }
     }
 
@@ -88,7 +85,7 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
 
     private fun deleteFile(file: File, delayTime: Long = 100, maxTries: Int = 100) =
         CoroutineScope(Dispatchers.IO).async {
-            var timeout = 0;
+            var timeout = 0
             while (file.exists() && !file.delete() && timeout++ < maxTries) {
                 println("Couldn't delete file, trying again in $delayTime ms")
                 delay(delayTime)
@@ -101,14 +98,13 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
             }
         }
 
-
     private fun whenDone() {
         stats.plotsDone++
         stats.results.add(state.currentResult)
         if (state.running && (stats.plotsDone < jobDesc.plotsToFinish || jobDesc.plotsToFinish == 0)) {
             stop()
             start()
-        }else{
+        } else {
             stop()
         }
     }
@@ -164,14 +160,14 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
                     println(state.currentResult)
                 }
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
     fun getLogsAsString(): String {
         val builder: StringBuilder = StringBuilder()
-        logs.forEach { builder.appendLine(it)  }
+        logs.forEach { builder.appendLine(it) }
         return builder.toString()
     }
 

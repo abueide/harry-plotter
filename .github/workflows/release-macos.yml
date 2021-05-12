@@ -2,7 +2,7 @@ name: JPackage Macos
 
 on:
   release:
-    types: [released, prereleased]
+    types: [ released, prereleased ]
 
 jobs:
   gradle:

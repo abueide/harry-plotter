@@ -31,13 +31,12 @@ import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.stage.Stage
 
-
-class HarryPlotter: Application() {
+class HarryPlotter : Application() {
     lateinit var mainStage: Stage
     override fun start(stage: Stage) {
         mainStage = stage
         val loader = FXMLLoader("fxml/main.fxml".getResource())
-        val root: Parent = loader.load();
+        val root: Parent = loader.load()
         val controller: MainController = loader.getController()
         val scene = Scene(root, 1080.0, 720.0)
 
@@ -52,7 +51,7 @@ class HarryPlotter: Application() {
         }
     }
 
-    fun toggleTheme(){
+    fun toggleTheme() {
         Prefs.darkMode = !Prefs.darkMode
         FxUtil.setTheme(mainStage)
     }
