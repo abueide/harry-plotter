@@ -13,6 +13,7 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
     val logs: ObservableList<String> = FXCollections.observableArrayList()
 
     var state: JobState = JobState()
+    var stats: JobStats = JobStats()
 
 
     fun start() {
@@ -26,15 +27,22 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
                 ioDelay = 10,
                 outputCallback = ::parseLine,
                 completedCallback = ::whenDone,
-                "plots",
-                "create",
-                "-k", "32",
-                "-a", jobDesc.key.fingerprint,
-                "-b", jobDesc.ram.toString(),
-                "-r", jobDesc.threads.toString(),
-                "-t", jobDesc.tempDir.toString(),
-                "-d", jobDesc.destDir.toString(),
+                "keys",
+                "show",
             )
+//            proc = chia.runCommandAsync(
+//                ioDelay = 10,
+//                outputCallback = ::parseLine,
+//                completedCallback = ::whenDone,
+//                "plots",
+//                "create",
+//                "-k", "32",
+//                "-a", jobDesc.key.fingerprint,
+//                "-b", jobDesc.ram.toString(),
+//                "-r", jobDesc.threads.toString(),
+//                "-t", jobDesc.tempDir.toString(),
+//                "-d", jobDesc.destDir.toString(),
+//            )
         }
     }
 
@@ -44,6 +52,7 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
         proc?.destroyForcibly()
         deleteTempFiles(id, block)
         logs.clear()
+        logWindow.clear()
         state = JobState()
     }
 
@@ -75,10 +84,13 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
 
 
     private fun whenDone() {
-        state.plotCount++
-        stop()
-        if (state.running && (state.plotCount < jobDesc.plotsToFinish || jobDesc.plotsToFinish == 0)) {
+        stats.plotsDone++
+        stats.results.add(state.currentResult)
+        if (state.running && (stats.plotsDone < jobDesc.plotsToFinish || jobDesc.plotsToFinish == 0)) {
+            stop()
             start()
+        }else{
+            stop()
         }
     }
 

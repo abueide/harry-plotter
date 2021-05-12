@@ -11,8 +11,6 @@ data class JobState(
     val results: MutableList<JobResult> = mutableListOf(),
     var percentage: Double = 0.0,
     var stopwatch: Int = 0,
-    var plotsDone: Int = 0,
-    var plotCount: Int = 0,
     var displayLogs: Boolean = false,
     var plotId: String = "",
     var status: String = JobProcess.STOPPED
