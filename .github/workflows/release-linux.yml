@@ -1,7 +1,7 @@
 name: JPackage Linux
+
 on: push
-  release:
-    types: [created]
+
 jobs:
   gradle:
     runs-on: ubuntu-latest
