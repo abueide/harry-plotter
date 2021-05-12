@@ -22,7 +22,7 @@ jobs:
       - uses: softprops/action-gh-release@v1
         with:
           files: |
-          build/jpackage/*.deb
-          LICENSE
+            build/jpackage/*.deb
+            LICENSE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
