@@ -2,10 +2,6 @@ name: JPackage Linux
 
 on:
   release:
-    types:
-      - prereleased
-      - released
-      - edited
 
 jobs:
   gradle:
