@@ -21,6 +21,8 @@ jobs:
           configuration-cache-enabled: true
       - uses: softprops/action-gh-release@v1
         with:
-          files: build/jpackage/*.deb
+          files: |
+          build/jpackage/*.deb
+          LICENSE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
