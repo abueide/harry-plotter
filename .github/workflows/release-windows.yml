@@ -1,7 +1,6 @@
 name: JPackage Windows
 
-on:
-  release:
+on: release
 
 jobs:
   gradle:

@@ -1,7 +1,6 @@
 name: JPackage Macos
 
-on:
-  release:
+on: release
 
 jobs:
   gradle:
