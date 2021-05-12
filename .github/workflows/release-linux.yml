@@ -1,6 +1,8 @@
 name: JPackage Linux
 
-on: release
+on:
+  release:
+    types: [released, prereleased]
 
 jobs:
   gradle:
