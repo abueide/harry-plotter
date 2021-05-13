@@ -31,7 +31,7 @@ import javafx.stage.Stage
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class KeyEditorWindow(key: ChiaKey? = null) {
+class KeyEditorWindow(val key: ChiaKey? = null) {
 
     fun show(callback: (key: ChiaKey?) -> Unit) {
         try {

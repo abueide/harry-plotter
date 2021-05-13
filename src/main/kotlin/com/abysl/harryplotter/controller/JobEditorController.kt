@@ -26,6 +26,7 @@ import com.abysl.harryplotter.data.JobProcess
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
+import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
 import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
@@ -74,9 +75,7 @@ class JobEditorController : Initializable {
     private lateinit var selectedJob: MultipleSelectionModel<JobProcess?>
     private lateinit var selectedKey: SingleSelectionModel<ChiaKey?>
 
-    private val dialogs: SimpleDialogs = SimpleDialogs()
-
-    private val fileChooser = SimpleFileChooser(jobName, dialogs)
+    private val fileChooser = SimpleFileChooser(jobName)
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         selectedKey = keysCombo.selectionModel
@@ -95,6 +94,15 @@ class JobEditorController : Initializable {
         this.jobs = jobs
         this.keys = keys
         this.selectedJob = selectedJob
+
+        selectedJob.selectedItemProperty().addListener { _, oldvalue, newvalue ->
+            oldvalue?.state?.displayLogs = false
+            newvalue?.state?.displayLogs = true
+            newvalue?.let {
+                loadJob(it)
+            }
+        }
+
         return keysCombo.selectionModel
     }
 
@@ -143,7 +151,7 @@ class JobEditorController : Initializable {
 
     fun onSave() {
         if (tempDir.text.isBlank() || destDir.text.isBlank()) {
-            dialogs.showAlert(
+            showAlert(
                 "Directory Not Selected",
                 "Please make sure to select a destination & temporary directory."
             )
@@ -152,23 +160,23 @@ class JobEditorController : Initializable {
         val temp = File(tempDir.text)
         val dest = File(destDir.text)
         if (!temp.exists()) {
-            dialogs.showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
+            showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
             return
         }
         if (!dest.exists()) {
-            dialogs.showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
+            showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
             return
         }
         if (!temp.isDirectory) {
-            dialogs.showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
+            showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
             return
         }
         if (!dest.isDirectory) {
-            dialogs.showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
+            showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
             return
         }
         if (selectedKey.selectedItem == null) {
-            dialogs.showAlert("Key Not Selected", "Please add and select a key")
+            showAlert("Key Not Selected", "Please add and select a key")
         }
 
         val name = jobName.text.ifBlank { "Plot Job ${jobs.count() + 1}" }

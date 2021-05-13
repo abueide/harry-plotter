@@ -19,13 +19,15 @@
 
 package com.abysl.harryplotter.windows
 
+import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
+import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
 import javafx.scene.Node
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import java.io.File
 import kotlin.system.exitProcess
 
-class SimpleFileChooser(val node: Node, val dialogs: SimpleDialogs = SimpleDialogs()) {
+class SimpleFileChooser(val node: Node) {
 
     fun chooseFile(title: String, vararg extensions: FileChooser.ExtensionFilter): File {
         val fileChooser = FileChooser()
@@ -35,7 +37,7 @@ class SimpleFileChooser(val node: Node, val dialogs: SimpleDialogs = SimpleDialo
         if (file != null) {
             return file
         }
-        if (!dialogs.showConfirmation("File Not Selected", "Try again?")) {
+        if (!showConfirmation("File Not Selected", "Try again?")) {
             exitProcess(0)
         }
         return chooseFile(title, *extensions)
@@ -50,7 +52,7 @@ class SimpleFileChooser(val node: Node, val dialogs: SimpleDialogs = SimpleDialo
         directoryChooser.title = title
         val directory: File? = directoryChooser.showDialog(node.scene.window)
         if (required) {
-            dialogs.showAlert("Directory Not Selected", "Please try again.")
+            showAlert("Directory Not Selected", "Please try again.")
             return chooseDir(title)
         }
         return directory

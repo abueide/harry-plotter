@@ -67,8 +67,9 @@ class MainController : Initializable {
     // Initial State ---------------------------------------------------------------------------------------------------
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        selectedJob = jobsListController.initModel(jobs)
+        selectedJob = jobsListController.initModel(chia, jobs)
         selectedKey = jobEditorController.initModel(jobs, keys, selectedJob)
+        jobStatusViewController.initModel(jobs, selectedJob)
         jobs.addListener(
             ListChangeListener { listChange ->
                 if (listChange.wasAdded()) {
@@ -95,37 +96,6 @@ class MainController : Initializable {
         chia = ChiaCli(exePath, chiaLocator.getConfigFile())
         keys.addAll(chia.readKeys())
         jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, it) })
-
-        jobsView.items = jobs
-        jobsView.contextMenu = jobsMenu
-        jobsView.selectionModel.selectedItemProperty().addListener { observable, oldvalue, newvalue ->
-            oldvalue?.state?.displayLogs = false
-            newvalue?.state?.displayLogs = true
-            newvalue?.let {
-                loadJob(it)
-            }
-        }
-        jobsView.selectionModel.selectFirst()
-    }
-
-    // User Actions ----------------------------------------------------------------------------------------------------
-
-    fun onStart() {
-        if (jobs.isEmpty()) {
-            showAlert("No plot jobs found!", "You must save & select your plot job before you run it.")
-        } else {
-            jobsView.selectionModel.selectedItem.start()
-        }
-    }
-
-    fun onStop() {
-        val job = jobsView.selectionModel.selectedItem
-        if (showConfirmation("Stop Process", "Are you sure you want to stop ${job.jobDesc}?")) {
-            job.stop()
-        }
-    }
-
-    fun onAddKey() {
     }
 
     fun onToggleTheme() {
@@ -147,33 +117,6 @@ class MainController : Initializable {
                 }
             }
         }
-
-        close()
-    }
-
-    // GUI Components --------------------------------------------------------------------------------------------------
-    val jobsMenu = ContextMenu()
-    val duplicate = MenuItem("Duplicate").also {
-        it.setOnAction {
-            val jobProc = jobsView.selectionModel.selectedItem
-            jobs.add(JobProcess(chia, logsWindow, jobProc.jobDesc))
-        }
-        jobsMenu.items.add(it)
-    }
-    val delete = MenuItem("Delete").also {
-        it.setOnAction {
-            val job = jobsView.selectionModel.selectedItem
-            if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.jobDesc}")) {
-                jobs.remove(job)
-            }
-        }
-        jobsMenu.items.add(it)
-    }
-
-    // Utility Functions -----------------------------------------------------------------------------------------------
-
-    private fun close() {
-        val stage = mainBox.scene.window as Stage
-        stage.close()
+        (mainBox.scene.window as Stage).close()
     }
 }

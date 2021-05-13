@@ -23,7 +23,7 @@ import com.abysl.harryplotter.util.FxUtil
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 
-class SimpleDialogs {
+object SimpleDialogs {
 
     fun showConfirmation(title: String, content: String): Boolean {
         val alert = Alert(Alert.AlertType.CONFIRMATION)

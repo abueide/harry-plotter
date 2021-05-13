@@ -21,6 +21,8 @@ package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.windows.SimpleDialogs
+import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
+import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
 import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.scene.Node
 import javafx.stage.FileChooser
@@ -28,15 +30,14 @@ import java.io.File
 import kotlin.system.exitProcess
 
 class ChiaLocator(node: Node) {
-    private val dialogs = SimpleDialogs()
-    private val fileChooser = SimpleFileChooser(node, dialogs)
+    private val fileChooser = SimpleFileChooser(node)
 
     fun getConfigFile(): File {
         val configDir = File(System.getProperty("user.home") + "/.chia/mainnet/config/config.yaml")
         if (configDir.exists()) {
             return configDir
         }
-        dialogs.showAlert(
+        showAlert(
             "Chia Config File Not Found",
             "Please specify the chia config location, usually located at C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml"
         )
@@ -48,7 +49,7 @@ class ChiaLocator(node: Node) {
         if (file.name.equals("config.yaml") && file.exists())
             return file
         else {
-            if (dialogs.showConfirmation(
+            if (showConfirmation(
                     "Wrong File",
                     "Looking for config.yaml, usually located at C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml . Try again?"
                 )
@@ -76,7 +77,7 @@ class ChiaLocator(node: Node) {
                 }
             }
         }
-        dialogs.showAlert("Chia Executable Not Found", "Please specify the chia executable location")
+        showAlert("Chia Executable Not Found", "Please specify the chia executable location")
         val file = fileChooser.chooseFile(
             "Select Chia Executable",
             FileChooser.ExtensionFilter("All Files", "*.*"),
@@ -86,7 +87,7 @@ class ChiaLocator(node: Node) {
         if (file.name.startsWith("chia"))
             return file
         else {
-            if (dialogs.showConfirmation(
+            if (showConfirmation(
                     "Wrong File",
                     "Looking for the chia cli executable (chia.exe lowercase). Try again?"
                 )
