@@ -75,9 +75,10 @@ class JobEditorController : Initializable {
     private lateinit var selectedJob: MultipleSelectionModel<JobProcess?>
     private lateinit var selectedKey: SingleSelectionModel<ChiaKey?>
 
-    private val fileChooser = SimpleFileChooser(jobName)
+    private lateinit var fileChooser: SimpleFileChooser
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        fileChooser = SimpleFileChooser(jobName)
         selectedKey = keysCombo.selectionModel
         keysCombo.selectionModel.selectFirst()
         threads.limitToInt()
@@ -203,10 +204,6 @@ class JobEditorController : Initializable {
         ram.text = jobDesc.ram.toString()
         plotsToFinish.text = jobDesc.plotsToFinish.toString()
         selectedKey.select(jobDesc.key)
-        //TODO: Remove reference to logswindow
-//        logsWindow.text = jobProc.getLogsAsString()
-        // Makes the textarea scroll to the bottom by default
-//        logsWindow.appendText(" ")
     }
 
 

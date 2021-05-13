@@ -22,6 +22,9 @@ package com.abysl.harryplotter.config
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -46,7 +49,9 @@ object Config {
     }
 
     fun savePlotJobs(jobs: List<JobDescription>) {
-        jobsFile.writeText(Json.encodeToString(jobs))
+        CoroutineScope(Dispatchers.IO).launch {
+            jobsFile.writeText(Json.encodeToString(jobs))
+        }
     }
 
     fun getPlotJobs(): List<JobDescription> {

@@ -41,7 +41,7 @@
           <children>
             <Button minWidth="65.0" mnemonicParsing="false" onAction="#onEdit" prefWidth="65.0" text="Edit" />
             <Button minWidth="65.0" mnemonicParsing="false" onAction="#onAdd" text="Add" />
-            <ComboBox fx:id="keys" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="keysCombo" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
           </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10.0">

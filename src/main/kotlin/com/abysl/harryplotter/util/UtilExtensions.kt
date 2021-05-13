@@ -20,6 +20,7 @@
 package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.HarryPlotter
+import javafx.collections.ObservableList
 import javafx.scene.control.TextField
 import java.io.InputStream
 import java.net.URL
@@ -32,12 +33,20 @@ fun String.getResourceAsStream(): InputStream {
     return HarryPlotter::class.java.getResourceAsStream(this)
 }
 
-fun List<String>.unlines(): String {
+fun List<String>.merge(delimiter: String): String{
     val builder = StringBuilder()
     this.forEach {
-        builder.append("$it ")
+        builder.append("$it$delimiter")
     }
     return builder.toString()
+}
+
+fun List<String>.unlines(): String {
+    return merge("\n")
+}
+
+fun List<String>.unwords(): String {
+    return merge(" ")
 }
 
 fun TextField.limitToInt() {

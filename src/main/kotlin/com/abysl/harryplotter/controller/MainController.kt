@@ -33,8 +33,6 @@ import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.MenuItem
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.SingleSelectionModel
 import javafx.scene.layout.VBox
@@ -54,7 +52,7 @@ class MainController : Initializable {
     private lateinit var jobEditorController: JobEditorController
 
     @FXML
-    private lateinit var jobStatusViewController: JobStatusViewController
+    private lateinit var jobStatusViewController: JobStatusController
 
     lateinit var chia: ChiaCli
     lateinit var toggleTheme: () -> Unit
@@ -67,24 +65,7 @@ class MainController : Initializable {
     // Initial State ---------------------------------------------------------------------------------------------------
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        selectedJob = jobsListController.initModel(chia, jobs)
-        selectedKey = jobEditorController.initModel(jobs, keys, selectedJob)
-        jobStatusViewController.initModel(jobs, selectedJob)
-        jobs.addListener(
-            ListChangeListener { listChange ->
-                if (listChange.wasAdded()) {
-                    selectedJob.select(listChange.addedSubList.first())
-                }
-                Config.savePlotJobs(jobs.map { it.jobDesc })
-            }
-        )
-        keys.addListener(
-            ListChangeListener {
-                if (it.wasAdded()) {
-                    selectedKey.select(it.addedSubList.first())
-                }
-            }
-        )
+
         keys.add(Config.devkey)
     }
 
@@ -94,6 +75,14 @@ class MainController : Initializable {
         val exePath = chiaLocator.getExePath()
         Prefs.exePath = exePath.path
         chia = ChiaCli(exePath, chiaLocator.getConfigFile())
+
+        selectedJob = jobsListController.initModel(chia, jobs)
+        selectedKey = jobEditorController.initModel(jobs, keys, selectedJob)
+        jobStatusViewController.initModel(jobs, selectedJob)
+
+        jobs.addListener(jobsListListener)
+        keys.addListener(keyListListener)
+
         keys.addAll(chia.readKeys())
         jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, it) })
     }
@@ -118,5 +107,23 @@ class MainController : Initializable {
             }
         }
         (mainBox.scene.window as Stage).close()
+    }
+
+    private val jobsListListener =
+        ListChangeListener<JobProcess> { listChange ->
+            while (listChange.next()) {
+                if (listChange.wasAdded()) {
+                    selectedJob.select(listChange.addedSubList.first())
+                }
+            }
+            Config.savePlotJobs(jobs.map { it.jobDesc })
+        }
+
+    private val keyListListener = ListChangeListener<ChiaKey> {
+        while (it.next()) {
+            if (it.wasAdded()) {
+                selectedKey.select(it.addedSubList.first())
+            }
+        }
     }
 }

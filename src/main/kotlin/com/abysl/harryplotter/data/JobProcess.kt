@@ -20,14 +20,13 @@
 package com.abysl.harryplotter.data
 
 import com.abysl.harryplotter.chia.ChiaCli
+import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -64,10 +63,10 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     fun stop(block: Boolean = false) {
         // Store in immutable variable so it doesn't try to delete files after state is wiped out
         val id: String = state.plotId
-        proc?.destroyForcibly()
-        deleteTempFiles(id, block)
         logs.clear()
         state = JobState()
+        proc?.destroyForcibly()
+        deleteTempFiles(id, block)
     }
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
@@ -75,8 +74,10 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
             val files = jobDesc.tempDir.listFiles()
                 ?.filter { it.toString().contains(state.plotId) && it.extension == "tmp" }
                 ?.map { deleteFile(it) }
-            runBlocking {
-                files?.forEach { it.await() }
+            if(block) {
+                runBlocking {
+                    files?.forEach { it.await() }
+                }
             }
         }
     }
@@ -108,12 +109,8 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     }
 
     fun parseLine(line: String) {
-        logs.add(line)
-        if (state.displayLogs) {
-            CoroutineScope(Dispatchers.JavaFx).launch {
-                // TODO: Fix
-//                logWindow.appendText(line + "\n")
-            }
+        Platform.runLater {
+            logs.add(line.trim())
         }
         try {
             if (line.contains("ID: ")) {
@@ -164,11 +161,6 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
         }
     }
 
-    fun getLogsAsString(): String {
-        val builder: StringBuilder = StringBuilder()
-        logs.forEach { builder.appendLine(it) }
-        return builder.toString()
-    }
 
     override fun toString(): String {
         return if (state.running)

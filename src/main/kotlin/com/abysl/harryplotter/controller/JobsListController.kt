@@ -4,6 +4,8 @@ import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.data.JobProcess
 import com.abysl.harryplotter.windows.SimpleDialogs
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
+import javafx.beans.value.ChangeListener
+import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -27,9 +29,7 @@ class JobsListController : Initializable {
     private lateinit var jobs: ObservableList<JobProcess>
 
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
-        jobsView.items = jobs
-    }
+    override fun initialize(location: URL?, resources: ResourceBundle?) { }
 
     fun initModel(
         chia: ChiaCli,
@@ -38,7 +38,7 @@ class JobsListController : Initializable {
         jobsView.items = jobs
         this.jobs = jobs
         this.chia = chia
-        jobsView.contextMenu =jobsMenu
+        jobsView.contextMenu = jobsMenu
         return jobsView.selectionModel
     }
 
