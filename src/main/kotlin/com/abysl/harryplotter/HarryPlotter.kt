@@ -35,7 +35,7 @@ class HarryPlotter : Application() {
     lateinit var mainStage: Stage
     override fun start(stage: Stage) {
         mainStage = stage
-        val loader = FXMLLoader("fxml/main.fxml".getResource())
+        val loader = FXMLLoader("fxml/MainView.fxml".getResource())
         val root: Parent = loader.load()
         val controller: MainController = loader.getController()
         val scene = Scene(root, 1080.0, 720.0)

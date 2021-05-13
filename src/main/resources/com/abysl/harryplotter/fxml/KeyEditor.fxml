@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
   ~     Copyright (c) 2021 Andrew Bueide
   ~
@@ -20,27 +19,24 @@
   ~     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-      minHeight="-Infinity"
-      minWidth="-Infinity" prefWidth="494.0" spacing="10.0" xmlns="http://javafx.com/javafx/16"
-      fx:controller="com.abysl.harryplotter.controller.AddKeyController">
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="494.0" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.controller.KeyEditor">
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
     <children>
-        <TextField fx:id="nickname" promptText="nickname"/>
-        <TextField fx:id="fingerprint" promptText="fingerprint"/>
-        <TextField fx:id="master" layoutX="20.0" layoutY="90.0" promptText="master public key"/>
-        <TextField fx:id="pool" promptText="pool public key"/>
-        <TextField fx:id="farmer" promptText="farmer public key"/>
+        <TextField fx:id="nickname" promptText="nickname" />
+        <TextField fx:id="fingerprint" promptText="fingerprint" />
+        <TextField fx:id="publicKey" layoutX="20.0" layoutY="90.0" promptText="master public key" />
+        <TextField fx:id="farmerKey" promptText="farmer public key" />
+        <TextField fx:id="poolKey" promptText="pool public key" />
         <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0">
             <children>
-                <Button mnemonicParsing="false" onAction="#onCancel" text="Cancel"/>
-                <Button mnemonicParsing="false" onAction="#onSave" text="Save"/>
+                <Button mnemonicParsing="false" onAction="#onCancel" text="Cancel" />
+                <Button mnemonicParsing="false" onAction="#onSave" text="Save" />
             </children>
         </HBox>
     </children>

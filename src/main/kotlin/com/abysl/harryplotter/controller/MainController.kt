@@ -23,9 +23,7 @@ import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.data.ChiaKey
-import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobProcess
-import com.abysl.harryplotter.util.FxUtil
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
@@ -37,13 +35,11 @@ import javafx.scene.control.ButtonType
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.ContextMenu
-import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
-import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import kotlinx.coroutines.CoroutineScope
@@ -69,9 +65,6 @@ class MainController : Initializable {
     private lateinit var tempDir: TextField
 
     @FXML
-    private lateinit var selectTempDir: Button
-
-    @FXML
     private lateinit var destDir: TextField
 
     @FXML
@@ -82,45 +75,6 @@ class MainController : Initializable {
 
     @FXML
     private lateinit var chiaKeysCombo: ComboBox<ChiaKey>
-
-    @FXML
-    private lateinit var save: Button
-
-    @FXML
-    private lateinit var stopAll: Button
-
-    @FXML
-    private lateinit var startAll: Button
-
-    @FXML
-    private lateinit var currentStatus: Label
-
-    @FXML
-    private lateinit var lastPlotTime: Label
-
-    @FXML
-    private lateinit var averagePlotTime: Label
-
-    @FXML
-    private lateinit var totalPlotsCreated: Label
-
-    @FXML
-    private lateinit var estimatedPlotsDay: Label
-
-    @FXML
-    private lateinit var averagePlotsDay: Label
-
-    @FXML
-    private lateinit var stop: Button
-
-    @FXML
-    private lateinit var start: Button
-
-    @FXML
-    private lateinit var addKey: Button
-
-    @FXML
-    private lateinit var themeToggle: Button
 
     @FXML
     private lateinit var stopAfterCheckBox: CheckBox
@@ -142,7 +96,6 @@ class MainController : Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         chiaKeysCombo.items = keys
         keys.add(Config.devkey)
-        chiaKeysCombo.selectionModel.selectFirst()
 
         threads.textProperty().addListener { observable, oldValue, newValue ->
             if (!newValue.matches(Regex("\\d*"))) {
@@ -220,77 +173,11 @@ class MainController : Initializable {
         }
     }
 
-    fun onTempBrowse() {
-        chooseDir("Select Temp Dir", false)?.let {
-            tempDir.text = it.absolutePath
-        }
-    }
-
-    fun onDestBrowse() {
-        chooseDir("Select Destination Dir", false)?.let {
-            destDir.text = it.absolutePath
-        }
-    }
-
-    fun onSave() {
-        if (tempDir.text.isBlank() || destDir.text.isBlank()) {
-            showAlert("Directory Not Selected", "Please make sure to select a destination & temporary directory.")
-            return
-        }
-        val temp = File(tempDir.text)
-        val dest = File(destDir.text)
-        if (!temp.exists()) {
-            showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
-            return
-        }
-        if (!dest.exists()) {
-            showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
-            return
-        }
-        if (!temp.isDirectory) {
-            showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
-            return
-        }
-        if (!dest.isDirectory) {
-            showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
-            return
-        }
-        val name = jobName.text.ifBlank { "Plot Job ${jobs.count() + 1}" }
-        val key = chiaKeysCombo.selectionModel.selectedItem
-        jobs.add(
-            JobProcess(
-                chia, logsWindow,
-                JobDescription(
-                    name, File(tempDir.text), File(destDir.text),
-                    threads.text.ifBlank { "2" }.toInt(),
-                    ram.text.ifBlank { "4608" }.toInt(),
-                    key,
-                    plotsToFinish.text.ifBlank { "0" }.toInt()
-                )
-            )
-        )
-    }
-
-    fun onCancel() {
-        jobName.clear()
-        tempDir.clear()
-        destDir.clear()
-        threads.clear()
-        ram.clear()
-        chiaKeysCombo.selectionModel.selectFirst()
-        jobsView.selectionModel.clearSelection()
-    }
-
     fun onAddKey() {
-        AddKey(keys).show()
     }
 
     fun onToggleTheme() {
         toggleTheme()
-    }
-
-    fun onStopAfter() {
-        plotsToFinish.disableProperty().value = !stopAfterCheckBox.selectedProperty().value
     }
 
     fun onExit() {
@@ -376,7 +263,7 @@ class MainController : Initializable {
         var chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
 
         if (chiaAppData.exists()) {
-            chiaAppData.list().forEach {
+            chiaAppData.list()?.forEach {
                 if (it.contains("app-")) {
                     chiaAppData = File(chiaAppData.path + "/$it/resources/app.asar.unpacked/daemon/chia.exe")
                     return chiaAppData
@@ -405,54 +292,6 @@ class MainController : Initializable {
         }
     }
 
-    fun chooseFile(title: String): File {
-        return chooseFile(title, FileChooser.ExtensionFilter("All", "*.*"))
-    }
-
-    fun chooseFile(title: String, vararg extensions: FileChooser.ExtensionFilter): File {
-        val fileChooser = FileChooser()
-        fileChooser.title = title
-        fileChooser.extensionFilters.addAll(extensions)
-        val file: File? = fileChooser.showOpenDialog(mainBox.scene.window)
-        if (file != null) {
-            return file
-        }
-        if (!showConfirmation("File Not Selected", "Try again?")) {
-            exitProcess(0)
-        }
-        return chooseFile(title, *extensions)
-    }
-
-    fun chooseDir(title: String, required: Boolean = false): File? {
-        val directoryChooser = DirectoryChooser()
-        directoryChooser.title = title
-        val directory: File? = directoryChooser.showDialog(mainBox.scene.window)
-        if (required) {
-            showAlert("Directory Not Selected", "Please try again.")
-            return chooseDir(title)
-        }
-        return directory
-    }
-
-    fun showAlert(title: String, content: String) {
-        val alert = Alert(Alert.AlertType.ERROR)
-        alert.title = title
-        alert.headerText = title
-        alert.contentText = content
-        FxUtil.setTheme(alert.dialogPane.scene)
-        alert.showAndWait()
-    }
-
-    fun showConfirmation(title: String, content: String): Boolean {
-        val alert = Alert(Alert.AlertType.CONFIRMATION)
-        alert.title = title
-        alert.headerText = title
-        alert.contentText = content
-        FxUtil.setTheme(alert.dialogPane.scene)
-        val answer = alert.showAndWait()
-        return answer.get() == ButtonType.OK
-    }
-
     fun loadJob(jobProc: JobProcess) {
         val jobDesc = jobProc.jobDesc
         jobName.text = jobDesc.name
@@ -464,6 +303,6 @@ class MainController : Initializable {
         chiaKeysCombo.selectionModel.select(jobDesc.key)
         logsWindow.text = jobProc.getLogsAsString()
         // Makes the textarea scroll to the bottom by default
-        logsWindow.appendText("")
+        logsWindow.appendText(" ")
     }
 }

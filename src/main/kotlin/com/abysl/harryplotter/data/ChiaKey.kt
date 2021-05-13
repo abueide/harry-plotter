@@ -20,6 +20,7 @@
 package com.abysl.harryplotter.data
 
 import kotlinx.serialization.Serializable
+import java.lang.Exception
 
 @Serializable
 data class ChiaKey(
@@ -44,16 +45,22 @@ data class ChiaKey(
     }
 
     fun parseLine(line: String): ChiaKey {
-        if (line.contains("Fingerprint")) {
-            return ChiaKey(fingerprint = line.split(": ")[1]).merge(this)
-        } else if (line.contains("Master public")) {
-            return ChiaKey(publicKey = line.split(": ")[1]).merge(this)
-        } else if (line.contains("Farmer public")) {
-            return ChiaKey(farmerKey = line.split(": ")[1]).merge(this)
-        } else if (line.contains("Pool public")) {
-            return ChiaKey(poolKey = line.split(": ")[1]).merge(this)
-        } else {
-            return this
+        try {
+            if (line.contains("Fingerprint")) {
+                return ChiaKey(fingerprint = line.split(": ").last()).merge(this)
+            } else if (line.contains("Master public")) {
+                return ChiaKey(publicKey = line.split(": ").last()).merge(this)
+            } else if (line.contains("Farmer public")) {
+                return ChiaKey(farmerKey = line.split(": ").last()).merge(this)
+            } else if (line.contains("Pool public")) {
+                return ChiaKey(poolKey = line.split(": ").last()).merge(this)
+            } else {
+                return this
+            }
+        } catch (e: Exception) {
+            println("Failed to parse key!")
+            e.printStackTrace()
         }
+        return ChiaKey()
     }
 }
