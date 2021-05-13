@@ -56,7 +56,7 @@ tasks.withType<KotlinCompile> {
 
 application {
     applicationName = "Harry Plotter"
-    mainClass.set("com.abysl.harryplotter.MainKt")
+    mainClass.set("com.abysl.harryplotter.HarryPlotterKt")
     applicationDefaultJvmArgs = jvmOptions
 }
 

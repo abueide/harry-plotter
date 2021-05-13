@@ -20,6 +20,7 @@
 package com.abysl.harryplotter.controller
 
 import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.data.ChiaKey
@@ -32,23 +33,14 @@ import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ComboBox
 import javafx.scene.control.ContextMenu
-import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
-import javafx.scene.control.TextArea
-import javafx.scene.control.TextField
+import javafx.scene.control.MultipleSelectionModel
+import javafx.scene.control.SingleSelectionModel
 import javafx.scene.layout.VBox
-import javafx.stage.FileChooser
 import javafx.stage.Stage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
-import kotlin.system.exitProcess
 
 class MainController : Initializable {
     // UI Components ---------------------------------------------------------------------------------------------------
@@ -56,79 +48,53 @@ class MainController : Initializable {
     private lateinit var mainBox: VBox
 
     @FXML
-    private lateinit var jobsView: ListView<JobProcess>
+    private lateinit var jobsListController: JobsListController
 
     @FXML
-    private lateinit var jobName: TextField
+    private lateinit var jobEditorController: JobEditorController
 
     @FXML
-    private lateinit var tempDir: TextField
-
-    @FXML
-    private lateinit var destDir: TextField
-
-    @FXML
-    private lateinit var threads: TextField
-
-    @FXML
-    private lateinit var ram: TextField
-
-    @FXML
-    private lateinit var chiaKeysCombo: ComboBox<ChiaKey>
-
-    @FXML
-    private lateinit var stopAfterCheckBox: CheckBox
-
-    @FXML
-    private lateinit var plotsToFinish: TextField
-
-    @FXML
-    private lateinit var logsWindow: TextArea
+    private lateinit var jobStatusViewController: JobStatusViewController
 
     lateinit var chia: ChiaCli
     lateinit var toggleTheme: () -> Unit
 
     val jobs: ObservableList<JobProcess> = FXCollections.observableArrayList()
     val keys: ObservableList<ChiaKey> = FXCollections.observableArrayList()
+    lateinit var selectedJob: MultipleSelectionModel<JobProcess?>
+    lateinit var selectedKey: SingleSelectionModel<ChiaKey?>
 
     // Initial State ---------------------------------------------------------------------------------------------------
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        chiaKeysCombo.items = keys
+        selectedJob = jobsListController.initModel(jobs)
+        selectedKey = jobEditorController.initModel(jobs, keys, selectedJob)
+        jobs.addListener(
+            ListChangeListener { listChange ->
+                if (listChange.wasAdded()) {
+                    selectedJob.select(listChange.addedSubList.first())
+                }
+                Config.savePlotJobs(jobs.map { it.jobDesc })
+            }
+        )
+        keys.addListener(
+            ListChangeListener {
+                if (it.wasAdded()) {
+                    selectedKey.select(it.addedSubList.first())
+                }
+            }
+        )
         keys.add(Config.devkey)
-
-        threads.textProperty().addListener { observable, oldValue, newValue ->
-            if (!newValue.matches(Regex("\\d*"))) {
-                threads.text = newValue.replace("[^\\d]".toRegex(), "")
-            }
-        }
-
-        ram.textProperty().addListener { observable, oldValue, newValue ->
-            if (!newValue.matches(Regex("\\d*"))) {
-                ram.text = newValue.replace("[^\\d]".toRegex(), "")
-            }
-        }
-
-        plotsToFinish.textProperty().addListener { observable, oldValue, newValue ->
-            if (!newValue.matches(Regex("\\d*"))) {
-                plotsToFinish.text = newValue.replace("[^\\d]".toRegex(), "")
-            }
-        }
     }
 
     // Calls after the window is initialized so mainBox.scene.window isn't null
     fun initialized() {
-        val exePath = getExePath()
+        val chiaLocator = ChiaLocator(mainBox)
+        val exePath = chiaLocator.getExePath()
         Prefs.exePath = exePath.path
-        chia = ChiaCli(getExePath(), getConfigFile())
-        chiaKeysCombo.items.addAll(chia.readKeys())
-        chiaKeysCombo.selectionModel.selectFirst()
-        jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, logsWindow, it) })
-        jobs.addListener(
-            ListChangeListener {
-                Config.savePlotJobs(jobs.map { it.jobDesc })
-            }
-        )
+        chia = ChiaCli(exePath, chiaLocator.getConfigFile())
+        keys.addAll(chia.readKeys())
+        jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, it) })
 
         jobsView.items = jobs
         jobsView.contextMenu = jobsMenu
@@ -144,14 +110,6 @@ class MainController : Initializable {
 
     // User Actions ----------------------------------------------------------------------------------------------------
 
-    fun onStartAll() {
-        jobsView.items.forEach {
-            CoroutineScope(Dispatchers.Default).launch {
-                it.start()
-            }
-        }
-    }
-
     fun onStart() {
         if (jobs.isEmpty()) {
             showAlert("No plot jobs found!", "You must save & select your plot job before you run it.")
@@ -164,12 +122,6 @@ class MainController : Initializable {
         val job = jobsView.selectionModel.selectedItem
         if (showConfirmation("Stop Process", "Are you sure you want to stop ${job.jobDesc}?")) {
             job.stop()
-        }
-    }
-
-    fun onStopAll() {
-        if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
-            jobs.forEach { it.stop() }
         }
     }
 
@@ -223,86 +175,5 @@ class MainController : Initializable {
     private fun close() {
         val stage = mainBox.scene.window as Stage
         stage.close()
-    }
-
-    fun getConfigFile(): File {
-        val configDir = File(System.getProperty("user.home") + "/.chia/mainnet/config/config.yaml")
-        if (configDir.exists()) {
-            return configDir
-        }
-        showAlert(
-            "Chia Config File Not Found",
-            "Please specify the chia config location, usually located at C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml"
-        )
-        val file = chooseFile(
-            "Select Chia Config File",
-            FileChooser.ExtensionFilter("YAML Config File", "config.yaml")
-        )
-
-        if (file.name.equals("config.yaml") && file.exists())
-            return file
-        else {
-            if (showConfirmation(
-                    "Wrong File",
-                    "Looking for config.yaml, usually located at C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml . Try again?"
-                )
-            ) {
-                return getConfigFile()
-            } else {
-                exitProcess(0)
-            }
-        }
-    }
-
-    fun getExePath(): File {
-        val lastPath = File(Prefs.exePath)
-        if (lastPath.exists()) return lastPath
-        val macChiaExe = File("/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia")
-        if (macChiaExe.exists()) return macChiaExe
-
-        var chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
-
-        if (chiaAppData.exists()) {
-            chiaAppData.list()?.forEach {
-                if (it.contains("app-")) {
-                    chiaAppData = File(chiaAppData.path + "/$it/resources/app.asar.unpacked/daemon/chia.exe")
-                    return chiaAppData
-                }
-            }
-        }
-        showAlert("Chia Executable Not Found", "Please specify the chia executable location")
-        val file = chooseFile(
-            "Select Chia Executable",
-            FileChooser.ExtensionFilter("All Files", "*.*"),
-            FileChooser.ExtensionFilter("Executable File", "*.exe")
-        )
-
-        if (file.name.startsWith("chia"))
-            return file
-        else {
-            if (showConfirmation(
-                    "Wrong File",
-                    "Looking for the chia cli executable (chia.exe lowercase). Try again?"
-                )
-            ) {
-                return getExePath()
-            } else {
-                exitProcess(0)
-            }
-        }
-    }
-
-    fun loadJob(jobProc: JobProcess) {
-        val jobDesc = jobProc.jobDesc
-        jobName.text = jobDesc.name
-        tempDir.text = jobDesc.tempDir.path
-        destDir.text = jobDesc.destDir.path
-        threads.text = jobDesc.threads.toString()
-        ram.text = jobDesc.ram.toString()
-        plotsToFinish.text = jobDesc.plotsToFinish.toString()
-        chiaKeysCombo.selectionModel.select(jobDesc.key)
-        logsWindow.text = jobProc.getLogsAsString()
-        // Makes the textarea scroll to the bottom by default
-        logsWindow.appendText(" ")
     }
 }

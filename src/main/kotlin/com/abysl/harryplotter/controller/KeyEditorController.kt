@@ -27,7 +27,7 @@ import javafx.stage.Stage
 import java.net.URL
 import java.util.ResourceBundle
 
-class KeyEditor : Initializable {
+class KeyEditorController : Initializable {
     @FXML
     lateinit var nickname: TextField
 

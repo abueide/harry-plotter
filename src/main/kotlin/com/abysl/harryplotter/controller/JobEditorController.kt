@@ -23,20 +23,26 @@ import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobProcess
+import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
 import com.abysl.harryplotter.windows.SimpleFileChooser
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
+import javafx.scene.control.MultipleSelectionModel
+import javafx.scene.control.SingleSelectionModel
 import javafx.scene.control.TextField
 import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
 
-class JobDescEditor : Initializable {
+class JobEditorController : Initializable {
     @FXML
     private lateinit var jobName: TextField
 
@@ -53,7 +59,7 @@ class JobDescEditor : Initializable {
     private lateinit var ram: TextField
 
     @FXML
-    private lateinit var keys: ComboBox<ChiaKey>
+    private lateinit var keysCombo: ComboBox<ChiaKey>
 
     @FXML
     private lateinit var stopAfterCheck: CheckBox
@@ -63,13 +69,33 @@ class JobDescEditor : Initializable {
 
     lateinit var chia: ChiaCli
 
+    private lateinit var jobs: ObservableList<JobProcess>
+    private lateinit var keys: ObservableList<ChiaKey>
+    private lateinit var selectedJob: MultipleSelectionModel<JobProcess?>
+    private lateinit var selectedKey: SingleSelectionModel<ChiaKey?>
+
     private val dialogs: SimpleDialogs = SimpleDialogs()
 
     private val fileChooser = SimpleFileChooser(jobName, dialogs)
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        keys.items = FXCollections.observableArrayList()
-        keys.selectionModel.selectFirst()
+        selectedKey = keysCombo.selectionModel
+        keysCombo.selectionModel.selectFirst()
+        threads.limitToInt()
+        ram.limitToInt()
+        plotsToFinish.limitToInt()
+    }
+
+    fun initModel(
+        jobs: ObservableList<JobProcess>,
+        keys: ObservableList<ChiaKey>,
+        selectedJob: MultipleSelectionModel<JobProcess?>
+    ): SingleSelectionModel<ChiaKey?> {
+        keysCombo.items = keys
+        this.jobs = jobs
+        this.keys = keys
+        this.selectedJob = selectedJob
+        return keysCombo.selectionModel
     }
 
     fun onStopAfter() {
@@ -90,18 +116,18 @@ class JobDescEditor : Initializable {
     }
 
     fun onEdit() {
-        val selected = keys.selectionModel.selectedItem
+        val selected = keysCombo.selectionModel.selectedItem
         KeyEditorWindow(selected).show {
             if (it != null) {
-                keys.items.remove(selected)
-                keys.items.add(it)
+                keysCombo.items.remove(selected)
+                keysCombo.items.add(it)
             }
         }
     }
 
     fun onAdd() {
         KeyEditorWindow().show {
-            if (it != null) keys.items.add(it)
+            if (it != null) keysCombo.items.add(it)
         }
     }
 
@@ -111,46 +137,69 @@ class JobDescEditor : Initializable {
         destDir.clear()
         threads.clear()
         ram.clear()
-        keys.selectionModel.selectFirst()
-        jobsView.selectionModel.clearSelection()
+        selectedKey.clearSelection()
+        selectedJob.clearSelection()
     }
 
     fun onSave() {
         if (tempDir.text.isBlank() || destDir.text.isBlank()) {
-            showAlert("Directory Not Selected", "Please make sure to select a destination & temporary directory.")
+            dialogs.showAlert(
+                "Directory Not Selected",
+                "Please make sure to select a destination & temporary directory."
+            )
             return
         }
         val temp = File(tempDir.text)
         val dest = File(destDir.text)
         if (!temp.exists()) {
-            showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
+            dialogs.showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
             return
         }
         if (!dest.exists()) {
-            showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
+            dialogs.showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
             return
         }
         if (!temp.isDirectory) {
-            showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
+            dialogs.showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
             return
         }
         if (!dest.isDirectory) {
-            showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
+            dialogs.showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
             return
         }
+        if (selectedKey.selectedItem == null) {
+            dialogs.showAlert("Key Not Selected", "Please add and select a key")
+        }
+
         val name = jobName.text.ifBlank { "Plot Job ${jobs.count() + 1}" }
-        val key = chiaKeysCombo.selectionModel.selectedItem
         jobs.add(
             JobProcess(
-                chia, logsWindow,
+                chia,
                 JobDescription(
                     name, File(tempDir.text), File(destDir.text),
-                    threads.text.ifBlank { "2" }.toInt(),
-                    ram.text.ifBlank { "4608" }.toInt(),
-                    key,
+                    threads.text.ifBlank { "0" }.toInt(),
+                    ram.text.ifBlank { "0" }.toInt(),
+                    selectedKey.selectedItem!!,
                     plotsToFinish.text.ifBlank { "0" }.toInt()
                 )
             )
         )
     }
+
+    fun loadJob(jobProc: JobProcess) {
+        val jobDesc = jobProc.jobDesc
+        jobName.text = jobDesc.name
+        tempDir.text = jobDesc.tempDir.path
+        destDir.text = jobDesc.destDir.path
+        threads.text = jobDesc.threads.toString()
+        ram.text = jobDesc.ram.toString()
+        plotsToFinish.text = jobDesc.plotsToFinish.toString()
+        selectedKey.select(jobDesc.key)
+        //TODO: Remove reference to logswindow
+//        logsWindow.text = jobProc.getLogsAsString()
+        // Makes the textarea scroll to the bottom by default
+//        logsWindow.appendText(" ")
+    }
+
+
 }

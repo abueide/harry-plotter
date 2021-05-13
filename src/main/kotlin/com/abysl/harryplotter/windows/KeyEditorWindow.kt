@@ -20,7 +20,7 @@
 package com.abysl.harryplotter.windows
 
 import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.controller.KeyEditor
+import com.abysl.harryplotter.controller.KeyEditorController
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.util.FxUtil
 import javafx.fxml.FXMLLoader
@@ -40,11 +40,11 @@ class KeyEditorWindow(key: ChiaKey? = null) {
             val root = loader.load<Parent>()
 
             // Get controller from scene
-            val editor: KeyEditor = loader.getController()
-            if(key != null){
-                editor.writeKey(key)
+            val editorController: KeyEditorController = loader.getController()
+            if (key != null) {
+                editorController.writeKey(key)
             }
-            editor.callback = callback
+            editorController.callback = callback
 
             val stage = Stage()
             stage.scene = Scene(root)

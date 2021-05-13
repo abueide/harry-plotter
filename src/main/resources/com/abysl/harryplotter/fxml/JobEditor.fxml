@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox prefHeight="280.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.controller.JobDescEditor">
+<HBox prefHeight="280.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.controller.JobEditorController">
   <children>
     <VBox maxWidth="150.0" minWidth="140.0" spacing="19.0" HBox.hgrow="ALWAYS">
       <children>

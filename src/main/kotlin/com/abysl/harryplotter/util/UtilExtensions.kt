@@ -20,6 +20,7 @@
 package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.HarryPlotter
+import javafx.scene.control.TextField
 import java.io.InputStream
 import java.net.URL
 
@@ -37,4 +38,12 @@ fun List<String>.unlines(): String {
         builder.append("$it ")
     }
     return builder.toString()
+}
+
+fun TextField.limitToInt() {
+    textProperty().addListener { observable, oldValue, newValue ->
+        if (!newValue.matches(Regex("\\d*"))) {
+            text = newValue.replace("[^\\d]".toRegex(), "")
+        }
+    }
 }

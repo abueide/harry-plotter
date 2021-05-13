@@ -56,3 +56,7 @@ class HarryPlotter : Application() {
         FxUtil.setTheme(mainStage)
     }
 }
+
+fun main() {
+    Application.launch(HarryPlotter::class.java)
+}
