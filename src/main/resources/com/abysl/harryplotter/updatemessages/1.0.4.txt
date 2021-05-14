@@ -5,7 +5,8 @@ Eth Address: 0x039c1c74e3AaCCB74457880099F441f61C9c9bAc
 BTC Address: bc1qlrujsyrspf587pj2ydrz9h0k5070wfzqwq3pxf
 PayPal: andrew@abueide.com
 
-Remember, https://github.com/abueide/harry-plotter/releases is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
+https://github.com/abueide/harry-plotter/releases
+is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
 Release 1.0.4 adds several new features
 

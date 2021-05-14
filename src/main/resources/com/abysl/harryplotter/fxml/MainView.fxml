@@ -20,65 +20,41 @@
   -->
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="mainBox" minHeight="400.0" minWidth="640.0" prefHeight="720.0"
-      prefWidth="1280.0" xmlns="http://javafx.com/javafx/16"
-      fx:controller="com.abysl.harryplotter.controller.MainController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="mainBox" minHeight="400.0" minWidth="640.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.controller.MainController">
   <children>
     <HBox>
       <children>
         <MenuBar HBox.hgrow="ALWAYS">
           <menus>
-            <Menu mnemonicParsing="false" text="File">
-              <items>
-                <MenuItem mnemonicParsing="false" text="New"/>
-                <MenuItem mnemonicParsing="false" text="Open…"/>
-                <Menu mnemonicParsing="false" text="Open Recent"/>
-                <SeparatorMenuItem mnemonicParsing="false"/>
-                <MenuItem mnemonicParsing="false" text="Close"/>
-                <MenuItem mnemonicParsing="false" text="Save"/>
-                <MenuItem mnemonicParsing="false" text="Save As…"/>
-                <MenuItem mnemonicParsing="false" text="Revert"/>
-                <SeparatorMenuItem mnemonicParsing="false"/>
-                <MenuItem mnemonicParsing="false" text="Preferences…"/>
-                <SeparatorMenuItem mnemonicParsing="false"/>
-                <MenuItem mnemonicParsing="false" text="Quit"/>
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Edit">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Undo"/>
-                <MenuItem mnemonicParsing="false" text="Redo"/>
-                <SeparatorMenuItem mnemonicParsing="false"/>
-                <MenuItem mnemonicParsing="false" text="Cut"/>
-                <MenuItem mnemonicParsing="false" text="Copy"/>
-                <MenuItem mnemonicParsing="false" text="Paste"/>
-                <MenuItem mnemonicParsing="false" text="Delete"/>
-                <SeparatorMenuItem mnemonicParsing="false"/>
-                <MenuItem mnemonicParsing="false" text="Select All"/>
-                <MenuItem mnemonicParsing="false" text="Unselect All"/>
-              </items>
-            </Menu>
             <Menu mnemonicParsing="false" text="Help">
               <items>
-                <MenuItem mnemonicParsing="false" text="About MyHelloApp"/>
+                <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About Harry Plotter" />
+                        <MenuItem mnemonicParsing="false" onAction="#onBugReport" text="Bug Report" />
               </items>
             </Menu>
           </menus>
         </MenuBar>
-        <Button fx:id="themeToggle" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0"
-                mnemonicParsing="false" onAction="#onToggleTheme" prefHeight="25.0" prefWidth="25.0" text="  ">
+        <Button fx:id="themeToggle" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#onToggleTheme" prefHeight="25.0" prefWidth="25.0" text="  ">
           <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0"/>
+            <Insets bottom="10.0" left="10.0" right="10.0" />
           </padding>
           <HBox.margin>
-            <Insets/>
+            <Insets />
           </HBox.margin>
         </Button>
       </children>
       <VBox.margin>
-        <Insets/>
+        <Insets />
       </VBox.margin>
     </HBox>
     <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -87,28 +63,27 @@
           <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
-                <HBox layoutY="10.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0"
-                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <HBox layoutY="10.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <children>
-                    <fx:include fx:id="jobsList" source="JobsListView.fxml"/>
+                    <fx:include fx:id="jobsList" source="JobsListView.fxml" />
                     <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                       <children>
-                        <fx:include fx:id="jobEditor" source="JobEditor.fxml"/>
-                        <fx:include fx:id="jobStatusView" source="JobStatusView.fxml"/>
+                        <fx:include fx:id="jobEditor" source="JobEditor.fxml" />
+                        <fx:include fx:id="jobStatusView" source="JobStatusView.fxml" />
                       </children>
                     </VBox>
                   </children>
                 </HBox>
               </children>
               <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
               </padding>
             </AnchorPane>
           </content>
         </Tab>
         <Tab text="Stats">
           <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
           </content>
         </Tab>
       </tabs>

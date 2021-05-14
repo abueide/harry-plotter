@@ -25,6 +25,9 @@ import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobProcess
+import com.abysl.harryplotter.windows.VersionPromptWindow
+import com.sun.javafx.application.HostServicesDelegate
+import javafx.application.HostServices
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
@@ -39,6 +42,7 @@ import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.net.URL
 import java.util.ResourceBundle
+
 
 class MainController : Initializable {
     // UI Components ---------------------------------------------------------------------------------------------------
@@ -55,6 +59,7 @@ class MainController : Initializable {
     private lateinit var jobStatusViewController: JobStatusController
 
     lateinit var chia: ChiaCli
+    lateinit var hostServices: HostServices
     lateinit var toggleTheme: () -> Unit
 
     val jobs: ObservableList<JobProcess> = FXCollections.observableArrayList()
@@ -65,7 +70,6 @@ class MainController : Initializable {
     // Initial State ---------------------------------------------------------------------------------------------------
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-
         keys.add(Config.devkey)
     }
 
@@ -85,6 +89,14 @@ class MainController : Initializable {
 
         keys.addAll(chia.readKeys())
         jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, it) })
+    }
+
+    fun onAbout(){
+        VersionPromptWindow.show()
+    }
+
+    fun onBugReport(){
+        hostServices.showDocument("https://github.com/abueide/harry-plotter/issues/new")
     }
 
     fun onToggleTheme() {

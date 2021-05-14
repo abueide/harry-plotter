@@ -25,6 +25,7 @@ import com.abysl.harryplotter.util.FxUtil
 import com.abysl.harryplotter.util.getResource
 import com.abysl.harryplotter.util.getResourceAsStream
 import com.abysl.harryplotter.windows.VersionPromptWindow
+import com.sun.javafx.application.HostServicesDelegate
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -46,6 +47,7 @@ class HarryPlotter : Application() {
         FxUtil.setTheme(stage)
         stage.show()
         controller.toggleTheme = ::toggleTheme
+        controller.hostServices = hostServices
         controller.initialized()
         stage.setOnCloseRequest {
             controller.onExit()

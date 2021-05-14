@@ -24,20 +24,22 @@ import com.abysl.harryplotter.util.FxUtil
 import com.abysl.harryplotter.util.getResource
 import javafx.scene.Scene
 import javafx.scene.control.TextArea
+import javafx.scene.text.Font
 import javafx.stage.Modality
 import javafx.stage.Stage
 import java.io.IOException
 import kotlin.system.exitProcess
 
 object VersionPromptWindow {
-    private const val WIDTH = 600.0
-    private const val HEIGHT = 400.0
+    private const val WIDTH = 700.0
+    private const val HEIGHT = 500.0
     fun show() {
         try {
             // Load scene
             val stage = Stage()
-            val textPrompt = TextArea()
             val version = "version.txt".getResource().readText()
+            val textPrompt = TextArea()
+            textPrompt.font = Font.font(14.0)
             textPrompt.text = "updatemessages/$version.txt".getResource().readText()
             textPrompt.wrapTextProperty().set(true)
             textPrompt.editableProperty().set(false)
