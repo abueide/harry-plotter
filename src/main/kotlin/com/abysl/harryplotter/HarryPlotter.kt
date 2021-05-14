@@ -25,7 +25,6 @@ import com.abysl.harryplotter.util.FxUtil
 import com.abysl.harryplotter.util.getResource
 import com.abysl.harryplotter.util.getResourceAsStream
 import com.abysl.harryplotter.windows.VersionPromptWindow
-import com.sun.javafx.application.HostServicesDelegate
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -53,7 +52,7 @@ class HarryPlotter : Application() {
             controller.onExit()
         }
 
-        if(Prefs.versionPrompt){
+        if (Prefs.versionPrompt) {
             VersionPromptWindow.show()
         }
     }

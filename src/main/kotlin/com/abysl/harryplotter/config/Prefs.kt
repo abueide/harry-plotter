@@ -51,5 +51,4 @@ object Prefs {
         set(value) {
             prefNode.putLong(STAGGER, value)
         }
-
 }

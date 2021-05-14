@@ -50,7 +50,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
             else if (jobDesc.key.farmerKey.isNotBlank() && jobDesc.key.poolKey.isNotBlank()) {
                 args.addAll(listOf("-f", jobDesc.key.farmerKey, "-p", jobDesc.key.poolKey))
             }
-            if (jobDesc.ram > 2500) args.addAll(listOf("-b", jobDesc.ram.toString()))
+            if (jobDesc.ram > MINIMUM_RAM) args.addAll(listOf("-b", jobDesc.ram.toString()))
             if (jobDesc.threads > 0) args.addAll(listOf("-r", jobDesc.threads.toString()))
             proc = chia.runCommandAsync(
                 ioDelay = 10,
@@ -178,5 +178,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
         const val STOPPED = "Stopped"
         const val RUNNING = "Running"
         const val ERROR = "Error"
+
+        private const val MINIMUM_RAM = 2500 // MiB
     }
 }

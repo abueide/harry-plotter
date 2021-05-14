@@ -33,13 +33,14 @@ import kotlin.system.exitProcess
 object VersionPromptWindow {
     private const val WIDTH = 700.0
     private const val HEIGHT = 500.0
+    private const val FONT_SIZE = 14.0
     fun show() {
         try {
             // Load scene
             val stage = Stage()
             val version = "version.txt".getResource().readText()
             val textPrompt = TextArea()
-            textPrompt.font = Font.font(14.0)
+            textPrompt.font = Font.font(FONT_SIZE)
             textPrompt.text = "updatemessages/$version.txt".getResource().readText()
             textPrompt.wrapTextProperty().set(true)
             textPrompt.editableProperty().set(false)
