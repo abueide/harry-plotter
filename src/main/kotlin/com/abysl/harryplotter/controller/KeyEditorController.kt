@@ -21,13 +21,10 @@ package com.abysl.harryplotter.controller
 
 import com.abysl.harryplotter.data.ChiaKey
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.control.TextField
 import javafx.stage.Stage
-import java.net.URL
-import java.util.ResourceBundle
 
-class AddKeyController : Initializable {
+class KeyEditorController {
     @FXML
     lateinit var nickname: TextField
 
@@ -35,21 +32,18 @@ class AddKeyController : Initializable {
     lateinit var fingerprint: TextField
 
     @FXML
-    lateinit var master: TextField
+    lateinit var publicKey: TextField
 
     @FXML
-    lateinit var pool: TextField
+    lateinit var farmerKey: TextField
 
     @FXML
-    lateinit var farmer: TextField
+    lateinit var poolKey: TextField
 
-    lateinit var callback: (ChiaKey) -> Unit
-
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
-    }
+    lateinit var callback: (ChiaKey?) -> Unit
 
     fun onSave() {
-        callback(ChiaKey(nickname.text, fingerprint.text, master.text, pool.text, farmer.text))
+        callback(readKey())
         close()
     }
 
@@ -60,5 +54,27 @@ class AddKeyController : Initializable {
     private fun close() {
         val stage = fingerprint.scene.window as Stage
         stage.close()
+    }
+
+    private fun readKey(): ChiaKey? {
+        return if (fingerprint.text.isBlank() && (poolKey.text.isBlank() || farmerKey.text.isBlank())) {
+            null
+        } else ChiaKey(
+            nickname.text.trim(),
+            fingerprint.text.trim(),
+            publicKey.text.trim(),
+            farmerKey.text.trim(),
+            poolKey.text.trim()
+        )
+    }
+
+    fun writeKey(key: ChiaKey?) {
+        key?.let {
+            nickname.text = it.nickname
+            fingerprint.text = it.fingerprint
+            publicKey.text = it.publicKey
+            farmerKey.text = it.farmerKey
+            poolKey.text = it.poolKey
+        }
     }
 }

@@ -58,11 +58,11 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
      * @return
      */
 
-    fun runCommand(vararg commandArgs: String): List<String> {
+    fun runCommand(vararg commandArgs: String, timeout: Long = 100): List<String> {
         val command: List<String> = listOf(exe.path) + commandArgs.toList()
         val proc: Process = ProcessBuilder(command)
             .start()
-        proc.waitFor(100, TimeUnit.SECONDS)
+        proc.waitFor(timeout, TimeUnit.SECONDS)
         val input: InputStream = proc.inputStream
         val err: InputStream = proc.errorStream
         return input.reader().readLines()

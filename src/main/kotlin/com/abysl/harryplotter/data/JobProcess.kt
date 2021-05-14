@@ -20,19 +20,17 @@
 package com.abysl.harryplotter.data
 
 import com.abysl.harryplotter.chia.ChiaCli
+import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.scene.control.TextArea
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
-class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDescription) {
+class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     var proc: Process? = null
     val logs: ObservableList<String> = FXCollections.observableArrayList()
 
@@ -65,11 +63,10 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
     fun stop(block: Boolean = false) {
         // Store in immutable variable so it doesn't try to delete files after state is wiped out
         val id: String = state.plotId
+        logs.clear()
+        state = JobState()
         proc?.destroyForcibly()
         deleteTempFiles(id, block)
-        logs.clear()
-        logWindow.clear()
-        state = JobState()
     }
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
@@ -77,8 +74,10 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
             val files = jobDesc.tempDir.listFiles()
                 ?.filter { it.toString().contains(state.plotId) && it.extension == "tmp" }
                 ?.map { deleteFile(it) }
-            runBlocking {
-                files?.forEach { it.await() }
+            if (block) {
+                runBlocking {
+                    files?.forEach { it.await() }
+                }
             }
         }
     }
@@ -110,11 +109,8 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
     }
 
     fun parseLine(line: String) {
-        logs.add(line)
-        if (state.displayLogs) {
-            CoroutineScope(Dispatchers.JavaFx).launch {
-                logWindow.appendText(line + "\n")
-            }
+        Platform.runLater {
+            logs.add(line.trim())
         }
         try {
             if (line.contains("ID: ")) {
@@ -160,27 +156,19 @@ class JobProcess(val chia: ChiaCli, val logWindow: TextArea, val jobDesc: JobDes
                     println(state.currentResult)
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (e: NoSuchElementException) {
+            println("WARNING: Fix Line Parser")
+            println(e)
         }
     }
 
-    fun getLogsAsString(): String {
-        val builder: StringBuilder = StringBuilder()
-        logs.forEach { builder.appendLine(it) }
-        return builder.toString()
-    }
-
     override fun toString(): String {
-        return if (state.running)
-            "$jobDesc - ${state.percentage}%"
-        else
-            jobDesc.toString()
+        return if (state.running) "$jobDesc - ${state.percentage}%" else jobDesc.toString()
     }
 
     companion object {
-        val STOPPED = "Stopped"
-        val RUNNING = "Running"
-        val ERROR = "Error"
+        const val STOPPED = "Stopped"
+        const val RUNNING = "Running"
+        const val ERROR = "Error"
     }
 }

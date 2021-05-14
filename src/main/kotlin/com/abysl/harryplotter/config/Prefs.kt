@@ -22,18 +22,18 @@ package com.abysl.harryplotter.config
 import java.util.prefs.Preferences
 
 object Prefs {
-    private val DARK_MODE = "DARK_MODE"
-    private val EXE_PATH = "EXE_PATH"
-    private val prefs = Preferences.userRoot().node("com.abysl.harryplotter")
+    private const val DARK_MODE = "DARK_MODE"
+    private const val EXE_PATH = "EXE_PATH"
+    private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
 
     var darkMode: Boolean
-        get() = prefs.getBoolean(DARK_MODE, false)
+        get() = prefNode.getBoolean(DARK_MODE, false)
         set(value) {
-            prefs.putBoolean(DARK_MODE, value)
+            prefNode.putBoolean(DARK_MODE, value)
         }
     var exePath: String
-        get() = prefs.get(EXE_PATH, "PATH/TO/FILE")
+        get() = prefNode.get(EXE_PATH, "PATH/TO/FILE")
         set(value) {
-            prefs.put(EXE_PATH, value)
+            prefNode.put(EXE_PATH, value)
         }
 }

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox prefHeight="280.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.controller.JobEditorController">
+  <children>
+    <VBox maxWidth="150.0" minWidth="140.0" spacing="19.0" HBox.hgrow="ALWAYS">
+      <children>
+        <Label text="Name" />
+        <Label text="* Temp Directory" />
+        <Label text="* Destination Directory" />
+        <Label text="Number of Threads" />
+        <Label text="Chia Key to Use" />
+        <CheckBox fx:id="stopAfterCheck" mnemonicParsing="false" onAction="#onStopAfter" text="Stop after" />
+      </children>
+    </VBox>
+    <VBox prefHeight="306.0" prefWidth="228.0" spacing="10.0" HBox.hgrow="ALWAYS">
+      <children>
+        <TextField fx:id="jobName" promptText="My Plot 1" />
+        <HBox spacing="10.0">
+          <children>
+            <TextField fx:id="tempDir" promptText="C:\Path\To\SSD\" HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#onTempBrowse" text="Browse" />
+          </children>
+        </HBox>
+        <HBox spacing="10.0">
+          <children>
+            <TextField fx:id="destDir" promptText="C:\Path\To\HDD\" HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#onDestBrowse" text="Browse" />
+          </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+          <children>
+            <TextField fx:id="threads" prefHeight="25.0" prefWidth="35.0" promptText="2" />
+            <Label minWidth="85.0" text="Max Ram (MiB)" />
+            <TextField fx:id="ram" prefHeight="25.0" prefWidth="101.0" promptText="4608" HBox.hgrow="ALWAYS" />
+          </children>
+        </HBox>
+        <HBox spacing="10.0">
+          <children>
+            <Button minWidth="65.0" mnemonicParsing="false" onAction="#onEdit" prefWidth="65.0" text="Edit" />
+            <Button minWidth="65.0" mnemonicParsing="false" onAction="#onAdd" text="Add" />
+            <ComboBox fx:id="keysCombo" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+          </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+          <children>
+            <TextField fx:id="plotsToFinish" disable="true" prefHeight="25.0" prefWidth="37.0" promptText="10" />
+            <Label text="Plots" />
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
+              <children>
+                <Button mnemonicParsing="false" onAction="#onCancel" text="Cancel" />
+                <Button fx:id="save" mnemonicParsing="false" onAction="#onSave" text="Save" />
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+  </children>
+   <padding>
+      <Insets bottom="10.0" />
+   </padding>
+</HBox>

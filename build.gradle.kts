@@ -56,7 +56,7 @@ tasks.withType<KotlinCompile> {
 
 application {
     applicationName = "Harry Plotter"
-    mainClass.set("com.abysl.harryplotter.MainKt")
+    mainClass.set("com.abysl.harryplotter.HarryPlotterKt")
     applicationDefaultJvmArgs = jvmOptions
 }
 
@@ -103,7 +103,7 @@ detekt {
         html.enabled = true // observe findings in your browser with structure and code snippets
         xml.enabled = true // checkstyle like format mainly for integrations like Jenkins
         txt.enabled = true // similar to the console output, contains issue signature to manually edit baseline files
-        sarif.enabled =
-            true // standardized SARIF format (https://sarifweb.azurewebsites.net/) to support integrations with Github Code Scanning
+        // standardized SARIF format (https://sarifweb.azurewebsites.net/) to support integrations with Github Code Scanning
+        sarif.enabled = true
     }
 }

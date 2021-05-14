@@ -17,12 +17,12 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.controller
+package com.abysl.harryplotter.windows
 
 import com.abysl.harryplotter.HarryPlotter
+import com.abysl.harryplotter.controller.KeyEditorController
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.util.FxUtil
-import javafx.collections.ObservableList
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -31,23 +31,21 @@ import javafx.stage.Stage
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class AddKey(val keys: ObservableList<ChiaKey>) {
+class KeyEditorWindow(val key: ChiaKey? = null) {
 
-    fun update(key: ChiaKey) {
-        keys.add(key)
-    }
-
-    fun show() {
+    fun show(callback: (key: ChiaKey?) -> Unit) {
         try {
-            // Load second scene
-            val loader = FXMLLoader(HarryPlotter::class.java.getResource("fxml/addkey.fxml"))
+            // Load scene
+            val loader = FXMLLoader(HarryPlotter::class.java.getResource("fxml/KeyEditor.fxml"))
             val root = loader.load<Parent>()
 
-            // Get controller of scene2
-            val controller: AddKeyController = loader.getController()
-            controller.callback = ::update
-            // Pass whatever data you want. You can have multiple method calls here
-            // Show scene 2 in new window
+            // Get controller from scene
+            val editorController: KeyEditorController = loader.getController()
+            if (key != null) {
+                editorController.writeKey(key)
+            }
+            editorController.callback = callback
+
             val stage = Stage()
             stage.scene = Scene(root)
             stage.title = "Add Key"
