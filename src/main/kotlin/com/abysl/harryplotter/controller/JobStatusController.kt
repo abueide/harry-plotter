@@ -8,26 +8,19 @@ import javafx.application.Platform
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.TextArea
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.URL
-import java.util.ResourceBundle
 
-class JobStatusController : Initializable {
+class JobStatusController {
 
     @FXML
     private lateinit var logsWindow: TextArea
 
     private lateinit var jobs: ObservableList<JobProcess>
     private lateinit var selectedJob: MultipleSelectionModel<JobProcess?>
-
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
-
-    }
 
     fun initModel(jobs: ObservableList<JobProcess>, selectedJob: MultipleSelectionModel<JobProcess?>) {
         this.jobs = jobs

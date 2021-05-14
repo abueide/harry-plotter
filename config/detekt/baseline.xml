@@ -2,48 +2,11 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>EmptyFunctionBlock:AddKeyController.kt$AddKeyController${ }</ID>
-    <ID>EmptyFunctionBlock:Config.kt$Config${ }</ID>
-    <ID>MagicNumber:ChiaCli.kt$ChiaCli$100</ID>
-    <ID>MagicNumber:HarryPlotter.kt$HarryPlotter$1080.0</ID>
-    <ID>MagicNumber:HarryPlotter.kt$HarryPlotter$720.0</ID>
     <ID>MagicNumber:JobProcess.kt$JobProcess$3</ID>
     <ID>MagicNumber:JobProcess.kt$JobProcess$4</ID>
-    <ID>MaxLineLength:MainController.kt$MainController$"Looking for config.yaml, usually located at C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml . Try again?"</ID>
-    <ID>MaxLineLength:MainController.kt$MainController$"Please specify the chia config location, usually located at C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml"</ID>
-    <ID>MaximumLineLength:com.abysl.harryplotter.controller.MainController.kt:348</ID>
-    <ID>MaximumLineLength:com.abysl.harryplotter.controller.MainController.kt:360</ID>
-    <ID>MayBeConst:JobProcess.kt$JobProcess.Companion$val ERROR = "Error"</ID>
-    <ID>MayBeConst:JobProcess.kt$JobProcess.Companion$val RUNNING = "Running"</ID>
-    <ID>MayBeConst:JobProcess.kt$JobProcess.Companion$val STOPPED = "Stopped"</ID>
-    <ID>MayBeConst:Prefs.kt$Prefs$private val DARK_MODE = "DARK_MODE"</ID>
-    <ID>MayBeConst:Prefs.kt$Prefs$private val EXE_PATH = "EXE_PATH"</ID>
-    <ID>MemberNameEqualsClassName:Prefs.kt$Prefs$private val prefs = Preferences.userRoot().node("com.abysl.harryplotter")</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.controller.MainController.kt:356</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.controller.MainController.kt:394</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.data.JobProcess.kt:176</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.data.JobProcess.kt:178</ID>
-    <ID>PrintStackTrace:JobProcess.kt$JobProcess$e</ID>
     <ID>ReturnCount:ChiaKey.kt$ChiaKey$fun parseLine(line: String): ChiaKey</ID>
-    <ID>ReturnCount:MainController.kt$MainController$fun getConfigFile(): File</ID>
-    <ID>ReturnCount:MainController.kt$MainController$fun getExePath(): File</ID>
-    <ID>ReturnCount:MainController.kt$MainController$fun onSave()</ID>
-    <ID>TooGenericExceptionCaught:JobProcess.kt$JobProcess$e: Exception</ID>
-    <ID>TooManyFunctions:MainController.kt$MainController : Initializable</ID>
-    <ID>UnusedPrivateMember:Config.kt$Config$desc: JobDescription</ID>
-    <ID>UnusedPrivateMember:Config.kt$Config$result: JobResult</ID>
-    <ID>UnusedPrivateMember:JobProcess.kt$JobProcess$block: Boolean</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var addKey: Button</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var averagePlotTime: Label</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var averagePlotsDay: Label</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var currentStatus: Label</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var estimatedPlotsDay: Label</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var lastPlotTime: Label</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var save: Button</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var selectTempDir: Button</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var startAll: Button</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var stopAll: Button</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var themeToggle: Button</ID>
-    <ID>UnusedPrivateMember:MainController.kt$MainController$@FXML private lateinit var totalPlotsCreated: Label</ID>
+    <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getConfigFile(): File</ID>
+    <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getExePath(): File</ID>
+    <ID>ReturnCount:JobEditorController.kt$JobEditorController$fun onSave()</ID>
   </CurrentIssues>
 </SmellBaseline>

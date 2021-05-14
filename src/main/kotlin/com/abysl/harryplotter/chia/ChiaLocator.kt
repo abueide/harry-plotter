@@ -20,7 +20,6 @@
 package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.windows.SimpleDialogs
 import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
 import com.abysl.harryplotter.windows.SimpleFileChooser
@@ -30,6 +29,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 class ChiaLocator(node: Node) {
+
     private val fileChooser = SimpleFileChooser(node)
 
     fun getConfigFile(): File {
@@ -37,34 +37,23 @@ class ChiaLocator(node: Node) {
         if (configDir.exists()) {
             return configDir
         }
-        showAlert(
-            "Chia Config File Not Found",
-            "Please specify the chia config location, usually located at C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml"
-        )
+        showAlert(CONFIG_NOT_FOUND, CONFIG_NOT_FOUND_INSTRUCTION)
         val file = fileChooser.chooseFile(
             "Select Chia Config File",
             FileChooser.ExtensionFilter("YAML Config File", "config.yaml")
         )
-
-        if (file.name.equals("config.yaml") && file.exists())
-            return file
-        else {
-            if (showConfirmation(
-                    "Wrong File",
-                    "Looking for config.yaml, usually located at C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml . Try again?"
-                )
-            ) {
-                return getConfigFile()
-            } else {
-                exitProcess(0)
-            }
+        if (file.name.equals("config.yaml") && file.exists()) return file
+        if (showConfirmation(WRONG_FILE, WRONG_CONFIG)) {
+            return getConfigFile()
+        } else {
+            exitProcess(0)
         }
     }
 
     fun getExePath(): File {
         val lastPath = File(Prefs.exePath)
         if (lastPath.exists()) return lastPath
-        val macChiaExe = File("/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia")
+        val macChiaExe = File(MAC_CHIA_PATH)
         if (macChiaExe.exists()) return macChiaExe
 
         var chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
@@ -84,18 +73,20 @@ class ChiaLocator(node: Node) {
             FileChooser.ExtensionFilter("Executable File", "*.exe")
         )
 
-        if (file.name.startsWith("chia"))
-            return file
-        else {
-            if (showConfirmation(
-                    "Wrong File",
-                    "Looking for the chia cli executable (chia.exe lowercase). Try again?"
-                )
-            ) {
-                return getExePath()
-            } else {
-                exitProcess(0)
-            }
-        }
+        if (file.name.startsWith("chia") && file.exists()) return file
+        if (showConfirmation("Wrong File", EXE_NOT_FOUND)) return getExePath() else exitProcess(0)
+    }
+
+    companion object {
+        private const val MAC_CHIA_PATH = "/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia"
+        private const val WRONG_CONFIG = "Looking for config.yaml, usually located at " +
+            "C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml. " +
+            "Try again?"
+        private const val WRONG_FILE = "Wrong File"
+        private const val CONFIG_NOT_FOUND = "Chia Config File Not Found"
+        private const val CONFIG_NOT_FOUND_INSTRUCTION =
+            "Please specify the chia config location, usually located at " +
+                "C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml"
+        private const val EXE_NOT_FOUND = "Looking for the chia cli executable (chia.exe lowercase). Try again?"
     }
 }

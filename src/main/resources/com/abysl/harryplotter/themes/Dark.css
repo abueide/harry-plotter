@@ -25,13 +25,6 @@
     -fx-control-inner-background-alt: -fx-control-inner-background;
 }
 
-.code-area {
-    -fx-background-color: transparent;
-    -fx-border-style: solid;
-    -fx-border-width: 1px;
-    -fx-text-fill: lightgray;
-}
-
 .label {
     -fx-text-fill: lightgray;
 }
@@ -97,4 +90,14 @@
 
 #themeToggle {
     -fx-background-color: #dce0d8;
+}
+
+#jobStats {
+    -fx-border-style: solid;
+    -fx-border-width: 1px;
+}
+
+#logsWindow {
+    -fx-border-style: solid;
+    -fx-border-width: 1px;
 }

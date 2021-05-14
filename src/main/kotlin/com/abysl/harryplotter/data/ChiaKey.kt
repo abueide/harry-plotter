@@ -20,7 +20,6 @@
 package com.abysl.harryplotter.data
 
 import kotlinx.serialization.Serializable
-import java.lang.Exception
 
 @Serializable
 data class ChiaKey(
@@ -57,9 +56,9 @@ data class ChiaKey(
             } else {
                 return this
             }
-        } catch (e: Exception) {
-            println("Failed to parse key!")
-            e.printStackTrace()
+        } catch (e: NoSuchElementException) {
+            println("WARNING: Fix line parser")
+            println(e)
         }
         return ChiaKey()
     }

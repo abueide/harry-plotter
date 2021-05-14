@@ -21,13 +21,10 @@ package com.abysl.harryplotter.controller
 
 import com.abysl.harryplotter.data.ChiaKey
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.control.TextField
 import javafx.stage.Stage
-import java.net.URL
-import java.util.ResourceBundle
 
-class KeyEditorController : Initializable {
+class KeyEditorController {
     @FXML
     lateinit var nickname: TextField
 
@@ -44,8 +41,6 @@ class KeyEditorController : Initializable {
     lateinit var poolKey: TextField
 
     lateinit var callback: (ChiaKey?) -> Unit
-
-    override fun initialize(location: URL?, resources: ResourceBundle?) {}
 
     fun onSave() {
         callback(readKey())

@@ -25,12 +25,8 @@ import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobProcess
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.windows.KeyEditorWindow
-import com.abysl.harryplotter.windows.SimpleDialogs
 import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
 import com.abysl.harryplotter.windows.SimpleFileChooser
-import javafx.beans.property.SimpleObjectProperty
-import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -205,6 +201,4 @@ class JobEditorController : Initializable {
         plotsToFinish.text = jobDesc.plotsToFinish.toString()
         selectedKey.select(jobDesc.key)
     }
-
-
 }

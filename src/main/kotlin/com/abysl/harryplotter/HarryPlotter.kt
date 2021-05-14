@@ -38,7 +38,7 @@ class HarryPlotter : Application() {
         val loader = FXMLLoader("fxml/MainView.fxml".getResource())
         val root: Parent = loader.load()
         val controller: MainController = loader.getController()
-        val scene = Scene(root, 1080.0, 720.0)
+        val scene = Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
         stage.icons.add(Image("icons/snitch.png".getResourceAsStream()))
         stage.scene = scene
@@ -54,6 +54,11 @@ class HarryPlotter : Application() {
     fun toggleTheme() {
         Prefs.darkMode = !Prefs.darkMode
         FxUtil.setTheme(mainStage)
+    }
+
+    companion object {
+        const val DEFAULT_WIDTH = 1080.0
+        const val DEFAULT_HEIGHT = 720.0
     }
 }
 

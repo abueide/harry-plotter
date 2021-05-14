@@ -74,7 +74,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
             val files = jobDesc.tempDir.listFiles()
                 ?.filter { it.toString().contains(state.plotId) && it.extension == "tmp" }
                 ?.map { deleteFile(it) }
-            if(block) {
+            if (block) {
                 runBlocking {
                     files?.forEach { it.await() }
                 }
@@ -156,22 +156,19 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
                     println(state.currentResult)
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (e: NoSuchElementException) {
+            println("WARNING: Fix Line Parser")
+            println(e)
         }
     }
 
-
     override fun toString(): String {
-        return if (state.running)
-            "$jobDesc - ${state.percentage}%"
-        else
-            jobDesc.toString()
+        return if (state.running) "$jobDesc - ${state.percentage}%" else jobDesc.toString()
     }
 
     companion object {
-        val STOPPED = "Stopped"
-        val RUNNING = "Running"
-        val ERROR = "Error"
+        const val STOPPED = "Stopped"
+        const val RUNNING = "Running"
+        const val ERROR = "Error"
     }
 }

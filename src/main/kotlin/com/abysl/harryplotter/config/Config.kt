@@ -21,7 +21,6 @@ package com.abysl.harryplotter.config
 
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
-import com.abysl.harryplotter.data.JobResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,10 +60,10 @@ object Config {
         return Json.decodeFromString(jobsFile.readText())
     }
 
-    fun saveTime(desc: JobDescription, result: JobResult) {
-    }
+//    fun saveTime(desc: JobDescription, result: JobResult) {
+//    }
 
-    fun loadTimes(desc: JobDescription): List<JobResult> {
-        return emptyList()
-    }
+//    fun loadTimes(desc: JobDescription): List<JobResult> {
+//        return emptyList()
+//    }
 }

@@ -2,13 +2,9 @@ package com.abysl.harryplotter.controller
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.data.JobProcess
-import com.abysl.harryplotter.windows.SimpleDialogs
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
-import javafx.beans.value.ChangeListener
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
@@ -16,10 +12,8 @@ import javafx.scene.control.MultipleSelectionModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.URL
-import java.util.*
 
-class JobsListController : Initializable {
+class JobsListController {
 
     @FXML
     lateinit var jobsView: ListView<JobProcess>
@@ -27,9 +21,6 @@ class JobsListController : Initializable {
     private lateinit var chia: ChiaCli
 
     private lateinit var jobs: ObservableList<JobProcess>
-
-
-    override fun initialize(location: URL?, resources: ResourceBundle?) { }
 
     fun initModel(
         chia: ChiaCli,
