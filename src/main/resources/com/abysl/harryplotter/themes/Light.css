@@ -20,3 +20,8 @@
 #themeToggle {
     -fx-background-color: #373e43;
 }
+
+#jobStats, #logsWindow, #jobsView {
+    -fx-border-style: solid;
+    -fx-border-width: 1px;
+}

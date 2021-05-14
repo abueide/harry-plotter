@@ -1,0 +1,58 @@
+/*
+ *     Copyright (c) 2021 Andrew Bueide
+ *
+ *     This file is part of Harry Plotter.
+ *
+ *     Harry Plotter is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     Harry Plotter is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package com.abysl.harryplotter.windows
+
+import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.util.FxUtil
+import com.abysl.harryplotter.util.getResource
+import javafx.scene.Scene
+import javafx.scene.control.TextArea
+import javafx.stage.Modality
+import javafx.stage.Stage
+import java.io.IOException
+import kotlin.system.exitProcess
+
+object VersionPromptWindow {
+    private const val WIDTH = 600.0
+    private const val HEIGHT = 400.0
+    fun show() {
+        try {
+            // Load scene
+            val stage = Stage()
+            val textPrompt = TextArea()
+            val version = "version.txt".getResource().readText()
+            textPrompt.text = "updatemessages/$version.txt".getResource().readText()
+            textPrompt.wrapTextProperty().set(true)
+            textPrompt.editableProperty().set(false)
+            stage.width = WIDTH
+            stage.height = HEIGHT
+            stage.scene = Scene(textPrompt)
+            stage.title = "Version $version"
+            stage.isAlwaysOnTop = true
+            stage.initModality(Modality.APPLICATION_MODAL)
+            FxUtil.setTheme(stage)
+            stage.show()
+            Prefs.versionPrompt = false
+        } catch (ex: IOException) {
+            System.err.println(ex)
+            exitProcess(1)
+        }
+    }
+}
