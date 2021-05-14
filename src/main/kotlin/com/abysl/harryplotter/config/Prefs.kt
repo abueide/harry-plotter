@@ -24,6 +24,7 @@ import java.util.prefs.Preferences
 object Prefs {
     private const val DARK_MODE = "DARK_MODE"
     private const val EXE_PATH = "EXE_PATH"
+    private const val STAGGER = "STAGGER"
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
 
     var darkMode: Boolean
@@ -35,5 +36,10 @@ object Prefs {
         get() = prefNode.get(EXE_PATH, "PATH/TO/FILE")
         set(value) {
             prefNode.put(EXE_PATH, value)
+        }
+    var stagger: Long
+        get() = prefNode.getLong(STAGGER, 0)
+        set(value) {
+            prefNode.putLong(STAGGER, value)
         }
 }
