@@ -35,7 +35,7 @@ val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
 group = "com.abysl"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
