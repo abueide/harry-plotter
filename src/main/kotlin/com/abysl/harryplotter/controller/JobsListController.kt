@@ -1,22 +1,26 @@
 package com.abysl.harryplotter.controller
 
-import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.data.JobProcess
+import com.abysl.harryplotter.model.DataModel.chia
+import com.abysl.harryplotter.model.DataModel.jobs
+import com.abysl.harryplotter.model.DataModel.jobsFlow
+import com.abysl.harryplotter.model.DataModel.selectedJob
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
+import javafx.application.Platform
 import javafx.beans.value.ChangeListener
-import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
-import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.TextField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.concurrent.CancellationException
 
@@ -28,24 +32,24 @@ class JobsListController {
     @FXML
     private lateinit var stagger: TextField
 
-    private lateinit var chia: ChiaCli
-
-    private lateinit var jobs: ObservableList<JobProcess>
-
     private var staggerRoutines: MutableList<Job> = mutableListOf()
 
-    fun initModel(
-        chia: ChiaCli,
-        jobs: ObservableList<JobProcess>
-    ): MultipleSelectionModel<JobProcess?> {
-        jobsView.items = jobs
+
+    fun initialized() {
+        jobsFlow
+            .onEach {
+                Platform.runLater {
+                    jobsView.items.setAll(it)
+                    jobsView.selectionModel.select(selectedJob)
+                }
+            }
+        jobsView.selectionModel.selectedItemProperty().addListener { obs, old, new ->
+            selectedJob = new
+        }
         jobsView.contextMenu = jobsMenu
         stagger.limitToInt()
         stagger.text = Prefs.stagger.toString()
         stagger.textProperty().addListener(staggerListener)
-        this.jobs = jobs
-        this.chia = chia
-        return jobsView.selectionModel
     }
 
     fun onStartAll() {
@@ -63,16 +67,16 @@ class JobsListController {
 
     val duplicate = MenuItem("Duplicate").also {
         it.setOnAction {
-            val jobProc = jobsView.selectionModel.selectedItem
-            jobs.add(JobProcess(chia, jobProc.jobDesc))
+            val job = selectedJob ?: return@setOnAction
+            jobs += JobProcess(chia, job.jobDesc)
         }
         jobsMenu.items.add(it)
     }
     val delete = MenuItem("Delete").also {
         it.setOnAction {
-            val job = jobsView.selectionModel.selectedItem
+            val job = selectedJob ?: return@setOnAction
             if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.jobDesc}")) {
-                jobs.remove(job)
+                jobs -= job
             }
         }
         jobsMenu.items.add(it)

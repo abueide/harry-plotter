@@ -20,6 +20,10 @@
 package com.abysl.harryplotter.data
 
 data class JobStats(
+    var lastPlotTime: Double = 0.0, // seconds
+    var averagePlotTime: Double = 0.0, // seconds
     var plotsDone: Int = 0,
-    val results: MutableList<JobResult> = mutableListOf()
+    var estimatedPlotsDay: Double = 0.0, // seconds
+    var averagePlotsDay: Double = 0.0, // seconds
+    var results: MutableList<JobResult> = mutableListOf()
 )

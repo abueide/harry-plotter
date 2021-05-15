@@ -20,22 +20,26 @@
 package com.abysl.harryplotter.data
 
 import com.abysl.harryplotter.chia.ChiaCli
-import javafx.application.Platform
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
-    var proc: Process? = null
-    val logs: ObservableList<String> = FXCollections.observableArrayList()
+    val logsFlow: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+    var logs: List<String>
+        get() = logsFlow.value
+        set(value) {
+            logsFlow.value = value
+        }
 
+    var proc: Process? = null
     var state: JobState = JobState()
     var stats: JobStats = JobStats()
+
 
     fun start() {
         if (state.running || proc?.isAlive == true) {
@@ -71,7 +75,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     fun stop(block: Boolean = false) {
         // Store in immutable variable so it doesn't try to delete files after state is wiped out
         val id: String = state.plotId
-        logs.clear()
+        logs = listOf()
         state = JobState()
         proc?.destroyForcibly()
         deleteTempFiles(id, block)
@@ -80,7 +84,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     private fun deleteTempFiles(plotId: String, block: Boolean) {
         if (plotId.isNotBlank()) {
             val files = jobDesc.tempDir.listFiles()
-                ?.filter { it.toString().contains(state.plotId) && it.extension == "tmp" }
+                ?.filter { it.toString().contains(plotId) && it.extension == "tmp" }
                 ?.map { deleteFile(it) }
             if (block) {
                 runBlocking {
@@ -94,7 +98,9 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
         CoroutineScope(Dispatchers.IO).async {
             var timeout = 0
             while (file.exists() && !file.delete() && timeout++ < maxTries) {
-                println("Couldn't delete file, trying again in $delayTime ms")
+                if (timeout > 1) {
+                    println("Couldn't delete file, trying again in $delayTime ms. ${file.name}")
+                }
                 delay(delayTime)
             }
             if (timeout < maxTries) {
@@ -117,9 +123,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     }
 
     fun parseLine(line: String) {
-        Platform.runLater {
-            logs.add(line.trim())
-        }
+        logs += line.trim()
         try {
             if (line.contains("ID: ")) {
                 state.plotId = line.split("ID: ").last()

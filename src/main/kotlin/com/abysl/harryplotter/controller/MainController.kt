@@ -23,26 +23,22 @@ import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobProcess
+import com.abysl.harryplotter.model.DataModel
+import com.abysl.harryplotter.model.DataModel.chia
+import com.abysl.harryplotter.model.DataModel.jobs
+import com.abysl.harryplotter.model.DataModel.keys
+import com.abysl.harryplotter.model.DataModel.selectedKey
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
-import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
-import javafx.scene.control.MultipleSelectionModel
-import javafx.scene.control.SingleSelectionModel
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
-import java.net.URL
-import java.util.ResourceBundle
 
-class MainController : Initializable {
+class MainController{
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
     private lateinit var mainBox: VBox
@@ -56,37 +52,21 @@ class MainController : Initializable {
     @FXML
     private lateinit var jobStatusViewController: JobStatusController
 
-    lateinit var chia: ChiaCli
     lateinit var hostServices: HostServices
     lateinit var toggleTheme: () -> Unit
 
-    val jobs: ObservableList<JobProcess> = FXCollections.observableArrayList()
-    val keys: ObservableList<ChiaKey> = FXCollections.observableArrayList()
-    lateinit var selectedJob: MultipleSelectionModel<JobProcess?>
-    lateinit var selectedKey: SingleSelectionModel<ChiaKey?>
-
-    // Initial State ---------------------------------------------------------------------------------------------------
-
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
-        keys.add(Config.devkey)
-    }
-
-    // Calls after the window is initialized so mainBox.scene.window isn't null
+    // Calls after the JavaFX vars are populated so they aren't null
     fun initialized() {
         val chiaLocator = ChiaLocator(mainBox)
         val exePath = chiaLocator.getExePath()
         Prefs.exePath = exePath.path
         chia = ChiaCli(exePath, chiaLocator.getConfigFile())
-
-        selectedJob = jobsListController.initModel(chia, jobs)
-        selectedKey = jobEditorController.initModel(jobs, keys, selectedJob)
-        jobStatusViewController.initModel(jobs, selectedJob)
-
-        jobs.addListener(jobsListListener)
-        keys.addListener(keyListListener)
-
-        keys.addAll(chia.readKeys())
-        jobs.addAll(Config.getPlotJobs().map { JobProcess(chia, it) })
+        jobsListController.initialized()
+        jobEditorController.initialized()
+        jobStatusViewController.initialized()
+        keys += chia.readKeys()
+        jobs += Config.getPlotJobs().map { JobProcess(chia, it) }
+        selectedKey = keys.first()
     }
 
     fun onAbout() {
@@ -117,23 +97,5 @@ class MainController : Initializable {
             }
         }
         (mainBox.scene.window as Stage).close()
-    }
-
-    private val jobsListListener =
-        ListChangeListener<JobProcess> { listChange ->
-            while (listChange.next()) {
-                if (listChange.wasAdded()) {
-                    selectedJob.select(listChange.addedSubList.first())
-                }
-            }
-            Config.savePlotJobs(jobs.map { it.jobDesc })
-        }
-
-    private val keyListListener = ListChangeListener<ChiaKey> {
-        while (it.next()) {
-            if (it.wasAdded()) {
-                selectedKey.select(it.addedSubList.first())
-            }
-        }
     }
 }

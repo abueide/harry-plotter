@@ -23,23 +23,28 @@ import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.data.ChiaKey
 import com.abysl.harryplotter.data.JobDescription
 import com.abysl.harryplotter.data.JobProcess
+import com.abysl.harryplotter.model.DataModel.jobs
+import com.abysl.harryplotter.model.DataModel.keys
+import com.abysl.harryplotter.model.DataModel.keysFlow
+import com.abysl.harryplotter.model.DataModel.selectedJob
+import com.abysl.harryplotter.model.DataModel.selectedKey
+import com.abysl.harryplotter.model.DataModel.selectedKeyFlow
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
 import com.abysl.harryplotter.windows.SimpleFileChooser
-import javafx.collections.ObservableList
+import javafx.application.Platform
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
-import javafx.scene.control.MultipleSelectionModel
-import javafx.scene.control.SingleSelectionModel
 import javafx.scene.control.TextField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.io.File
-import java.net.URL
-import java.util.ResourceBundle
 
-class JobEditorController : Initializable {
+class JobEditorController {
     @FXML
     private lateinit var jobName: TextField
 
@@ -66,41 +71,31 @@ class JobEditorController : Initializable {
 
     lateinit var chia: ChiaCli
 
-    private lateinit var jobs: ObservableList<JobProcess>
-    private lateinit var keys: ObservableList<ChiaKey>
-    private lateinit var selectedJob: MultipleSelectionModel<JobProcess?>
-    private lateinit var selectedKey: SingleSelectionModel<ChiaKey?>
-
     private lateinit var fileChooser: SimpleFileChooser
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    fun initialized() {
+        // Bind selected key bi directionally with the listeners
+        keysFlow
+            .onEach { Platform.runLater {
+                keysCombo.items.setAll(it)
+                keysCombo.selectionModel.select(selectedKey)
+            } }
+            .launchIn(CoroutineScope(Dispatchers.IO))
+        selectedKeyFlow
+            .onEach { key ->
+                Platform.runLater {
+                    key?.let { keysCombo.selectionModel.select(key) }
+                }
+            }
+            .launchIn(CoroutineScope(Dispatchers.IO))
+        keysCombo.selectionModel.selectedItemProperty().addListener { observable, old, new ->
+            new?.let { selectedKey = new }
+        }
         fileChooser = SimpleFileChooser(jobName)
-        selectedKey = keysCombo.selectionModel
-        keysCombo.selectionModel.selectFirst()
+        // Allow user input of only integers
         threads.limitToInt()
         ram.limitToInt()
         plotsToFinish.limitToInt()
-    }
-
-    fun initModel(
-        jobs: ObservableList<JobProcess>,
-        keys: ObservableList<ChiaKey>,
-        selectedJob: MultipleSelectionModel<JobProcess?>
-    ): SingleSelectionModel<ChiaKey?> {
-        keysCombo.items = keys
-        this.jobs = jobs
-        this.keys = keys
-        this.selectedJob = selectedJob
-
-        selectedJob.selectedItemProperty().addListener { _, oldvalue, newvalue ->
-            oldvalue?.state?.displayLogs = false
-            newvalue?.state?.displayLogs = true
-            newvalue?.let {
-                loadJob(it)
-            }
-        }
-
-        return keysCombo.selectionModel
     }
 
     fun onStopAfter() {
@@ -121,18 +116,23 @@ class JobEditorController : Initializable {
     }
 
     fun onEdit() {
-        val selected = keysCombo.selectionModel.selectedItem
-        KeyEditorWindow(selected).show {
-            if (it != null) {
-                keysCombo.items.remove(selected)
-                keysCombo.items.add(it)
+        val oldKey = selectedKey ?: return
+        KeyEditorWindow(oldKey).show { newKey ->
+            if (newKey != null) {
+                var test = keys
+                keys -= oldKey
+                test = keys
+                keys += newKey
+                test = keys
+                selectedKey = newKey
+                val test2 = selectedKey
             }
         }
     }
 
     fun onAdd() {
         KeyEditorWindow().show {
-            if (it != null) keysCombo.items.add(it)
+            if (it != null) keys += it
         }
     }
 
@@ -142,8 +142,8 @@ class JobEditorController : Initializable {
         destDir.clear()
         threads.clear()
         ram.clear()
-        selectedKey.clearSelection()
-        selectedJob.clearSelection()
+        selectedKey = null
+        selectedJob = null
     }
 
     fun onSave() {
@@ -172,23 +172,22 @@ class JobEditorController : Initializable {
             showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
             return
         }
-        if (selectedKey.selectedItem == null) {
+        if (selectedKey == null) {
             showAlert("Key Not Selected", "Please add and select a key")
         }
-
+        val key = selectedKey ?: return
         val name = jobName.text.ifBlank { "Plot Job ${jobs.count() + 1}" }
-        jobs.add(
-            JobProcess(
-                chia,
-                JobDescription(
-                    name, File(tempDir.text), File(destDir.text),
-                    threads.text.ifBlank { "0" }.toInt(),
-                    ram.text.ifBlank { "0" }.toInt(),
-                    selectedKey.selectedItem!!,
-                    plotsToFinish.text.ifBlank { "0" }.toInt()
-                )
+        jobs += JobProcess(
+            chia,
+            JobDescription(
+                name, File(tempDir.text), File(destDir.text),
+                threads.text.ifBlank { "0" }.toInt(),
+                ram.text.ifBlank { "0" }.toInt(),
+                key,
+                plotsToFinish.text.ifBlank { "0" }.toInt()
             )
         )
+
     }
 
     fun loadJob(jobProc: JobProcess) {
@@ -199,6 +198,6 @@ class JobEditorController : Initializable {
         threads.text = jobDesc.threads.toString()
         ram.text = jobDesc.ram.toString()
         plotsToFinish.text = jobDesc.plotsToFinish.toString()
-        selectedKey.select(jobDesc.key)
+        selectedKey = jobDesc.key
     }
 }
