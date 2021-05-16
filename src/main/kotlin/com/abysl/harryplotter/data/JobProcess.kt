@@ -72,7 +72,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     private fun deleteTempFiles(plotId: String, block: Boolean) {
         if (plotId.isNotBlank()) {
             val files = jobDesc.tempDir.listFiles()
-                ?.filter { it.toString().contains(state.plotId) && it.extension == "tmp" }
+                ?.filter { it.toString().contains(plotId) && it.extension == "tmp" }
                 ?.map { deleteFile(it) }
             if (block) {
                 runBlocking {
