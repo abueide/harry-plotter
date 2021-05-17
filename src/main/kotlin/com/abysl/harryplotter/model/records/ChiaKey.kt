@@ -17,10 +17,11 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.data
+package com.abysl.harryplotter.model.records
 
 import kotlinx.serialization.Serializable
 
+@JvmRecord
 @Serializable
 data class ChiaKey(
     val nickname: String = "",

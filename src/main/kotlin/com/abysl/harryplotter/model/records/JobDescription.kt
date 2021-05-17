@@ -17,17 +17,26 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.data
+package com.abysl.harryplotter.model.records
 
-data class JobState(
-    var running: Boolean = false,
-    var phase: Int = 1,
-    var subphase: String = "",
-    var currentResult: JobResult = JobResult(),
-    val results: MutableList<JobResult> = mutableListOf(),
-    var percentage: Double = 0.0,
-    var stopwatch: Int = 0,
-    var displayLogs: Boolean = false,
-    var plotId: String = "",
-    var status: String = JobProcess.STOPPED
-)
+import com.abysl.harryplotter.util.FileSerializer
+import kotlinx.serialization.Serializable
+import java.io.File
+
+@JvmRecord
+@Serializable
+data class JobDescription(
+    val name: String,
+    @Serializable(with = FileSerializer::class)
+    val tempDir: File,
+    @Serializable(with = FileSerializer::class)
+    val destDir: File,
+    val threads: Int,
+    val ram: Int,
+    val key: ChiaKey,
+    val plotsToFinish: Int, // -1  = keep going forever
+) {
+    override fun toString(): String {
+        return name
+    }
+}

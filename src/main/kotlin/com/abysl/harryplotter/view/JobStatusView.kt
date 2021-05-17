@@ -1,9 +1,8 @@
-package com.abysl.harryplotter.controller
+package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.model.DataModel.jobs
 import com.abysl.harryplotter.model.DataModel.selectedJob
 import com.abysl.harryplotter.model.DataModel.selectedJobFlow
-import com.abysl.harryplotter.util.unlines
 import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
 import javafx.application.Platform
@@ -12,11 +11,8 @@ import javafx.scene.control.TextArea
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
-class JobStatusController {
+class JobStatusView {
 
     @FXML
     private lateinit var logsWindow: TextArea
@@ -31,7 +27,7 @@ class JobStatusController {
                 val current = job ?: return@onEach
                 logsScope = CoroutineScope(Dispatchers.IO)
                 current.logsFlow
-                    .onEach { logs -> Platform.runLater { logsWindow.text = logs.unlines()} }
+                    .onEach { logs -> Platform.runLater { logsWindow.text = logs.unlines() } }
                     .launchIn(logsScope)
             }.launchIn(CoroutineScope(Dispatchers.IO))
     }
@@ -45,9 +41,7 @@ class JobStatusController {
                 showAlert("No job selected!", "You must save & select your plot job before you run it.")
             }
             else -> {
-                CoroutineScope(Dispatchers.Default).launch {
-                    selectedJob?.start()
-                }
+                selectedJob?.start()
             }
         }
     }

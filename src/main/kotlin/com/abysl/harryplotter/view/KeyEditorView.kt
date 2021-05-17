@@ -17,14 +17,14 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.controller
+package com.abysl.harryplotter.view
 
-import com.abysl.harryplotter.data.ChiaKey
+import com.abysl.harryplotter.model.records.ChiaKey
 import javafx.fxml.FXML
 import javafx.scene.control.TextField
 import javafx.stage.Stage
 
-class KeyEditorController {
+class KeyEditorView {
     @FXML
     lateinit var nickname: TextField
 

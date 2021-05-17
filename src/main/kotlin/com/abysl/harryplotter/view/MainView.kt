@@ -17,14 +17,13 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.controller
+package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.data.JobProcess
-import com.abysl.harryplotter.model.DataModel
+import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.DataModel.chia
 import com.abysl.harryplotter.model.DataModel.jobs
 import com.abysl.harryplotter.model.DataModel.keys
@@ -38,19 +37,19 @@ import javafx.scene.control.ButtonType
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 
-class MainController{
+class MainView{
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
     private lateinit var mainBox: VBox
 
     @FXML
-    private lateinit var jobsListController: JobsListController
+    private lateinit var jobsListView: JobsListView
 
     @FXML
-    private lateinit var jobEditorController: JobEditorController
+    private lateinit var jobEditorView: JobEditorView
 
     @FXML
-    private lateinit var jobStatusViewController: JobStatusController
+    private lateinit var jobStatusViewController: JobStatusView
 
     lateinit var hostServices: HostServices
     lateinit var toggleTheme: () -> Unit
@@ -61,11 +60,11 @@ class MainController{
         val exePath = chiaLocator.getExePath()
         Prefs.exePath = exePath.path
         chia = ChiaCli(exePath, chiaLocator.getConfigFile())
-        jobsListController.initialized()
-        jobEditorController.initialized()
+        jobsListView.initialized()
+        jobEditorView.initialized()
         jobStatusViewController.initialized()
         keys += chia.readKeys()
-        jobs += Config.getPlotJobs().map { JobProcess(chia, it) }
+        jobs += Config.getPlotJobs().map { PlotJob(chia, it) }
         selectedKey = keys.first()
     }
 

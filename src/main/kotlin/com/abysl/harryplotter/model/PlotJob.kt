@@ -17,73 +17,73 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.data
+package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.model.records.JobDescription
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.io.File
 
-class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
-    val logsFlow: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
-    var logs: List<String>
-        get() = logsFlow.value
-        set(value) {
-            logsFlow.value = value
-        }
+@Serializable
+class PlotJob(var desc: JobDescription, var stats: JobStats = JobStats(), ) {
+    @Transient
+    private var state: JobState = JobState()
 
-    var proc: Process? = null
-    var state: JobState = JobState()
-    var stats: JobStats = JobStats()
+    @Transient
+    lateinit var chia: ChiaCli
 
+    fun init(chia: ChiaCli){
+        this.chia = chia
+    }
 
-    fun start() {
-        if (state.running || proc?.isAlive == true) {
+     fun start() {
+        if (state.running || state.proc?.isAlive == true) {
             println("Trying to start new process while old one is still running, ignoring start job.")
         } else {
-            state.status = RUNNING
             state.running = true
 
             val args = mutableListOf<String>()
             args.addAll(listOf("plots", "create", "-k", "32"))
-            if (jobDesc.key.fingerprint.isNotBlank()) args.addAll(listOf("-a", jobDesc.key.fingerprint))
-            else if (jobDesc.key.farmerKey.isNotBlank() && jobDesc.key.poolKey.isNotBlank()) {
-                args.addAll(listOf("-f", jobDesc.key.farmerKey, "-p", jobDesc.key.poolKey))
+            if (desc.key.fingerprint.isNotBlank()) args.addAll(listOf("-a", desc.key.fingerprint))
+            else if (desc.key.farmerKey.isNotBlank() && desc.key.poolKey.isNotBlank()) {
+                args.addAll(listOf("-f", desc.key.farmerKey, "-p", desc.key.poolKey))
             }
-            if (jobDesc.ram > MINIMUM_RAM) args.addAll(listOf("-b", jobDesc.ram.toString()))
-            if (jobDesc.threads > 0) args.addAll(listOf("-r", jobDesc.threads.toString()))
-            proc = chia.runCommandAsync(
+            if (desc.ram > MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
+            if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
+            state.proc = chia.runCommandAsync(
                 ioDelay = 10,
                 outputCallback = ::parseLine,
                 completedCallback = ::whenDone,
                 "plots",
                 "create",
                 "-k", "32",
-                "-a", jobDesc.key.fingerprint,
-                "-b", jobDesc.ram.toString(),
-                "-r", jobDesc.threads.toString(),
-                "-t", jobDesc.tempDir.toString(),
-                "-d", jobDesc.destDir.toString(),
+                "-a", desc.key.fingerprint,
+                "-b", desc.ram.toString(),
+                "-r", desc.threads.toString(),
+                "-t", desc.tempDir.toString(),
+                "-d", desc.destDir.toString(),
             )
         }
     }
 
+    // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
+    // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
         // Store in immutable variable so it doesn't try to delete files after state is wiped out
-        val id: String = state.plotId
-        logs = listOf()
+        deleteTempFiles(state.plotId, block)
+        state.proc?.destroyForcibly()
         state = JobState()
-        proc?.destroyForcibly()
-        deleteTempFiles(id, block)
     }
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
         if (plotId.isNotBlank()) {
-            val files = jobDesc.tempDir.listFiles()
+            val files = desc.tempDir.listFiles()
                 ?.filter { it.toString().contains(plotId) && it.extension == "tmp" }
                 ?.map { deleteFile(it) }
             if (block) {
@@ -114,7 +114,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     private fun whenDone() {
         stats.plotsDone++
         stats.results.add(state.currentResult)
-        if (state.running && (stats.plotsDone < jobDesc.plotsToFinish || jobDesc.plotsToFinish == 0)) {
+        if (state.running && (stats.plotsDone < desc.plotsToFinish || desc.plotsToFinish == 0)) {
             stop()
             start()
         } else {
@@ -123,7 +123,7 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     }
 
     fun parseLine(line: String) {
-        logs += line.trim()
+        state.logs.add(line.trim())
         try {
             if (line.contains("ID: ")) {
                 state.plotId = line.split("ID: ").last()
@@ -175,14 +175,10 @@ class JobProcess(val chia: ChiaCli, val jobDesc: JobDescription) {
     }
 
     override fun toString(): String {
-        return if (state.running) "$jobDesc - ${state.percentage}%" else jobDesc.toString()
+        return if (state.running) "$desc - ${state.percentage}%" else desc.toString()
     }
 
     companion object {
-        const val STOPPED = "Stopped"
-        const val RUNNING = "Running"
-        const val ERROR = "Error"
-
         private const val MINIMUM_RAM = 2500 // MiB
     }
 }

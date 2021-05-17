@@ -17,25 +17,16 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.data
+package com.abysl.harryplotter.model
 
-import com.abysl.harryplotter.util.FileSerializer
 import kotlinx.serialization.Serializable
-import java.io.File
 
 @Serializable
-data class JobDescription(
-    val name: String,
-    @Serializable(with = FileSerializer::class)
-    val tempDir: File,
-    @Serializable(with = FileSerializer::class)
-    val destDir: File,
-    val threads: Int,
-    val ram: Int,
-    val key: ChiaKey,
-    val plotsToFinish: Int, // -1  = keep going forever
-) {
-    override fun toString(): String {
-        return name
-    }
-}
+data class JobStats(
+    var lastPlotTime: Double = 0.0, // seconds
+    var averagePlotTime: Double = 0.0, // seconds
+    var plotsDone: Int = 0,
+    var estimatedPlotsDay: Double = 0.0, // seconds
+    var averagePlotsDay: Double = 0.0, // seconds
+    var results: MutableList<JobResult> = mutableListOf()
+)

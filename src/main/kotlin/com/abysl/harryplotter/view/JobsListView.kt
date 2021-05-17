@@ -1,7 +1,7 @@
-package com.abysl.harryplotter.controller
+package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.data.JobProcess
+import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.DataModel.chia
 import com.abysl.harryplotter.model.DataModel.jobs
 import com.abysl.harryplotter.model.DataModel.jobsFlow
@@ -19,15 +19,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.concurrent.CancellationException
 
-class JobsListController {
+class JobsListView {
 
     @FXML
-    lateinit var jobsView: ListView<JobProcess>
+    lateinit var jobsView: ListView<PlotJob>
 
     @FXML
     private lateinit var stagger: TextField
@@ -68,7 +66,7 @@ class JobsListController {
     val duplicate = MenuItem("Duplicate").also {
         it.setOnAction {
             val job = selectedJob ?: return@setOnAction
-            jobs += JobProcess(chia, job.jobDesc)
+            jobs += PlotJob(chia, job.jobDesc)
         }
         jobsMenu.items.add(it)
     }

@@ -19,8 +19,8 @@
 
 package com.abysl.harryplotter.config
 
-import com.abysl.harryplotter.data.ChiaKey
-import com.abysl.harryplotter.data.JobDescription
+import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.model.records.JobDescription
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

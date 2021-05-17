@@ -17,13 +17,18 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.data
+package com.abysl.harryplotter.viewmodel
 
-data class JobStats(
-    var lastPlotTime: Double = 0.0, // seconds
-    var averagePlotTime: Double = 0.0, // seconds
-    var plotsDone: Int = 0,
-    var estimatedPlotsDay: Double = 0.0, // seconds
-    var averagePlotsDay: Double = 0.0, // seconds
-    var results: MutableList<JobResult> = mutableListOf()
-)
+import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.model.records.ChiaKey
+import javafx.beans.property.SimpleListProperty
+import javafx.beans.property.SimpleObjectProperty
+
+class MainViewModel {
+    val plotJobs: SimpleListProperty<PlotJob> = SimpleListProperty()
+    val chiaKeys: SimpleListProperty<ChiaKey> = SimpleListProperty()
+    val selectedPlotJob: SimpleObjectProperty<PlotJob?> = SimpleObjectProperty<PlotJob?>(null)
+    val selectedKey: SimpleObjectProperty<ChiaKey?> = SimpleObjectProperty<ChiaKey?>(null)
+
+
+}
