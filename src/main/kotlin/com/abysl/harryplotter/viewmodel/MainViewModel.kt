@@ -19,10 +19,12 @@
 
 package com.abysl.harryplotter.viewmodel
 
+import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.chia.ChiaLocator
+import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.ChiaKey
-import javafx.beans.property.SimpleListProperty
-import javafx.beans.property.SimpleObjectProperty
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainViewModel {
@@ -30,4 +32,19 @@ class MainViewModel {
     val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
     val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
+
+    private val jobsListViewModel: JobsListViewModel = JobsListViewModel(this.mainViewModel)
+
+    init {
+        val chiaLocator = ChiaLocator(mainBox)
+        val exePath = chiaLocator.getExePath()
+        Prefs.exePath = exePath.path
+        chia = ChiaCli(exePath, chiaLocator.getConfigFile())
+        jobsListView.initialized()
+        jobEditorView.initialized()
+        jobStatusViewController.initialized()
+        keys += chia.readKeys()
+        jobs += Config.getPlotJobs().map { PlotJob(chia, it) }
+        selectedKey = keys.first()
+    }
 }

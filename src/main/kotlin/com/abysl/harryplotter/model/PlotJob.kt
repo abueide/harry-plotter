@@ -32,7 +32,7 @@ import kotlinx.serialization.Transient
 import java.io.File
 
 @Serializable
-class PlotJob(val desc: JobDescription, val stats: JobStats = JobStats()) {
+class PlotJob(var desc: JobDescription, val stats: JobStats = JobStats()) {
     @Transient
     val state: JobState = JobState()
 

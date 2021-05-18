@@ -28,6 +28,8 @@ import com.abysl.harryplotter.model.DataModel.chia
 import com.abysl.harryplotter.model.DataModel.jobs
 import com.abysl.harryplotter.model.DataModel.keys
 import com.abysl.harryplotter.model.DataModel.selectedKey
+import com.abysl.harryplotter.viewmodel.JobEditorViewModel
+import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
 import javafx.fxml.FXML
@@ -54,18 +56,10 @@ class MainView{
     lateinit var hostServices: HostServices
     lateinit var toggleTheme: () -> Unit
 
+    val viewModel = MainViewModel()
+
     // Calls after the JavaFX vars are populated so they aren't null
     fun initialized() {
-        val chiaLocator = ChiaLocator(mainBox)
-        val exePath = chiaLocator.getExePath()
-        Prefs.exePath = exePath.path
-        chia = ChiaCli(exePath, chiaLocator.getConfigFile())
-        jobsListView.initialized()
-        jobEditorView.initialized()
-        jobStatusViewController.initialized()
-        keys += chia.readKeys()
-        jobs += Config.getPlotJobs().map { PlotJob(chia, it) }
-        selectedKey = keys.first()
     }
 
     fun onAbout() {

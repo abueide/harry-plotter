@@ -19,6 +19,6 @@
 
 package com.abysl.harryplotter.viewmodel
 
-class JobStatusViewModel {
+class JobStatusViewModel(val mainViewModel: MainViewModel) {
 
 }

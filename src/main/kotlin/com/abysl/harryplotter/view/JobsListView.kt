@@ -7,6 +7,9 @@ import com.abysl.harryplotter.model.DataModel.jobs
 import com.abysl.harryplotter.model.DataModel.jobsFlow
 import com.abysl.harryplotter.model.DataModel.selectedJob
 import com.abysl.harryplotter.util.limitToInt
+import com.abysl.harryplotter.viewmodel.JobEditorViewModel
+import com.abysl.harryplotter.viewmodel.JobsListViewModel
+import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
@@ -32,8 +35,13 @@ class JobsListView {
 
     private var staggerRoutines: MutableList<Job> = mutableListOf()
 
+    lateinit var viewModel: JobsListViewModel
+    lateinit var mainViewModel: MainViewModel
 
-    fun initialized() {
+    fun initialized(mainViewModel: MainViewModel) {
+        this.mainViewModel = mainViewModel
+        this.viewModel =
+
         jobsFlow
             .onEach {
                 Platform.runLater {

@@ -63,12 +63,13 @@ class JobEditorView {
     private lateinit var plotsToFinish: TextField
 
     private lateinit var fileChooser: SimpleFileChooser
+
     lateinit var viewModel: JobEditorViewModel
     lateinit var mainViewModel: MainViewModel
 
-    fun initialized(viewModel: JobEditorViewModel) {
-        this.viewModel = viewModel
-        this.mainViewModel = viewModel.mainViewModel
+    fun initialized(mainViewModel: MainViewModel) {
+        this.mainViewModel = mainViewModel
+        this.viewModel = JobEditorViewModel(this.mainViewModel)
 
         fileChooser = SimpleFileChooser(jobName)
 

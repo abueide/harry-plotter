@@ -19,5 +19,6 @@
 
 package com.abysl.harryplotter.viewmodel
 
-class JobsListViewModel {
+class JobsListViewModel(val mainViewModel: MainViewModel) {
+
 }

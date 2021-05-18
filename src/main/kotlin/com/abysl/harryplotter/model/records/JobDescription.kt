@@ -26,24 +26,17 @@ import kotlinx.serialization.Serializable
 import java.io.File
 
 @Serializable(with = FileSerializer::class)
-class JobDescription(
-    nameValue: String,
-    tempDirValue: File,
-    destDirValue: File,
-    threadsValue: Int,
-    ramValue: Int,
-    keyValue: ChiaKey,
-    plotsToFinishValue: Int, // -1  = keep going forever
+@JvmRecord
+data class JobDescription(
+    val name: String,
+    val tempDir: File,
+    val destDir: File,
+    val threads: Int,
+    val ram: Int,
+    val key: ChiaKey,
+    val plotsToFinish: Int, // -1  = keep going forever
 ) {
-    val name: MutableStateFlow<String> = MutableStateFlow(nameValue)
-    val tempDir: MutableStateFlow<File> = MutableStateFlow(tempDirValue)
-    val destDir: MutableStateFlow<File> = MutableStateFlow(destDirValue)
-    val threads: MutableStateFlow<Int> = MutableStateFlow(threadsValue)
-    val ram: MutableStateFlow<Int> = MutableStateFlow(ramValue)
-    val key: MutableStateFlow<ChiaKey> = MutableStateFlow(keyValue)
-    val plotsToFinish: MutableStateFlow<Int> = MutableStateFlow(plotsToFinishValue) // -1  = keep going forever
-
     override fun toString(): String {
-        return name()
+        return name
     }
 }

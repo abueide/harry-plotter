@@ -1,5 +1,8 @@
 package com.abysl.harryplotter.view
 
+import com.abysl.harryplotter.viewmodel.JobStatusViewModel
+import com.abysl.harryplotter.viewmodel.JobsListViewModel
+import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
 import javafx.application.Platform
@@ -16,7 +19,13 @@ class JobStatusView {
 
     var logsScope = CoroutineScope(Dispatchers.IO)
 
+
+    lateinit var viewModel: JobStatusViewModel
+    lateinit var mainViewModel: MainViewModel
+
     fun initialized() {
+        this.mainViewModel = mainViewModel
+        this.viewModel = JobStatusViewModel(this.mainViewModel)
         selectedJobFlow
             .onEach { job ->
                 logsScope.cancel()

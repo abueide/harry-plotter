@@ -19,19 +19,16 @@
 
 package com.abysl.harryplotter.viewmodel
 
-import com.abysl.harryplotter.model.JobStats
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.JobDescription
-import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
-import kotlinx.coroutines.flow.MutableStateFlow
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import java.io.File
 
 class JobEditorViewModel(val mainViewModel: MainViewModel) {
     val jobName = MutableStateFlow("")
@@ -44,9 +41,9 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
     init {
         loadJob(mainViewModel.selectedPlotJob.value)
         mainViewModel.selectedPlotJob.onEach {
-            if(it == null){
+            if (it == null) {
                 clearJob()
-            }else {
+            } else {
                 loadJob(it)
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
@@ -54,13 +51,13 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
 
     fun loadJob(plotJob: PlotJob?) {
         plotJob ?: return
-            val desc = plotJob.desc
-            jobName.value = desc.name()
-            tempDir.value = desc.tempDir().path
-            destDir.value = desc.destDir().path
-            threads.value = desc.threads.toString()
-            ram.value = desc.ram.toString()
-            plotsToFinish.value = desc.plotsToFinish.toString()
+        val desc = plotJob.desc
+        jobName.value = desc.name
+        tempDir.value = desc.tempDir.path
+        destDir.value = desc.destDir.path
+        threads.value = desc.threads.toString()
+        ram.value = desc.ram.toString()
+        plotsToFinish.value = desc.plotsToFinish.toString()
     }
 
     fun clearJob() {
@@ -72,7 +69,7 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
         plotsToFinish.value = ""
     }
 
-    fun getJob(): JobDescription? {
+    fun getJobDescription(): JobDescription? {
         val tempDirPath = tempDir.value
         val destDirPath = destDir.value
         if (tempDirPath.isBlank() || destDirPath.isBlank()) {
@@ -142,11 +139,12 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
     }
 
     fun onSave() {
+        val newDesc = getJobDescription() ?: return
         val selectedJob = mainViewModel.selectedPlotJob.value
-        val newJob = getJob()
-        if(selectedJob == null){
-            newJob?.let { mainViewModel.plotJobs.value += it }
-        }else {
+        if (selectedJob == null) {
+            mainViewModel.plotJobs.value += PlotJob(newDesc)
+        } else {
+            selectedJob.desc = newDesc
         }
     }
 }
