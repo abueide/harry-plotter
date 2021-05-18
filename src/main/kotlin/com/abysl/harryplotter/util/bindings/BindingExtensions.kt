@@ -17,45 +17,29 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.util
+package com.abysl.harryplotter.util.bindings
 
-import com.abysl.harryplotter.HarryPlotter
-import javafx.scene.control.TextField
+import javafx.beans.value.ObservableValue
+import javafx.beans.value.WritableValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.io.InputStream
-import java.net.URL
 
-fun String.getResource(): URL {
-    return HarryPlotter::class.java.getResource(this)
+fun <T> WritableValue<T>.bind(stateFlow: StateFlow<T>): BindingConverter {
+    return ObservableToFlowBinding(this, stateFlow)
 }
 
-fun String.getResourceAsStream(): InputStream {
-    return HarryPlotter::class.java.getResourceAsStream(this)
+fun <T> MutableStateFlow<T>.bind(observable: ObservableValue<T>): BindingConverter {
+    return FlowToObservableBinding(this, observable)
 }
 
-fun List<String>.merge(delimiter: String): String {
-    val builder = StringBuilder()
-    this.forEach {
-        builder.append("$it$delimiter")
-    }
-    return builder.toString()
+fun <T, U> T.bindBidirectional(stateFlow: MutableStateFlow<U>): BindingConverter
+        where T : ObservableValue<U>,
+              T : WritableValue<U> {
+    return BiDirectionalBinding(this.bind(stateFlow), stateFlow.bind(this))
 }
 
-fun List<String>.unlines(): String {
-    return merge("\n")
+fun <T, U> MutableStateFlow<U>.bindBidirectional(observable: T): BindingConverter
+        where T : ObservableValue<U>,
+              T : WritableValue<U> {
+    return BiDirectionalBinding(this.bind(observable), observable.bind(this))
 }
-
-fun List<String>.unwords(): String {
-    return merge(" ")
-}
-
-operator fun <T> StateFlow<T>.invoke(): T{
-    return this.value
-}
-
-operator fun <T> MutableStateFlow<T>.invoke(someValue: T){
-    this.value = someValue
-}
-
-

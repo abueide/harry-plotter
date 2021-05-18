@@ -19,14 +19,15 @@
 
 package com.abysl.harryplotter.model
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class JobStats(
-    var lastPlotTime: Double = 0.0, // seconds
-    var averagePlotTime: Double = 0.0, // seconds
-    var plotsDone: Int = 0,
-    var estimatedPlotsDay: Double = 0.0, // seconds
-    var averagePlotsDay: Double = 0.0, // seconds
-    var results: MutableList<JobResult> = mutableListOf()
+    val lastPlotTime: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
+    val averagePlotTime: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
+    val plotsDone: MutableStateFlow<Int> = MutableStateFlow(0),
+    val estimatedPlotsDay: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
+    val averagePlotsDay: MutableStateFlow<Double> =MutableStateFlow(0.0), // seconds
+    val results: MutableStateFlow<List<JobResult>> = MutableStateFlow(listOf())
 )

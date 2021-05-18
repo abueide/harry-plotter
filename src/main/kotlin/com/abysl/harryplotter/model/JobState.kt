@@ -19,16 +19,32 @@
 
 package com.abysl.harryplotter.model
 
+import com.abysl.harryplotter.util.invoke
+import kotlinx.coroutines.flow.MutableStateFlow
+
 
 data class JobState(
-    var proc: Process? = null,
-    var running: Boolean = false,
-    var phase: Int = 1,
-    var subphase: String = "",
-    var plotId: String = "",
-    var percentage: Double = 0.0,
-    var secondsRunning: Long = 0,
-    var currentResult: JobResult = JobResult(),
-    val results: MutableList<JobResult> = mutableListOf(),
-    var logs: MutableList<String> = mutableListOf(),
-)
+    val proc: MutableStateFlow<Process?> = MutableStateFlow(null),
+    val running: MutableStateFlow<Boolean> = MutableStateFlow(false),
+    val phase: MutableStateFlow<Int> = MutableStateFlow(1),
+    val subphase: MutableStateFlow<String> = MutableStateFlow(""),
+    val plotId: MutableStateFlow<String> = MutableStateFlow(""),
+    val percentage: MutableStateFlow<Double> = MutableStateFlow(0.0),
+    val secondsRunning: MutableStateFlow<Long> = MutableStateFlow(0),
+    val currentResult: MutableStateFlow<JobResult> = MutableStateFlow(JobResult()),
+    val results: MutableStateFlow<List<JobResult>> = MutableStateFlow(mutableListOf()),
+    val logs: MutableStateFlow<List<String>> = MutableStateFlow(mutableListOf()),
+) {
+    fun reset() {
+        proc(null)
+        running(false)
+        phase(1)
+        subphase("")
+        plotId("")
+        percentage(0.0)
+        secondsRunning(0)
+        currentResult(JobResult())
+        results(listOf())
+        logs(listOf())
+    }
+}

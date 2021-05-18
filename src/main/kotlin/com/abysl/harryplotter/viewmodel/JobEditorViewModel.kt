@@ -24,51 +24,56 @@ import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
-import javafx.beans.property.SimpleStringProperty
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class JobEditorViewModel(val mainViewModel: MainViewModel) {
-    val jobName = SimpleStringProperty()
-    val tempDir = SimpleStringProperty()
-    val destDir = SimpleStringProperty()
-    val threads = SimpleStringProperty()
-    val ram = SimpleStringProperty()
-    val plotsToFinish = SimpleStringProperty()
+    val jobName = MutableStateFlow("")
+    val tempDir = MutableStateFlow("")
+    val destDir = MutableStateFlow("")
+    val threads = MutableStateFlow("")
+    val ram = MutableStateFlow("")
+    val plotsToFinish = MutableStateFlow("")
 
     init {
-        loadJob(mainViewModel.selectedPlotJob.get())
-        mainViewModel.selectedPlotJob.addListener { observable, old, new ->
-            if(new == null){
+        loadJob(mainViewModel.selectedPlotJob.value)
+        mainViewModel.selectedPlotJob.onEach {
+            if(it == null){
                 clearJob()
             }else {
-                loadJob(new)
+                loadJob(it)
             }
-        }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     fun loadJob(plotJob: PlotJob?) {
         plotJob ?: return
-        val desc = plotJob.desc
-        jobName.set(desc.name)
-        tempDir.set(desc.tempDir.path)
-        destDir.set(desc.destDir.path)
-        threads.set(desc.threads.toString())
-        ram.set(desc.ram.toString())
-        plotsToFinish.set(desc.plotsToFinish.toString())
+            val desc = plotJob.desc
+            jobName.value = desc.name
+            tempDir.value = desc.tempDir.path
+            destDir.value = desc.destDir.path
+            threads.value = desc.threads.toString()
+            ram.value = desc.ram.toString()
+            plotsToFinish.value = desc.plotsToFinish.toString()
     }
 
     fun clearJob() {
-        jobName.set("")
-        tempDir.set("")
-        destDir.set("")
-        threads.set("")
-        ram.set("")
-        plotsToFinish.set("")
+        jobName.value = ""
+        tempDir.value = ""
+        destDir.value = ""
+        threads.value = ""
+        ram.value = ""
+        plotsToFinish.value = ""
     }
 
     fun getJob(): PlotJob? {
-        val tempDirPath = tempDir.get()
-        val destDirPath = destDir.get()
+        val tempDirPath = tempDir.value
+        val destDirPath = destDir.value
         if (tempDirPath.isBlank() || destDirPath.isBlank()) {
             SimpleDialogs.showAlert(
                 "Directory Not Selected",
@@ -94,54 +99,54 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
             SimpleDialogs.showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
             return null
         }
-        val selectedKey = mainViewModel.selectedKey.get()
+        val selectedKey = mainViewModel.selectedKey.value
         if (selectedKey == null) {
             SimpleDialogs.showAlert("Key Not Selected", "Please add and select a key")
             return null
         }
-        val name = jobName.get().ifBlank { "Plot Job ${mainViewModel.plotJobs.count() + 1}" }
-        val selectedJob = mainViewModel.selectedPlotJob.get()
+        val name = jobName.value.ifBlank { "Plot Job ${mainViewModel.plotJobs.value.size + 1}" }
+        val selectedJob = mainViewModel.selectedPlotJob.value
         val stats = if (selectedJob == null) JobStats() else selectedJob.stats
         val newDescription = JobDescription(
             name, File(tempDirPath), File(destDirPath),
-            threads.get().ifBlank { "0" }.toInt(),
-            ram.get().ifBlank { "0" }.toInt(),
+            threads.value.ifBlank { "0" }.toInt(),
+            ram.value.ifBlank { "0" }.toInt(),
             selectedKey,
-            plotsToFinish.get().ifBlank { "0" }.toInt()
+            plotsToFinish.value.ifBlank { "0" }.toInt()
         )
         return PlotJob(newDescription, stats)
     }
 
     fun onEdit() {
-        val oldKey = mainViewModel.selectedKey.get() ?: return
+        val oldKey = mainViewModel.selectedKey.value ?: return
         KeyEditorWindow(oldKey).show { newKey ->
             if (newKey != null) {
-                mainViewModel.chiaKeys.remove(oldKey)
-                mainViewModel.chiaKeys.add(newKey)
+                mainViewModel.chiaKeys.value -= oldKey
+                mainViewModel.chiaKeys.value += newKey
             }
         }
     }
 
     fun onAdd() {
         KeyEditorWindow().show {
-            if (it != null) mainViewModel.chiaKeys.add(it)
+            if (it != null) mainViewModel.chiaKeys.value += it
         }
     }
 
     fun onCancel() {
-        jobName.set("")
-        tempDir.set("")
-        destDir.set("")
-        threads.set("")
-        ram.set("")
-        mainViewModel.selectedKey.set(null)
+        jobName.value = ""
+        tempDir.value = ""
+        destDir.value = ""
+        threads.value = ""
+        ram.value = ""
+        mainViewModel.selectedKey.value = null
     }
 
     fun onSave() {
-        val selectedJob = mainViewModel.selectedPlotJob.get()
+        val selectedJob = mainViewModel.selectedPlotJob.value
         val newJob = getJob()
         if(selectedJob == null){
-            newJob?.let { mainViewModel.plotJobs.add(it) }
+            newJob?.let { mainViewModel.plotJobs.value += it }
         }else {
         }
     }

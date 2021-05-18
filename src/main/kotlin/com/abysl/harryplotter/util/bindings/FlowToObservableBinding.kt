@@ -17,18 +17,30 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.viewmodel
+package com.abysl.harryplotter.util.bindings
 
-import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.records.ChiaKey
-import javafx.beans.property.SimpleListProperty
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class MainViewModel {
-    val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
-    val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
-    val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-    val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
+class FlowToObservableBinding<T>(
+    val flowProperty: MutableStateFlow<T>,
+    val observableProperty: ObservableValue<T>,
+) : BindingConverter {
+    val binding: ChangeListener<T> = ChangeListener { observable, old, new ->
+        observable.addListener { observable, old, new ->
+            flowProperty?.value = new
+        }
+    }
+    init {
+        start()
+    }
 
+    override fun start() {
+        observableProperty?.addListener(binding)
+    }
+
+    override fun stop() {
+        observableProperty.removeListener(binding)
+    }
 }

@@ -17,18 +17,25 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.viewmodel
+package com.abysl.harryplotter.util
 
-import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.records.ChiaKey
-import javafx.beans.property.SimpleListProperty
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.value.ObservableValue
+import javafx.beans.value.WritableValue
+import javafx.scene.control.TextField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
 
-class MainViewModel {
-    val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
-    val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
-    val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-    val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
-
+fun TextField.limitToInt() {
+    textProperty().addListener { observable, oldValue, newValue ->
+        if (!newValue.matches(Regex("\\d*"))) {
+            text = newValue.replace("[^\\d]".toRegex(), "")
+        }
+    }
 }
+

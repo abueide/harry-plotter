@@ -20,6 +20,8 @@
 package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.util.bind
+import com.abysl.harryplotter.util.bindBidirectional
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.viewmodel.JobEditorViewModel
 import com.abysl.harryplotter.viewmodel.MainViewModel
@@ -28,6 +30,10 @@ import javafx.fxml.FXML
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class JobEditorView {
     @FXML
@@ -77,13 +83,13 @@ class JobEditorView {
 
         keysCombo.itemsProperty().bindBidirectional(viewModel.mainViewModel.chiaKeys)
         mainViewModel.selectedKey.bind(keysCombo.selectionModel.selectedItemProperty())
-        mainViewModel.selectedKey.addListener { observable, old, new ->
-            if (new == null) {
+        mainViewModel.selectedKey.onEach {
+            if (it == null) {
                 keysCombo.selectionModel.clearSelection()
-            } else if (new in keysCombo.items) {
-                keysCombo.selectionModel.select(new)
+            } else if (it in keysCombo.items) {
+                keysCombo.selectionModel.select(it)
             }
-        }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     fun onStopAfter() {

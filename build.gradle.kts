@@ -42,8 +42,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-RC")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.0-RC2")
 }

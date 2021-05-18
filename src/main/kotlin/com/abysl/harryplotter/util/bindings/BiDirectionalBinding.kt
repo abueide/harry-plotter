@@ -17,18 +17,16 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.viewmodel
+package com.abysl.harryplotter.util.bindings
 
-import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.records.ChiaKey
-import javafx.beans.property.SimpleListProperty
-import javafx.beans.property.SimpleObjectProperty
-import kotlinx.coroutines.flow.MutableStateFlow
+class BiDirectionalBinding(val bindingA: BindingConverter, val bindingB: BindingConverter): BindingConverter{
+    override fun start() {
+        bindingA.start()
+        bindingB.start()
+    }
 
-class MainViewModel {
-    val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
-    val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
-    val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-    val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
-
+    override fun stop() {
+        bindingA.stop()
+        bindingB.stop()
+    }
 }
