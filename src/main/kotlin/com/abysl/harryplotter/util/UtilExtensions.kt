@@ -23,6 +23,7 @@ import com.abysl.harryplotter.HarryPlotter
 import javafx.scene.control.TextField
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 import java.io.InputStream
 import java.net.URL
 
@@ -32,6 +33,10 @@ fun String.getResource(): URL {
 
 fun String.getResourceAsStream(): InputStream {
     return HarryPlotter::class.java.getResourceAsStream(this)
+}
+
+fun String.asFile(): File{
+    return File(this)
 }
 
 fun List<String>.merge(delimiter: String): String {

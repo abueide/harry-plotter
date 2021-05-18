@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.util
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -35,5 +36,17 @@ object FileSerializer : KSerializer<File> {
 
     override fun serialize(encoder: Encoder, value: File) {
         encoder.encodeString(value.absolutePath)
+    }
+}
+
+object FileFlowSerializer : KSerializer<MutableStateFlow<File>> {
+    override val descriptor = PrimitiveSerialDescriptor("FileFlow", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): MutableStateFlow<File> {
+        return MutableStateFlow(File(decoder.decodeString()))
+    }
+
+    override fun serialize(encoder: Encoder, value: MutableStateFlow<File>) {
+        encoder.encodeString(value.value.absolutePath)
     }
 }

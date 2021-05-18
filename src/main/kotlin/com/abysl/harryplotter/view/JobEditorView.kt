@@ -22,10 +22,13 @@ package com.abysl.harryplotter.view
 import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.util.bind
 import com.abysl.harryplotter.util.bindBidirectional
+import com.abysl.harryplotter.util.bindings.bind
+import com.abysl.harryplotter.util.bindings.bindBidirectional
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.viewmodel.JobEditorViewModel
 import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.SimpleFileChooser
+import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
@@ -70,6 +73,10 @@ class JobEditorView {
 
         fileChooser = SimpleFileChooser(jobName)
 
+        threads.limitToInt()
+        ram.limitToInt()
+        plotsToFinish.limitToInt()
+
         viewModel.jobName.bindBidirectional(jobName.textProperty())
         viewModel.tempDir.bindBidirectional(tempDir.textProperty())
         viewModel.destDir.bindBidirectional(destDir.textProperty())
@@ -77,17 +84,15 @@ class JobEditorView {
         viewModel.ram.bindBidirectional(ram.textProperty())
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
 
-        threads.limitToInt()
-        ram.limitToInt()
-        plotsToFinish.limitToInt()
-
-        keysCombo.itemsProperty().bindBidirectional(viewModel.mainViewModel.chiaKeys)
+        viewModel.mainViewModel.chiaKeys.bind(keysCombo.itemsProperty().get())
         mainViewModel.selectedKey.bind(keysCombo.selectionModel.selectedItemProperty())
         mainViewModel.selectedKey.onEach {
-            if (it == null) {
-                keysCombo.selectionModel.clearSelection()
-            } else if (it in keysCombo.items) {
-                keysCombo.selectionModel.select(it)
+            Platform.runLater {
+                if (it == null) {
+                    keysCombo.selectionModel.clearSelection()
+                } else if (it in keysCombo.items) {
+                    keysCombo.selectionModel.select(it)
+                }
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
     }

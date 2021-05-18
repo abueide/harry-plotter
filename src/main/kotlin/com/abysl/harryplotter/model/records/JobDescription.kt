@@ -20,23 +20,23 @@
 package com.abysl.harryplotter.model.records
 
 import com.abysl.harryplotter.util.FileSerializer
+import com.abysl.harryplotter.util.invoke
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import java.io.File
 
 @JvmRecord
-@Serializable
+@Serializable(with = FileSerializer::class)
 data class JobDescription(
-    val name: String,
-    @Serializable(with = FileSerializer::class)
-    val tempDir: File,
-    @Serializable(with = FileSerializer::class)
-    val destDir: File,
-    val threads: Int,
-    val ram: Int,
-    val key: ChiaKey,
-    val plotsToFinish: Int, // -1  = keep going forever
+    val name: MutableStateFlow<String>,
+    val tempDir: MutableStateFlow<File>,
+    val destDir: MutableStateFlow<File>,
+    val threads: MutableStateFlow<Int>,
+    val ram: MutableStateFlow<Int>,
+    val key: MutableStateFlow<ChiaKey>,
+    val plotsToFinish: MutableStateFlow<Int>, // -1  = keep going forever
 ) {
     override fun toString(): String {
-        return name
+        return name()
     }
 }

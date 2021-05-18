@@ -51,12 +51,12 @@ class PlotJob(val desc: JobDescription, val stats: JobStats = JobStats()) {
 
             val args = mutableListOf<String>()
             args.addAll(listOf("plots", "create", "-k", "32"))
-            if (desc.key.fingerprint.isNotBlank()) args.addAll(listOf("-a", desc.key.fingerprint))
-            else if (desc.key.farmerKey.isNotBlank() && desc.key.poolKey.isNotBlank()) {
-                args.addAll(listOf("-f", desc.key.farmerKey, "-p", desc.key.poolKey))
+            if (desc.key().fingerprint.isNotBlank()) args.addAll(listOf("-a", desc.key().fingerprint))
+            else if (desc.key().farmerKey.isNotBlank() && desc.key().poolKey.isNotBlank()) {
+                args.addAll(listOf("-f", desc.key().farmerKey, "-p", desc.key().poolKey))
             }
-            if (desc.ram > MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
-            if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
+            if (desc.ram() > MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
+            if (desc.threads() > 0) args.addAll(listOf("-r", desc.threads.toString()))
             state.proc(chia.runCommandAsync(
                 ioDelay = 10,
                 outputCallback = ::parseLine,
@@ -64,7 +64,7 @@ class PlotJob(val desc: JobDescription, val stats: JobStats = JobStats()) {
                 "plots",
                 "create",
                 "-k", "32",
-                "-a", desc.key.fingerprint,
+                "-a", desc.key().fingerprint,
                 "-b", desc.ram.toString(),
                 "-r", desc.threads.toString(),
                 "-t", desc.tempDir.toString(),
@@ -84,7 +84,7 @@ class PlotJob(val desc: JobDescription, val stats: JobStats = JobStats()) {
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
         if (plotId.isNotBlank()) {
-            val files = desc.tempDir.listFiles()
+            val files = desc.tempDir().listFiles()
                 ?.filter { it.toString().contains(plotId) && it.extension == "tmp" }
                 ?.map { deleteFile(it) }
             if (block) {
@@ -115,7 +115,7 @@ class PlotJob(val desc: JobDescription, val stats: JobStats = JobStats()) {
     private fun whenDone() {
         stats.plotsDone.value++
         stats.results.value += state.currentResult()
-        if (state.running() && (stats.plotsDone() < desc.plotsToFinish || desc.plotsToFinish == 0)) {
+        if (state.running() && (stats.plotsDone() < desc.plotsToFinish() || desc.plotsToFinish() == 0)) {
             stop()
             start()
         } else {
