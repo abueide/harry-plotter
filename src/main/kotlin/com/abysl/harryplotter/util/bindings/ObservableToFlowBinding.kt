@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
-import kotlin.properties.ObservableProperty
 
 class ObservableToFlowBinding<T>(val writableValue: WritableValue<T>, val stateFlow: StateFlow<T>): BindingConverter  {
 
@@ -41,7 +40,9 @@ class ObservableToFlowBinding<T>(val writableValue: WritableValue<T>, val stateF
     override fun start() {
         job = stateFlow.onEach { newValue ->
             CoroutineScope(Dispatchers.JavaFx).launch {
-                writableValue.value = newValue
+                if(writableValue.value?.equals(newValue) != true) {
+                    writableValue.value = newValue
+                }
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
     }

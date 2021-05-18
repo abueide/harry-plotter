@@ -29,7 +29,9 @@ class FlowToObservableBinding<T>(
 ) : BindingConverter {
     val binding: ChangeListener<T> = ChangeListener { observable, old, new ->
         observable.addListener { observable, old, new ->
-            flowProperty?.value = new
+            if(old?.equals(new) != true) {
+                flowProperty.value = new
+            }
         }
     }
     init {
@@ -37,7 +39,7 @@ class FlowToObservableBinding<T>(
     }
 
     override fun start() {
-        observableProperty?.addListener(binding)
+        observableProperty.addListener(binding)
     }
 
     override fun stop() {
