@@ -19,6 +19,21 @@
 
 package com.abysl.harryplotter.viewmodel
 
-class JobsListViewModel(val mainViewModel: MainViewModel) {
+import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.util.invoke
+import kotlinx.coroutines.flow.MutableStateFlow
 
+class JobsListViewModel() {
+    val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
+    val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
+
+    fun saveJob(description: JobDescription){
+        val selectedJob = selectedPlotJob()
+        if (selectedJob == null) {
+            plotJobs.value += PlotJob(description)
+        } else {
+            selectedJob.description = description
+        }
+    }
 }

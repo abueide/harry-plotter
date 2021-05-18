@@ -55,10 +55,14 @@ fun List<String>.unwords(): String {
     return merge(" ")
 }
 
+// Syntax sugar to make chains with multiple StateFlows more readable, example:
+// mainViewModel.jobsListViewModel.jobsList.value.first().logs.value ->
+// mainViewModel.jobsListViewmodel.jobsList().first().logs()
 operator fun <T> StateFlow<T>.invoke(): T{
     return this.value
 }
 
+// Same as above, but for setting values
 operator fun <T> MutableStateFlow<T>.invoke(someValue: T){
     this.value = someValue
 }

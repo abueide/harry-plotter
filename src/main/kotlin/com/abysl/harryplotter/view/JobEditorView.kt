@@ -65,11 +65,9 @@ class JobEditorView {
     private lateinit var fileChooser: SimpleFileChooser
 
     lateinit var viewModel: JobEditorViewModel
-    lateinit var mainViewModel: MainViewModel
 
-    fun initialized(mainViewModel: MainViewModel) {
-        this.mainViewModel = mainViewModel
-        this.viewModel = JobEditorViewModel(this.mainViewModel)
+    fun initialized(jobEditorViewModel: JobEditorViewModel) {
+        this.viewModel = jobEditorViewModel
 
         fileChooser = SimpleFileChooser(jobName)
 
@@ -86,8 +84,8 @@ class JobEditorView {
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
 
         // Bind selected key to viewmodel bidirectionally
-        mainViewModel.selectedKey.bind(keysCombo.selectionModel.selectedItemProperty())
-        mainViewModel.selectedKey.onEach {
+        jobEditorViewModel.selectedKey.bind(keysCombo.selectionModel.selectedItemProperty())
+        jobEditorViewModel.selectedKey.onEach {
             Platform.runLater {
                 if (it == null) {
                     keysCombo.selectionModel.clearSelection()
@@ -97,7 +95,7 @@ class JobEditorView {
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
         // Bind Chia Keys Combo Box Items to ViewModel
-        viewModel.mainViewModel.chiaKeys.onEach {
+        viewModel.chiaKeys.onEach {
             Platform.runLater { keysCombo.items = FXCollections.observableList(it) }
         }.launchIn(CoroutineScope(Dispatchers.IO))
     }

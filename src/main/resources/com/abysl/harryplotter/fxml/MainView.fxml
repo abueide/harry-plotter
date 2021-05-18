@@ -65,10 +65,10 @@
               <children>
                 <HBox layoutY="10.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <children>
-                    <fx:include fx:id="jobsList" source="JobsListView.fxml" />
+                    <fx:include fx:id="jobsListView" source="JobsListView.fxml" />
                     <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                       <children>
-                        <fx:include fx:id="jobEditor" source="JobEditor.fxml" />
+                        <fx:include fx:id="jobEditorView" source="JobEditor.fxml" />
                         <fx:include fx:id="jobStatusView" source="JobStatusView.fxml" />
                       </children>
                     </VBox>

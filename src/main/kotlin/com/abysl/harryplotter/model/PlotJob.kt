@@ -32,7 +32,7 @@ import kotlinx.serialization.Transient
 import java.io.File
 
 @Serializable
-class PlotJob(var desc: JobDescription, val stats: JobStats = JobStats()) {
+class PlotJob(var description: JobDescription, val stats: JobStats = JobStats()) {
     @Transient
     val state: JobState = JobState()
 
@@ -51,12 +51,12 @@ class PlotJob(var desc: JobDescription, val stats: JobStats = JobStats()) {
 
             val args = mutableListOf<String>()
             args.addAll(listOf("plots", "create", "-k", "32"))
-            if (desc.key().fingerprint.isNotBlank()) args.addAll(listOf("-a", desc.key().fingerprint))
-            else if (desc.key().farmerKey.isNotBlank() && desc.key().poolKey.isNotBlank()) {
-                args.addAll(listOf("-f", desc.key().farmerKey, "-p", desc.key().poolKey))
+            if (description.key.fingerprint.isNotBlank()) args.addAll(listOf("-a", description.key.fingerprint))
+            else if (description.key.farmerKey.isNotBlank() && description.key.poolKey.isNotBlank()) {
+                args.addAll(listOf("-f", description.key.farmerKey, "-p", description.key.poolKey))
             }
-            if (desc.ram() > MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
-            if (desc.threads() > 0) args.addAll(listOf("-r", desc.threads.toString()))
+            if (description.ram > MINIMUM_RAM) args.addAll(listOf("-b", description.ram.toString()))
+            if (description.threads > 0) args.addAll(listOf("-r", description.threads.toString()))
             state.proc(chia.runCommandAsync(
                 ioDelay = 10,
                 outputCallback = ::parseLine,
@@ -64,11 +64,11 @@ class PlotJob(var desc: JobDescription, val stats: JobStats = JobStats()) {
                 "plots",
                 "create",
                 "-k", "32",
-                "-a", desc.key().fingerprint,
-                "-b", desc.ram.toString(),
-                "-r", desc.threads.toString(),
-                "-t", desc.tempDir.toString(),
-                "-d", desc.destDir.toString(),
+                "-a", description.key.fingerprint,
+                "-b", description.ram.toString(),
+                "-r", description.threads.toString(),
+                "-t", description.tempDir.toString(),
+                "-d", description.destDir.toString(),
             ))
         }
     }
@@ -84,7 +84,7 @@ class PlotJob(var desc: JobDescription, val stats: JobStats = JobStats()) {
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
         if (plotId.isNotBlank()) {
-            val files = desc.tempDir().listFiles()
+            val files = description.tempDir.listFiles()
                 ?.filter { it.toString().contains(plotId) && it.extension == "tmp" }
                 ?.map { deleteFile(it) }
             if (block) {
@@ -115,7 +115,7 @@ class PlotJob(var desc: JobDescription, val stats: JobStats = JobStats()) {
     private fun whenDone() {
         stats.plotsDone.value++
         stats.results.value += state.currentResult()
-        if (state.running() && (stats.plotsDone() < desc.plotsToFinish() || desc.plotsToFinish() == 0)) {
+        if (state.running() && (stats.plotsDone() < description.plotsToFinish || description.plotsToFinish == 0)) {
             stop()
             start()
         } else {
@@ -177,7 +177,7 @@ class PlotJob(var desc: JobDescription, val stats: JobStats = JobStats()) {
     }
 
     override fun toString(): String {
-        return if (state.running()) "$desc - ${state.percentage}%" else desc.toString()
+        return if (state.running()) "$description - ${state.percentage}%" else description.toString()
     }
 
     companion object {

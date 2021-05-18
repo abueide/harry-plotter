@@ -19,6 +19,42 @@
 
 package com.abysl.harryplotter.viewmodel
 
-class JobStatusViewModel(val mainViewModel: MainViewModel) {
+import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.util.invoke
+import javafx.application.Platform
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
+class JobStatusViewModel {
+    var logsScope = CoroutineScope(Dispatchers.IO)
+    var shownLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+    var shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
+
+    private var lastLogsSize = 0
+
+    fun loadJob(job: PlotJob) {
+        clearJob()
+        shownJob.value = job
+        logsScope = CoroutineScope(Dispatchers.IO)
+        job.state.logs
+            .onEach { logsList ->
+                lastLogsSize = shownLogs().size
+                shownLogs.value = logsList
+            }
+            .launchIn(logsScope)
+    }
+
+    fun clearJob(){
+        logsScope.cancel()
+        shownJob.value = null
+        shownLogs.value = listOf()
+    }
+
+    fun shouldAppend(): Boolean{
+        return shownLogs().size == lastLogsSize + 1
+    }
 }

@@ -21,14 +21,8 @@ package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.chia.ChiaLocator
-import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.DataModel.chia
-import com.abysl.harryplotter.model.DataModel.jobs
-import com.abysl.harryplotter.model.DataModel.keys
-import com.abysl.harryplotter.model.DataModel.selectedKey
-import com.abysl.harryplotter.viewmodel.JobEditorViewModel
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
@@ -39,28 +33,33 @@ import javafx.scene.control.ButtonType
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 
-class MainView{
+class MainView {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
     private lateinit var mainBox: VBox
 
     @FXML
-    private lateinit var jobsListView: JobsListView
+    private lateinit var jobsListViewController: JobsListView
 
     @FXML
-    private lateinit var jobEditorView: JobEditorView
+    private lateinit var jobEditorViewController: JobEditorView
 
     @FXML
     private lateinit var jobStatusViewController: JobStatusView
 
     lateinit var hostServices: HostServices
     lateinit var toggleTheme: () -> Unit
+    lateinit var viewModel: MainViewModel
 
-    val viewModel = MainViewModel()
+
+    fun initialized() {
+        viewModel = MainViewModel(findChia())
+        jobsListViewController.initialized(viewModel.jobsListViewModel)
+        jobEditorViewController.initialized(viewModel.jobEditorViewModel)
+        jobStatusViewController.initialized(viewModel.jobStatusViewModel)
+    }
 
     // Calls after the JavaFX vars are populated so they aren't null
-    fun initialized() {
-    }
 
     fun onAbout() {
         VersionPromptWindow.show()
@@ -75,7 +74,8 @@ class MainView{
     }
 
     fun onExit() {
-        if (jobs.any { it.state.running }) {
+        val jobs = viewModel.jobsListViewModel.plotJobs()
+        if (jobs.any { it.state.running() }) {
             val alert = Alert(Alert.AlertType.CONFIRMATION)
             alert.title = "Let plot jobs finish?"
             alert.headerText = "Let plot jobs finish?"
@@ -91,4 +91,13 @@ class MainView{
         }
         (mainBox.scene.window as Stage).close()
     }
+
+    fun findChia(): ChiaCli {
+        val chiaLocator = ChiaLocator(mainBox)
+        val exePath = chiaLocator.getExePath()
+        Prefs.exePath = exePath.path
+        return ChiaCli(exePath, chiaLocator.getConfigFile())
+    }
+
+
 }

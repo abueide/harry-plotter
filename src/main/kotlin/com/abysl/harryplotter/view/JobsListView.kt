@@ -2,14 +2,9 @@ package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.DataModel.chia
-import com.abysl.harryplotter.model.DataModel.jobs
-import com.abysl.harryplotter.model.DataModel.jobsFlow
-import com.abysl.harryplotter.model.DataModel.selectedJob
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
-import com.abysl.harryplotter.viewmodel.JobEditorViewModel
 import com.abysl.harryplotter.viewmodel.JobsListViewModel
-import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
@@ -22,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.concurrent.CancellationException
 
@@ -36,21 +32,19 @@ class JobsListView {
     private var staggerRoutines: MutableList<Job> = mutableListOf()
 
     lateinit var viewModel: JobsListViewModel
-    lateinit var mainViewModel: MainViewModel
 
-    fun initialized(mainViewModel: MainViewModel) {
-        this.mainViewModel = mainViewModel
-        this.viewModel =
+    fun initialized(jobsListViewModel: JobsListViewModel) {
+        this.viewModel = jobsListViewModel
 
-        jobsFlow
+       viewModel.plotJobs
             .onEach {
                 Platform.runLater {
                     jobsView.items.setAll(it)
-                    jobsView.selectionModel.select(selectedJob)
+                    jobsView.selectionModel.select(viewModel.selectedPlotJob())
                 }
             }
         jobsView.selectionModel.selectedItemProperty().addListener { obs, old, new ->
-            selectedJob = new
+            viewModel.selectedPlotJob.value = new
         }
         jobsView.contextMenu = jobsMenu
         stagger.limitToInt()
@@ -65,7 +59,7 @@ class JobsListView {
     fun onStopAll() {
         if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
             staggerRoutines.forEach { it.cancel(CancellationException("User Stopped All")) }
-            jobs.forEach { it.stop() }
+            viewModel.plotJobs().forEach { it.stop() }
         }
     }
 
@@ -73,16 +67,17 @@ class JobsListView {
 
     val duplicate = MenuItem("Duplicate").also {
         it.setOnAction {
-            val job = selectedJob ?: return@setOnAction
-            jobs += PlotJob(chia, job.jobDesc)
+            val job = viewModel.selectedPlotJob() ?: return@setOnAction
+            viewModel.plotJobs.value += PlotJob(job.description)
         }
         jobsMenu.items.add(it)
     }
+
     val delete = MenuItem("Delete").also {
         it.setOnAction {
-            val job = selectedJob ?: return@setOnAction
-            if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.jobDesc}")) {
-                jobs -= job
+            val job = viewModel.selectedPlotJob() ?: return@setOnAction
+            if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.description}")) {
+                viewModel.plotJobs.value -= job
             }
         }
         jobsMenu.items.add(it)
@@ -97,7 +92,7 @@ class JobsListView {
     }
 
     fun staggerRoutine() = CoroutineScope(Dispatchers.Default).launch {
-        jobs.forEach {
+        viewModel.plotJobs().forEach {
             it.start()
             delay(Prefs.stagger * MILLIS_PER_MINUTE)
         }

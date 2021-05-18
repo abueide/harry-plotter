@@ -25,26 +25,42 @@ import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.util.invoke
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
-class MainViewModel {
-    val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
-    val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
-    val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-    val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
+class MainViewModel(val chia: ChiaCli) {
 
-    private val jobsListViewModel: JobsListViewModel = JobsListViewModel(this.mainViewModel)
+    val jobsListViewModel: JobsListViewModel = JobsListViewModel()
+    val jobEditorViewModel: JobEditorViewModel = JobEditorViewModel()
+    val jobStatusViewModel: JobStatusViewModel = JobStatusViewModel()
 
     init {
-        val chiaLocator = ChiaLocator(mainBox)
-        val exePath = chiaLocator.getExePath()
-        Prefs.exePath = exePath.path
-        chia = ChiaCli(exePath, chiaLocator.getConfigFile())
-        jobsListView.initialized()
-        jobEditorView.initialized()
-        jobStatusViewController.initialized()
-        keys += chia.readKeys()
-        jobs += Config.getPlotJobs().map { PlotJob(chia, it) }
-        selectedKey = keys.first()
+        jobEditorViewModel.initialized(savedCallback = jobsListViewModel::saveJob)
+
+
+
+        jobsListViewModel.plotJobs.value += Config.getPlotJobs().map { jobDescription ->
+            PlotJob(jobDescription).also { job -> job.init(chia) }
+        }
+        jobEditorViewModel.chiaKeys.value += chia.readKeys()
+        jobEditorViewModel.selectedKey.value = jobEditorViewModel.chiaKeys().firstOrNull()
+
+        jobEditorViewModel.loadJob(jobsListViewModel.selectedPlotJob())
+        jobsListViewModel.selectedPlotJob.onEach {
+            if (it == null) {
+                jobEditorViewModel.clearJob()
+                jobStatusViewModel.clearJob()
+            } else {
+                jobEditorViewModel.loadJob(it)
+                jobStatusViewModel.loadJob(it)
+            }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
+
+        //"Plot Job ${jobsListViewModel.plotJobs.value.size + 1}"
     }
 }

@@ -20,17 +20,15 @@
 package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import java.io.File
 
-class JobEditorViewModel(val mainViewModel: MainViewModel) {
+class JobEditorViewModel() {
     val jobName = MutableStateFlow("")
     val tempDir = MutableStateFlow("")
     val destDir = MutableStateFlow("")
@@ -38,20 +36,18 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
     val ram = MutableStateFlow("")
     val plotsToFinish = MutableStateFlow("")
 
-    init {
-        loadJob(mainViewModel.selectedPlotJob.value)
-        mainViewModel.selectedPlotJob.onEach {
-            if (it == null) {
-                clearJob()
-            } else {
-                loadJob(it)
-            }
-        }.launchIn(CoroutineScope(Dispatchers.IO))
+    val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
+    val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
+
+    private lateinit var savedCallback: (JobDescription) -> Unit
+
+    fun initialized(savedCallback: (JobDescription) -> Unit){
+        this.savedCallback = savedCallback
     }
 
     fun loadJob(plotJob: PlotJob?) {
         plotJob ?: return
-        val desc = plotJob.desc
+        val desc = plotJob.description
         jobName.value = desc.name
         tempDir.value = desc.tempDir.path
         destDir.value = desc.destDir.path
@@ -69,7 +65,7 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
         plotsToFinish.value = ""
     }
 
-    fun getJobDescription(): JobDescription? {
+    fun getJobDescription(defaultName: String = "Unnamed Job"): JobDescription? {
         val tempDirPath = tempDir.value
         val destDirPath = destDir.value
         if (tempDirPath.isBlank() || destDirPath.isBlank()) {
@@ -97,35 +93,35 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
             SimpleDialogs.showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
             return null
         }
-        val selectedKey = mainViewModel.selectedKey.value
-        if (selectedKey == null) {
+        val key = selectedKey()
+        if (key == null) {
             SimpleDialogs.showAlert("Key Not Selected", "Please add and select a key")
             return null
         }
-        val name = jobName.value.ifBlank { "Plot Job ${mainViewModel.plotJobs.value.size + 1}" }
+        val name = jobName.value.ifBlank { defaultName }
         val newDescription = JobDescription(
             name, File(tempDirPath), File(destDirPath),
             threads.value.ifBlank { "0" }.toInt(),
             ram.value.ifBlank { "0" }.toInt(),
-            selectedKey,
+            key,
             plotsToFinish.value.ifBlank { "0" }.toInt()
         )
         return newDescription
     }
 
     fun onEdit() {
-        val oldKey = mainViewModel.selectedKey.value ?: return
+        val oldKey = selectedKey() ?: return
         KeyEditorWindow(oldKey).show { newKey ->
             if (newKey != null) {
-                mainViewModel.chiaKeys.value -= oldKey
-                mainViewModel.chiaKeys.value += newKey
+                chiaKeys.value -= oldKey
+                chiaKeys.value += newKey
             }
         }
     }
 
     fun onAdd() {
         KeyEditorWindow().show {
-            if (it != null) mainViewModel.chiaKeys.value += it
+            if (it != null) chiaKeys.value += it
         }
     }
 
@@ -135,16 +131,12 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
         destDir.value = ""
         threads.value = ""
         ram.value = ""
-        mainViewModel.selectedKey.value = null
+        selectedKey.value = null
     }
 
     fun onSave() {
         val newDesc = getJobDescription() ?: return
-        val selectedJob = mainViewModel.selectedPlotJob.value
-        if (selectedJob == null) {
-            mainViewModel.plotJobs.value += PlotJob(newDesc)
-        } else {
-            selectedJob.desc = newDesc
-        }
+        savedCallback(newDesc)
+
     }
 }
