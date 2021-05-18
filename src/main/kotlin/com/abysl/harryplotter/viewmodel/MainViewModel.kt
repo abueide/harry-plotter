@@ -30,5 +30,4 @@ class MainViewModel {
     val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
     val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
-
 }

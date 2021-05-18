@@ -22,6 +22,7 @@ package com.abysl.harryplotter.viewmodel
 import com.abysl.harryplotter.model.JobStats
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,9 +55,9 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
     fun loadJob(plotJob: PlotJob?) {
         plotJob ?: return
             val desc = plotJob.desc
-            jobName.value = desc.name
-            tempDir.value = desc.tempDir.path
-            destDir.value = desc.destDir.path
+            jobName.value = desc.name()
+            tempDir.value = desc.tempDir().path
+            destDir.value = desc.destDir().path
             threads.value = desc.threads.toString()
             ram.value = desc.ram.toString()
             plotsToFinish.value = desc.plotsToFinish.toString()
@@ -71,7 +72,7 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
         plotsToFinish.value = ""
     }
 
-    fun getJob(): PlotJob? {
+    fun getJob(): JobDescription? {
         val tempDirPath = tempDir.value
         val destDirPath = destDir.value
         if (tempDirPath.isBlank() || destDirPath.isBlank()) {
@@ -105,8 +106,6 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
             return null
         }
         val name = jobName.value.ifBlank { "Plot Job ${mainViewModel.plotJobs.value.size + 1}" }
-        val selectedJob = mainViewModel.selectedPlotJob.value
-        val stats = if (selectedJob == null) JobStats() else selectedJob.stats
         val newDescription = JobDescription(
             name, File(tempDirPath), File(destDirPath),
             threads.value.ifBlank { "0" }.toInt(),
@@ -114,7 +113,7 @@ class JobEditorViewModel(val mainViewModel: MainViewModel) {
             selectedKey,
             plotsToFinish.value.ifBlank { "0" }.toInt()
         )
-        return PlotJob(newDescription, stats)
+        return newDescription
     }
 
     fun onEdit() {

@@ -1,8 +1,5 @@
 package com.abysl.harryplotter.view
 
-import com.abysl.harryplotter.model.DataModel.jobs
-import com.abysl.harryplotter.model.DataModel.selectedJob
-import com.abysl.harryplotter.model.DataModel.selectedJobFlow
 import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
 import javafx.application.Platform

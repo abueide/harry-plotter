@@ -20,8 +20,6 @@
 package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.util.bind
-import com.abysl.harryplotter.util.bindBidirectional
 import com.abysl.harryplotter.util.bindings.bind
 import com.abysl.harryplotter.util.bindings.bindBidirectional
 import com.abysl.harryplotter.util.limitToInt
@@ -29,6 +27,7 @@ import com.abysl.harryplotter.viewmodel.JobEditorViewModel
 import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.application.Platform
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
@@ -77,6 +76,7 @@ class JobEditorView {
         ram.limitToInt()
         plotsToFinish.limitToInt()
 
+        // Bind JobDescription to viewmodel bidirectionally
         viewModel.jobName.bindBidirectional(jobName.textProperty())
         viewModel.tempDir.bindBidirectional(tempDir.textProperty())
         viewModel.destDir.bindBidirectional(destDir.textProperty())
@@ -84,7 +84,7 @@ class JobEditorView {
         viewModel.ram.bindBidirectional(ram.textProperty())
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
 
-        viewModel.mainViewModel.chiaKeys.bind(keysCombo.itemsProperty().get())
+        // Bind selected key to viewmodel bidirectionally
         mainViewModel.selectedKey.bind(keysCombo.selectionModel.selectedItemProperty())
         mainViewModel.selectedKey.onEach {
             Platform.runLater {
@@ -94,6 +94,10 @@ class JobEditorView {
                     keysCombo.selectionModel.select(it)
                 }
             }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
+        // Bind Chia Keys Combo Box Items to ViewModel
+        viewModel.mainViewModel.chiaKeys.onEach {
+            Platform.runLater { keysCombo.items = FXCollections.observableList(it) }
         }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
