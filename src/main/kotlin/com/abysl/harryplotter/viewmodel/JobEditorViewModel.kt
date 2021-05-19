@@ -50,6 +50,7 @@ class JobEditorViewModel {
     fun loadJob(plotJob: PlotJob?) {
         plotJob ?: return
         val desc = plotJob.description
+        selectedKey.value = desc.key
         jobName.value = desc.name
         tempDir.value = desc.tempDir.path
         destDir.value = desc.destDir.path
@@ -89,7 +90,7 @@ class JobEditorViewModel {
         destDir.value = ""
         threads.value = ""
         ram.value = ""
-        selectedKey.value = null
+        selectedKey.value = chiaKeys.value.firstOrNull()
     }
 
     fun onSave() {

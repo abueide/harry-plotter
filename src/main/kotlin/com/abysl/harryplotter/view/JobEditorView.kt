@@ -84,21 +84,35 @@ class JobEditorView {
         viewModel.ram.bindBidirectional(ram.textProperty())
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
 
-        // Bind selected key to viewmodel bidirectionally
-        keysCombo.selectionModel.select(viewModel.selectedKey())
-        jobEditorViewModel.selectedKey.bind(keysCombo.selectionModel.selectedItemProperty())
-        jobEditorViewModel.selectedKey.onEach {
-            Platform.runLater {
-                if (it == null) {
-                    keysCombo.selectionModel.clearSelection()
-                } else if (it in keysCombo.items) {
-                    keysCombo.selectionModel.select(it)
-                }
-            }
+        viewModel.plotsToFinish.onEach {
+            stopAfterCheck.selectedProperty().set(it.toIntOrNull() ?: 0 > 0)
         }.launchIn(CoroutineScope(Dispatchers.IO))
+
+        stopAfterCheck.selectedProperty().addListener {observable, old, new ->
+            plotsToFinish.isDisable = !new
+        }
+
         // Bind Chia Keys Combo Box Items to ViewModel
         viewModel.chiaKeys.onEach {
             Platform.runLater { keysCombo.items = FXCollections.observableList(it) }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
+
+        // Bind selected key to viewmodel bidirectionally
+        keysCombo.selectionModel.select(viewModel.selectedKey())
+        keysCombo.selectionModel.selectedItemProperty().addListener { observable, old, new ->
+            if(old != new) {
+                jobEditorViewModel.selectedKey.value = new
+            }
+        }
+        jobEditorViewModel.selectedKey.onEach {
+            println("Selecting")
+            Platform.runLater {
+                if (it == null) {
+                    keysCombo.selectionModel.clearSelection()
+                } else{
+                    keysCombo.selectionModel.select(it)
+                }
+            }
         }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
