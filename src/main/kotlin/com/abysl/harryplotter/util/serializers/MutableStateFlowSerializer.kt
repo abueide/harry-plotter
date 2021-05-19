@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.util.serializers
 
+import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
@@ -29,6 +30,6 @@ import kotlinx.serialization.encoding.Encoder
 @Serializer(forClass = MutableStateFlow::class)
 class MutableStateFlowSerializer<T>(private val dataSerializer: KSerializer<T>) : KSerializer<MutableStateFlow<T>> {
     override val descriptor: SerialDescriptor = dataSerializer.descriptor
-    override fun serialize(encoder: Encoder, value: MutableStateFlow<T>) = dataSerializer.serialize(encoder, value.value)
+    override fun serialize(encoder: Encoder, value: MutableStateFlow<T>) = dataSerializer.serialize(encoder, value())
     override fun deserialize(decoder: Decoder) = MutableStateFlow(dataSerializer.deserialize(decoder))
 }

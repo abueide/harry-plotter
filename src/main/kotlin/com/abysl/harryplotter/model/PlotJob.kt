@@ -131,7 +131,6 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
             if (line.contains("ID: ")) {
                 state.plotId(line.split("ID: ").last())
             }
-
             when {
                 line.contains("Starting phase") -> {
                     val phase = line
