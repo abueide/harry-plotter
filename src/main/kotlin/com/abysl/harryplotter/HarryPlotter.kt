@@ -20,10 +20,10 @@
 package com.abysl.harryplotter
 
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.view.MainView
 import com.abysl.harryplotter.util.FxUtil
 import com.abysl.harryplotter.util.getResource
 import com.abysl.harryplotter.util.getResourceAsStream
+import com.abysl.harryplotter.view.MainView
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.Application
 import javafx.fxml.FXMLLoader

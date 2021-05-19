@@ -20,9 +20,9 @@
 package com.abysl.harryplotter.windows
 
 import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.view.KeyEditorView
 import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.util.FxUtil
+import com.abysl.harryplotter.view.KeyEditorView
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene

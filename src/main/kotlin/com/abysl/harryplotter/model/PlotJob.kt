@@ -39,11 +39,11 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
     @Transient
     lateinit var chia: ChiaCli
 
-    fun init(chia: ChiaCli){
+    fun init(chia: ChiaCli) {
         this.chia = chia
     }
 
-     fun start() {
+    fun start() {
         if (state.running() || state.proc()?.isAlive == true) {
             println("Trying to start new process while old one is still running, ignoring start job.")
         } else {
@@ -57,19 +57,21 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
             }
             if (description.ram > MINIMUM_RAM) args.addAll(listOf("-b", description.ram.toString()))
             if (description.threads > 0) args.addAll(listOf("-r", description.threads.toString()))
-            state.proc(chia.runCommandAsync(
-                ioDelay = 10,
-                outputCallback = ::parseLine,
-                completedCallback = ::whenDone,
-                "plots",
-                "create",
-                "-k", "32",
-                "-a", description.key.fingerprint,
-                "-b", description.ram.toString(),
-                "-r", description.threads.toString(),
-                "-t", description.tempDir.toString(),
-                "-d", description.destDir.toString(),
-            ))
+            state.proc(
+                chia.runCommandAsync(
+                    ioDelay = 10,
+                    outputCallback = ::parseLine,
+                    completedCallback = ::whenDone,
+                    "plots",
+                    "create",
+                    "-k", "32",
+                    "-a", description.key.fingerprint,
+                    "-b", description.ram.toString(),
+                    "-r", description.threads.toString(),
+                    "-t", description.tempDir.toString(),
+                    "-d", description.destDir.toString(),
+                )
+            )
         }
     }
 

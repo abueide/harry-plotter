@@ -33,6 +33,4 @@ data class JobStats(
     val estimatedPlotsDay: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
     val averagePlotsDay: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
     val results: MutableStateFlow<List<JobResult>> = MutableStateFlow(listOf())
-){
-}
-
+)

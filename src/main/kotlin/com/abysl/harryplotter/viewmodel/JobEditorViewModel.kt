@@ -27,7 +27,6 @@ import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.onEach
 import java.io.File
 
 class JobEditorViewModel {
@@ -96,7 +95,6 @@ class JobEditorViewModel {
     fun onSave() {
         val newDesc = getJobDescription() ?: return
         savedCallback(newDesc)
-
     }
 
     fun getJobDescription(defaultName: String = "Unnamed Job"): JobDescription? {

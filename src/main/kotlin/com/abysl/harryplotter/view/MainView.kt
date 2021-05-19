@@ -51,7 +51,6 @@ class MainView {
     lateinit var toggleTheme: () -> Unit
     lateinit var viewModel: MainViewModel
 
-
     fun initialized() {
         viewModel = MainViewModel(findChia())
         jobsListViewController.initialized(viewModel.jobsListViewModel)
@@ -98,6 +97,4 @@ class MainView {
         Prefs.exePath = exePath.path
         return ChiaCli(exePath, chiaLocator.getConfigFile())
     }
-
-
 }

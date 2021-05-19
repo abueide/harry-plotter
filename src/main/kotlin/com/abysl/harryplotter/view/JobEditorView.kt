@@ -20,12 +20,10 @@
 package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.util.bindings.bind
 import com.abysl.harryplotter.util.bindings.bindBidirectional
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.viewmodel.JobEditorViewModel
-import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.application.Platform
 import javafx.collections.FXCollections
@@ -88,7 +86,7 @@ class JobEditorView {
             stopAfterCheck.selectedProperty().set(it.toIntOrNull() ?: 0 > 0)
         }.launchIn(CoroutineScope(Dispatchers.IO))
 
-        stopAfterCheck.selectedProperty().addListener {observable, old, new ->
+        stopAfterCheck.selectedProperty().addListener { observable, old, new ->
             plotsToFinish.isDisable = !new
         }
 
@@ -100,7 +98,7 @@ class JobEditorView {
         // Bind selected key to viewmodel bidirectionally
         keysCombo.selectionModel.select(viewModel.selectedKey())
         keysCombo.selectionModel.selectedItemProperty().addListener { observable, old, new ->
-            if(old != new) {
+            if (old != new) {
                 jobEditorViewModel.selectedKey.value = new
             }
         }
@@ -109,7 +107,7 @@ class JobEditorView {
             Platform.runLater {
                 if (it == null) {
                     keysCombo.selectionModel.clearSelection()
-                } else{
+                } else {
                     keysCombo.selectionModel.select(it)
                 }
             }

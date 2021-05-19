@@ -21,7 +21,6 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
-import javafx.application.Platform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -48,13 +47,13 @@ class JobStatusViewModel {
             .launchIn(logsScope)
     }
 
-    fun clearJob(){
+    fun clearJob() {
         logsScope.cancel()
         shownJob.value = null
         shownLogs.value = listOf()
     }
 
-    fun shouldAppend(): Boolean{
+    fun shouldAppend(): Boolean {
         return shownLogs().size == lastLogsSize + 1
     }
 }

@@ -29,7 +29,7 @@ class JobsListViewModel {
     val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
 
-    fun saveJob(description: JobDescription){
+    fun saveJob(description: JobDescription) {
         val selectedJob = selectedPlotJob()
         if (selectedJob == null) {
             val newJob = PlotJob(description)

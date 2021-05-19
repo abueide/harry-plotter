@@ -19,10 +19,8 @@
 
 package com.abysl.harryplotter.util.bindings
 
-import com.abysl.harryplotter.model.records.ChiaKey
 import javafx.beans.value.ObservableValue
 import javafx.beans.value.WritableValue
-import javafx.collections.ObservableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

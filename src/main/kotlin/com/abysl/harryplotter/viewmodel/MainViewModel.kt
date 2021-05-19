@@ -21,7 +21,6 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
-import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +54,6 @@ class MainViewModel(val chia: ChiaCli) {
                 jobStatusViewModel.loadJob(it)
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
-        //"Plot Job ${jobsListViewModel.plotJobs.value.size + 1}"
+        // "Plot Job ${jobsListViewModel.plotJobs.value.size + 1}"
     }
 }

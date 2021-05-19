@@ -19,7 +19,7 @@
 
 package com.abysl.harryplotter.util.bindings
 
-class BiDirectionalBinding(val bindingA: BindingConverter, val bindingB: BindingConverter): BindingConverter{
+class BiDirectionalBinding(val bindingA: BindingConverter, val bindingB: BindingConverter) : BindingConverter {
     override fun start() {
         bindingA.start()
         bindingB.start()

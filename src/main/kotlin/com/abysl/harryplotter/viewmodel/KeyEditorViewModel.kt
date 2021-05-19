@@ -19,6 +19,4 @@
 
 package com.abysl.harryplotter.viewmodel
 
-class KeyEditorViewModel {
-
-}
+class KeyEditorViewModel

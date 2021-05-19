@@ -45,9 +45,9 @@ class JobStatusView {
         }
     }
 
-    fun onStop(){
+    fun onStop() {
         val job: PlotJob = viewModel.shownJob() ?: return
-        if (showConfirmation("Stop Process", "Are you sure you want to stop ${job}?")) {
+        if (showConfirmation("Stop Process", "Are you sure you want to stop $job?")) {
             job.stop()
         }
     }

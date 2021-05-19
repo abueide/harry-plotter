@@ -19,17 +19,7 @@
 
 package com.abysl.harryplotter.util
 
-import javafx.beans.value.ObservableValue
-import javafx.beans.value.WritableValue
 import javafx.scene.control.TextField
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.launch
 
 fun TextField.limitToInt() {
     textProperty().addListener { observable, oldValue, newValue ->
@@ -38,4 +28,3 @@ fun TextField.limitToInt() {
         }
     }
 }
-

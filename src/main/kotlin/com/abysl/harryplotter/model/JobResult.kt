@@ -31,7 +31,7 @@ data class JobResult(
     val totalTime: Double = 0.0,
     val copyTime: Double = 0.0,
 ) {
-    operator fun plus(other: JobResult): JobResult{
+    operator fun plus(other: JobResult): JobResult {
         return JobResult(
             testTime(phaseOneTime, other.phaseOneTime),
             testTime(phaseTwoTime, other.phaseTwoTime),
