@@ -55,11 +55,6 @@ class MainViewModel(val chia: ChiaCli) {
                 jobStatusViewModel.loadJob(it)
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
-
-        jobsListViewModel.plotJobs.onEach {
-            Config.savePlotJobs(it)
-        }.launchIn(CoroutineScope(Dispatchers.IO))
-
         //"Plot Job ${jobsListViewModel.plotJobs.value.size + 1}"
     }
 }

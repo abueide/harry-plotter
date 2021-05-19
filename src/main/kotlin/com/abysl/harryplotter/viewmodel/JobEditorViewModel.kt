@@ -26,9 +26,11 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.onEach
 import java.io.File
 
-class JobEditorViewModel() {
+class JobEditorViewModel {
     val jobName = MutableStateFlow("")
     val tempDir = MutableStateFlow("")
     val destDir = MutableStateFlow("")
@@ -41,7 +43,7 @@ class JobEditorViewModel() {
 
     private lateinit var savedCallback: (JobDescription) -> Unit
 
-    fun initialized(savedCallback: (JobDescription) -> Unit){
+    fun initialized(savedCallback: (JobDescription) -> Unit) {
         this.savedCallback = savedCallback
     }
 
@@ -63,6 +65,37 @@ class JobEditorViewModel() {
         threads.value = ""
         ram.value = ""
         plotsToFinish.value = ""
+    }
+
+    fun onEdit() {
+        val oldKey = selectedKey() ?: return
+        KeyEditorWindow(oldKey).show { newKey ->
+            if (newKey != null) {
+                chiaKeys.value -= oldKey
+                chiaKeys.value += newKey
+            }
+        }
+    }
+
+    fun onAdd() {
+        KeyEditorWindow().show {
+            if (it != null) chiaKeys.value += it
+        }
+    }
+
+    fun onCancel() {
+        jobName.value = ""
+        tempDir.value = ""
+        destDir.value = ""
+        threads.value = ""
+        ram.value = ""
+        selectedKey.value = null
+    }
+
+    fun onSave() {
+        val newDesc = getJobDescription() ?: return
+        savedCallback(newDesc)
+
     }
 
     fun getJobDescription(defaultName: String = "Unnamed Job"): JobDescription? {
@@ -107,36 +140,5 @@ class JobEditorViewModel() {
             plotsToFinish.value.ifBlank { "0" }.toInt()
         )
         return newDescription
-    }
-
-    fun onEdit() {
-        val oldKey = selectedKey() ?: return
-        KeyEditorWindow(oldKey).show { newKey ->
-            if (newKey != null) {
-                chiaKeys.value -= oldKey
-                chiaKeys.value += newKey
-            }
-        }
-    }
-
-    fun onAdd() {
-        KeyEditorWindow().show {
-            if (it != null) chiaKeys.value += it
-        }
-    }
-
-    fun onCancel() {
-        jobName.value = ""
-        tempDir.value = ""
-        destDir.value = ""
-        threads.value = ""
-        ram.value = ""
-        selectedKey.value = null
-    }
-
-    fun onSave() {
-        val newDesc = getJobDescription() ?: return
-        savedCallback(newDesc)
-
     }
 }

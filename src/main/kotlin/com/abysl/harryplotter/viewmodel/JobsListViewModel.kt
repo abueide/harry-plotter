@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.viewmodel
 
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.util.invoke
@@ -31,9 +32,12 @@ class JobsListViewModel {
     fun saveJob(description: JobDescription){
         val selectedJob = selectedPlotJob()
         if (selectedJob == null) {
+            val newJob = PlotJob(description)
             plotJobs.value += PlotJob(description)
+            selectedPlotJob.value = newJob
         } else {
             selectedJob.description = description
         }
+        Config.savePlotJobs(plotJobs())
     }
 }

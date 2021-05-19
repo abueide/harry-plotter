@@ -22,6 +22,7 @@ package com.abysl.harryplotter.view
 import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.util.bindings.bind
 import com.abysl.harryplotter.util.bindings.bindBidirectional
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.viewmodel.JobEditorViewModel
 import com.abysl.harryplotter.viewmodel.MainViewModel
@@ -84,6 +85,7 @@ class JobEditorView {
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
 
         // Bind selected key to viewmodel bidirectionally
+        keysCombo.selectionModel.select(viewModel.selectedKey())
         jobEditorViewModel.selectedKey.bind(keysCombo.selectionModel.selectedItemProperty())
         jobEditorViewModel.selectedKey.onEach {
             Platform.runLater {
