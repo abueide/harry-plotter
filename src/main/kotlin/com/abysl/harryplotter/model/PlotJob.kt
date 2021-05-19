@@ -178,7 +178,7 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
     }
 
     override fun toString(): String {
-        return if (state.running()) "$description - ${state.percentage}%" else description.toString()
+        return if (state.running()) "$description - ${state.percentage()}%" else description.toString()
     }
 
     companion object {

@@ -26,7 +26,7 @@ class JobStatusView {
         viewModel.shownLogs.onEach {
             Platform.runLater {
                 if (viewModel.shouldAppend()) {
-                    logsWindow.appendText(viewModel.shownLogs().last())
+                    logsWindow.appendText(viewModel.shownLogs().last() + "\n")
                 } else {
                     logsWindow.text = viewModel.shownLogs().unlines()
                 }
