@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.concurrent.CancellationException
@@ -36,13 +37,12 @@ class JobsListView {
     fun initialized(jobsListViewModel: JobsListViewModel) {
         this.viewModel = jobsListViewModel
 
-       viewModel.plotJobs
-            .onEach {
-                Platform.runLater {
-                    jobsView.items.setAll(it)
-                    jobsView.selectionModel.select(viewModel.selectedPlotJob())
-                }
+        jobsListViewModel.plotJobs.onEach {
+            Platform.runLater {
+                jobsView.items.setAll(it)
+                jobsView.selectionModel.select(viewModel.selectedPlotJob())
             }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
         jobsView.selectionModel.selectedItemProperty().addListener { obs, old, new ->
             viewModel.selectedPlotJob.value = new
         }

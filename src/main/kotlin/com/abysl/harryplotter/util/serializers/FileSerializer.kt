@@ -17,7 +17,7 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.util
+package com.abysl.harryplotter.util.serializers
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.KSerializer
@@ -39,14 +39,14 @@ object FileSerializer : KSerializer<File> {
     }
 }
 
-object FileFlowSerializer : KSerializer<MutableStateFlow<File>> {
-    override val descriptor = PrimitiveSerialDescriptor("FileFlow", PrimitiveKind.STRING)
-
-    override fun deserialize(decoder: Decoder): MutableStateFlow<File> {
-        return MutableStateFlow(File(decoder.decodeString()))
-    }
-
-    override fun serialize(encoder: Encoder, value: MutableStateFlow<File>) {
-        encoder.encodeString(value.value.absolutePath)
-    }
-}
+//object FileFlowSerializer : KSerializer<MutableStateFlow<File>> {
+//    override val descriptor = PrimitiveSerialDescriptor("FileFlow", PrimitiveKind.STRING)
+//
+//    override fun deserialize(decoder: Decoder): MutableStateFlow<File> {
+//        return MutableStateFlow(File(decoder.decodeString()))
+//    }
+//
+//    override fun serialize(encoder: Encoder, value: MutableStateFlow<File>) {
+//        encoder.encodeString(value.value.absolutePath)
+//    }
+//}

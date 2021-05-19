@@ -20,16 +20,11 @@
 package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.chia.ChiaCli
-import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
-import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -42,11 +37,11 @@ class MainViewModel(val chia: ChiaCli) {
     init {
         jobEditorViewModel.initialized(savedCallback = jobsListViewModel::saveJob)
 
-
-
-        jobsListViewModel.plotJobs.value += Config.getPlotJobs().map { jobDescription ->
-            PlotJob(jobDescription).also { job -> job.init(chia) }
+        jobsListViewModel.plotJobs.value += Config.getPlotJobs().map {
+            it.init(chia)
+            return@map it
         }
+
         jobEditorViewModel.chiaKeys.value += chia.readKeys()
         jobEditorViewModel.selectedKey.value = jobEditorViewModel.chiaKeys().firstOrNull()
 
@@ -59,6 +54,10 @@ class MainViewModel(val chia: ChiaCli) {
                 jobEditorViewModel.loadJob(it)
                 jobStatusViewModel.loadJob(it)
             }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
+
+        jobsListViewModel.plotJobs.onEach {
+            Config.savePlotJobs(it)
         }.launchIn(CoroutineScope(Dispatchers.IO))
 
         //"Plot Job ${jobsListViewModel.plotJobs.value.size + 1}"

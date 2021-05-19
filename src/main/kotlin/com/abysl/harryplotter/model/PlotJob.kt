@@ -119,7 +119,7 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
             stop()
             start()
         } else {
-            stop()
+//            stop()
         }
     }
 

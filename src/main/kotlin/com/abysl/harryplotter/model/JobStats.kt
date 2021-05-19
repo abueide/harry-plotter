@@ -17,17 +17,22 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:UseSerializers(MutableStateFlowSerializer::class)
 package com.abysl.harryplotter.model
 
+import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 
-@Serializable
+@Serializable()
 data class JobStats(
     val lastPlotTime: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
     val averagePlotTime: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
     val plotsDone: MutableStateFlow<Int> = MutableStateFlow(0),
     val estimatedPlotsDay: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
-    val averagePlotsDay: MutableStateFlow<Double> =MutableStateFlow(0.0), // seconds
+    val averagePlotsDay: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
     val results: MutableStateFlow<List<JobResult>> = MutableStateFlow(listOf())
-)
+){
+}
+

@@ -21,6 +21,7 @@ package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.Serializable
 
 
 data class JobState(

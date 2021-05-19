@@ -107,13 +107,13 @@ class JobEditorView {
 
     fun onTempBrowse() {
         fileChooser.chooseDir("Select Temp Dir", false)?.let {
-            tempDir.text = it.absolutePath
+            viewModel.tempDir.value = it.absolutePath
         }
     }
 
     fun onDestBrowse() {
         fileChooser.chooseDir("Select Destination Dir", false)?.let {
-            destDir.text = it.absolutePath
+            viewModel.destDir.value = it.absolutePath
         }
     }
 
