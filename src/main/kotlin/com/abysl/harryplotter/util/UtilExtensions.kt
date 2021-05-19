@@ -20,7 +20,9 @@
 package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.HarryPlotter
-import javafx.scene.control.TextField
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 import java.io.InputStream
 import java.net.URL
 
@@ -30,6 +32,10 @@ fun String.getResource(): URL {
 
 fun String.getResourceAsStream(): InputStream {
     return HarryPlotter::class.java.getResourceAsStream(this)
+}
+
+fun String.asFile(): File {
+    return File(this)
 }
 
 fun List<String>.merge(delimiter: String): String {
@@ -48,10 +54,14 @@ fun List<String>.unwords(): String {
     return merge(" ")
 }
 
-fun TextField.limitToInt() {
-    textProperty().addListener { observable, oldValue, newValue ->
-        if (!newValue.matches(Regex("\\d*"))) {
-            text = newValue.replace("[^\\d]".toRegex(), "")
-        }
-    }
+// Syntax sugar to make chains with multiple StateFlows more readable, example:
+// mainViewModel.jobsListViewModel.jobsList.value.first().logs.value ->
+// mainViewModel.jobsListViewmodel.jobsList().first().logs()
+operator fun <T> StateFlow<T>.invoke(): T {
+    return this.value
+}
+
+// Same as above, but for setting values
+operator fun <T> MutableStateFlow<T>.invoke(someValue: T) {
+    this.value = someValue
 }

@@ -19,13 +19,22 @@
 
 package com.abysl.harryplotter.config
 
+import com.abysl.harryplotter.util.getResource
 import java.util.prefs.Preferences
 
 object Prefs {
+    private const val VERSION_PROMPT = "VERSION_PROMPT"
     private const val DARK_MODE = "DARK_MODE"
     private const val EXE_PATH = "EXE_PATH"
     private const val STAGGER = "STAGGER"
+    private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
+
+    var versionPrompt: Boolean
+        get() = prefNode.getBoolean(VERSION_PROMPT + version, true)
+        set(value) {
+            prefNode.putBoolean(VERSION_PROMPT + version, value)
+        }
 
     var darkMode: Boolean
         get() = prefNode.getBoolean(DARK_MODE, false)

@@ -17,9 +17,32 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.data
+package com.abysl.harryplotter.util.bindings
 
-data class JobStats(
-    var plotsDone: Int = 0,
-    val results: MutableList<JobResult> = mutableListOf()
-)
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
+import kotlinx.coroutines.flow.MutableStateFlow
+
+class FlowToObservableBinding<T>(
+    val flowProperty: MutableStateFlow<T>,
+    val observableProperty: ObservableValue<T>,
+) : BindingConverter {
+    val binding: ChangeListener<T> = ChangeListener { observable, old, new ->
+        observable.addListener { observable, old, new ->
+            if (old?.equals(new) != true) {
+                flowProperty.value = new
+            }
+        }
+    }
+    init {
+        start()
+    }
+
+    override fun start() {
+        observableProperty.addListener(binding)
+    }
+
+    override fun stop() {
+        observableProperty.removeListener(binding)
+    }
+}

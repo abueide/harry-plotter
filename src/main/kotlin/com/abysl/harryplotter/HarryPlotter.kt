@@ -20,10 +20,11 @@
 package com.abysl.harryplotter
 
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.controller.MainController
 import com.abysl.harryplotter.util.FxUtil
 import com.abysl.harryplotter.util.getResource
 import com.abysl.harryplotter.util.getResourceAsStream
+import com.abysl.harryplotter.view.MainView
+import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -37,17 +38,22 @@ class HarryPlotter : Application() {
         mainStage = stage
         val loader = FXMLLoader("fxml/MainView.fxml".getResource())
         val root: Parent = loader.load()
-        val controller: MainController = loader.getController()
+        val view: MainView = loader.getController()
         val scene = Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT)
+        view.initialized()
 
         stage.icons.add(Image("icons/snitch.png".getResourceAsStream()))
         stage.scene = scene
         FxUtil.setTheme(stage)
         stage.show()
-        controller.toggleTheme = ::toggleTheme
-        controller.initialized()
+        view.toggleTheme = ::toggleTheme
+        view.hostServices = hostServices
         stage.setOnCloseRequest {
-            controller.onExit()
+            view.onExit()
+        }
+
+        if (Prefs.versionPrompt) {
+            VersionPromptWindow.show()
         }
     }
 

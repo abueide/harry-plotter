@@ -17,32 +17,26 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.data
+package com.abysl.harryplotter.model.records
 
+import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.serialization.Serializable
+import java.io.File
 
+@JvmRecord
 @Serializable
-data class JobResult(
-    // Time in Seconds
-    val phaseOneTime: Double = 0.0,
-    val phaseTwoTime: Double = 0.0,
-    val phaseThreeTime: Double = 0.0,
-    val phaseFourTime: Double = 0.0,
-    val totalTime: Double = 0.0,
-    val copyTime: Double = 0.0,
+data class JobDescription(
+    val name: String,
+    @Serializable(with = FileSerializer::class)
+    val tempDir: File,
+    @Serializable(with = FileSerializer::class)
+    val destDir: File,
+    val threads: Int,
+    val ram: Int,
+    val key: ChiaKey,
+    val plotsToFinish: Int, // -1  = keep going forever
 ) {
-    fun merge(other: JobResult): JobResult {
-        return JobResult(
-            testTime(phaseOneTime, other.phaseOneTime),
-            testTime(phaseTwoTime, other.phaseTwoTime),
-            testTime(phaseThreeTime, other.phaseThreeTime),
-            testTime(phaseFourTime, other.phaseFourTime),
-            testTime(totalTime, other.totalTime),
-            testTime(copyTime, other.copyTime)
-        )
-    }
-
-    fun testTime(time: Double, other: Double): Double {
-        return if (time != 0.0) time else other
+    override fun toString(): String {
+        return name
     }
 }

@@ -1,51 +1,55 @@
-package com.abysl.harryplotter.controller
+package com.abysl.harryplotter.view
 
-import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.data.JobProcess
+import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
+import com.abysl.harryplotter.viewmodel.JobsListViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
+import javafx.application.Platform
 import javafx.beans.value.ChangeListener
-import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
-import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.TextField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.concurrent.CancellationException
 
-class JobsListController {
+class JobsListView {
 
     @FXML
-    lateinit var jobsView: ListView<JobProcess>
+    lateinit var jobsView: ListView<PlotJob>
 
     @FXML
     private lateinit var stagger: TextField
 
-    private lateinit var chia: ChiaCli
-
-    private lateinit var jobs: ObservableList<JobProcess>
-
     private var staggerRoutines: MutableList<Job> = mutableListOf()
 
-    fun initModel(
-        chia: ChiaCli,
-        jobs: ObservableList<JobProcess>
-    ): MultipleSelectionModel<JobProcess?> {
-        jobsView.items = jobs
+    lateinit var viewModel: JobsListViewModel
+
+    fun initialized(jobsListViewModel: JobsListViewModel) {
+        this.viewModel = jobsListViewModel
+
+        jobsListViewModel.plotJobs.onEach {
+            Platform.runLater {
+                jobsView.items.setAll(it)
+                jobsView.selectionModel.select(viewModel.selectedPlotJob())
+            }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
+        jobsView.selectionModel.selectedItemProperty().addListener { obs, old, new ->
+            viewModel.selectedPlotJob.value = new
+        }
         jobsView.contextMenu = jobsMenu
         stagger.limitToInt()
         stagger.text = Prefs.stagger.toString()
         stagger.textProperty().addListener(staggerListener)
-        this.jobs = jobs
-        this.chia = chia
-        return jobsView.selectionModel
     }
 
     fun onStartAll() {
@@ -55,7 +59,7 @@ class JobsListController {
     fun onStopAll() {
         if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
             staggerRoutines.forEach { it.cancel(CancellationException("User Stopped All")) }
-            jobs.forEach { it.stop() }
+            viewModel.plotJobs().forEach { it.stop() }
         }
     }
 
@@ -63,16 +67,17 @@ class JobsListController {
 
     val duplicate = MenuItem("Duplicate").also {
         it.setOnAction {
-            val jobProc = jobsView.selectionModel.selectedItem
-            jobs.add(JobProcess(chia, jobProc.jobDesc))
+            val job = viewModel.selectedPlotJob() ?: return@setOnAction
+            viewModel.plotJobs.value += PlotJob(job.description)
         }
         jobsMenu.items.add(it)
     }
+
     val delete = MenuItem("Delete").also {
         it.setOnAction {
-            val job = jobsView.selectionModel.selectedItem
-            if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.jobDesc}")) {
-                jobs.remove(job)
+            val job = viewModel.selectedPlotJob() ?: return@setOnAction
+            if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.description}")) {
+                viewModel.plotJobs.value -= job
             }
         }
         jobsMenu.items.add(it)
@@ -87,7 +92,7 @@ class JobsListController {
     }
 
     fun staggerRoutine() = CoroutineScope(Dispatchers.Default).launch {
-        jobs.forEach {
+        viewModel.plotJobs().forEach {
             it.start()
             delay(Prefs.stagger * MILLIS_PER_MINUTE)
         }

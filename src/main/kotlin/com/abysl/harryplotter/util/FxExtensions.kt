@@ -17,17 +17,14 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.data
+package com.abysl.harryplotter.util
 
-data class JobState(
-    var running: Boolean = false,
-    var phase: Int = 1,
-    var subphase: String = "",
-    var currentResult: JobResult = JobResult(),
-    val results: MutableList<JobResult> = mutableListOf(),
-    var percentage: Double = 0.0,
-    var stopwatch: Int = 0,
-    var displayLogs: Boolean = false,
-    var plotId: String = "",
-    var status: String = JobProcess.STOPPED
-)
+import javafx.scene.control.TextField
+
+fun TextField.limitToInt() {
+    textProperty().addListener { observable, oldValue, newValue ->
+        if (!newValue.matches(Regex("\\d*"))) {
+            text = newValue.replace("[^\\d]".toRegex(), "")
+        }
+    }
+}

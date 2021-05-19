@@ -17,11 +17,18 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#themeToggle {
-    -fx-background-color: #373e43;
-}
+package com.abysl.harryplotter.util.serializers
 
-#jobStats, #logsWindow, #jobsView {
-    -fx-border-style: solid;
-    -fx-border-width: 1px;
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+
+class StateFlowSerializer<T>(private val dataSerializer: KSerializer<T>) : KSerializer<StateFlow<T>> {
+    override val descriptor: SerialDescriptor = dataSerializer.descriptor
+    override fun serialize(encoder: Encoder, value: StateFlow<T>) = dataSerializer.serialize(encoder, value.value)
+    override fun deserialize(decoder: Decoder) = MutableStateFlow(dataSerializer.deserialize(decoder)).asStateFlow()
 }

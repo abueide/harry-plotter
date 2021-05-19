@@ -17,11 +17,16 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#themeToggle {
-    -fx-background-color: #373e43;
-}
+package com.abysl.harryplotter.util.bindings
 
-#jobStats, #logsWindow, #jobsView {
-    -fx-border-style: solid;
-    -fx-border-width: 1px;
+class BiDirectionalBinding(val bindingA: BindingConverter, val bindingB: BindingConverter) : BindingConverter {
+    override fun start() {
+        bindingA.start()
+        bindingB.start()
+    }
+
+    override fun stop() {
+        bindingA.stop()
+        bindingB.stop()
+    }
 }

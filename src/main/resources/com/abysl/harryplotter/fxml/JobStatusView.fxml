@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox prefHeight="365.0" prefWidth="900.0" spacing="10.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.controller.JobStatusController">
+<HBox prefHeight="365.0" prefWidth="900.0" spacing="10.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.view.JobStatusView">
   <children>
       <VBox>
          <HBox.margin>

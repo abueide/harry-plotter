@@ -19,8 +19,8 @@
 
 package com.abysl.harryplotter.config
 
-import com.abysl.harryplotter.data.ChiaKey
-import com.abysl.harryplotter.data.JobDescription
+import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.model.records.ChiaKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,13 +47,13 @@ object Config {
         }
     }
 
-    fun savePlotJobs(jobs: List<JobDescription>) {
+    fun savePlotJobs(jobs: List<PlotJob>) {
         CoroutineScope(Dispatchers.IO).launch {
             jobsFile.writeText(Json.encodeToString(jobs))
         }
     }
 
-    fun getPlotJobs(): List<JobDescription> {
+    fun getPlotJobs(): List<PlotJob> {
         if (!jobsFile.exists()) {
             return emptyList()
         }

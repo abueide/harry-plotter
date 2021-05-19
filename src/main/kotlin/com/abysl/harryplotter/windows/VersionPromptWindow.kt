@@ -19,40 +19,40 @@
 
 package com.abysl.harryplotter.windows
 
-import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.FxUtil
-import com.abysl.harryplotter.view.KeyEditorView
-import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
+import com.abysl.harryplotter.util.getResource
 import javafx.scene.Scene
+import javafx.scene.control.TextArea
+import javafx.scene.text.Font
 import javafx.stage.Modality
 import javafx.stage.Stage
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class KeyEditorWindow(val key: ChiaKey? = null) {
-
-    fun show(callback: (key: ChiaKey?) -> Unit) {
+object VersionPromptWindow {
+    private const val WIDTH = 700.0
+    private const val HEIGHT = 500.0
+    private const val FONT_SIZE = 14.0
+    fun show() {
         try {
             // Load scene
-            val loader = FXMLLoader(HarryPlotter::class.java.getResource("fxml/KeyEditor.fxml"))
-            val root = loader.load<Parent>()
-
-            // Get controller from scene
-            val editorView: KeyEditorView = loader.getController()
-            if (key != null) {
-                editorView.writeKey(key)
-            }
-            editorView.callback = callback
-
             val stage = Stage()
-            stage.scene = Scene(root)
-            stage.title = "Add Key"
+            val version = "version.txt".getResource().readText()
+            val textPrompt = TextArea()
+            textPrompt.font = Font.font(FONT_SIZE)
+            textPrompt.text = "updatemessages/$version.txt".getResource().readText()
+            textPrompt.wrapTextProperty().set(true)
+            textPrompt.editableProperty().set(false)
+            stage.width = WIDTH
+            stage.height = HEIGHT
+            stage.scene = Scene(textPrompt)
+            stage.title = "Version $version"
             stage.isAlwaysOnTop = true
             stage.initModality(Modality.APPLICATION_MODAL)
             FxUtil.setTheme(stage)
             stage.show()
+            Prefs.versionPrompt = false
         } catch (ex: IOException) {
             System.err.println(ex)
             exitProcess(1)
