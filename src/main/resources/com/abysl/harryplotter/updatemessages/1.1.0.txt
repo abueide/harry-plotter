@@ -12,4 +12,4 @@ https://github.com/abueide/harry-plotter/releases
 
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
-Release 1.1.0 Beta is the MVP of Harry Plotter. This update brings several bugfixes, user documentation, and stats for your plot jobs!
+Release 1.1.0 Beta is the MVP of Harry Plotter. This update brings several bugfixes and  user documentation.

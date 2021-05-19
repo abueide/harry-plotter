@@ -44,7 +44,7 @@ You can also toggle dark/light mode by clicking the opposite colored button at t
 
 ### Dependencies
 
-JDK 16 (https://adoptopenjdk.net/?variant=openjdk16&jvmVariant=hotspot)
+[JDK 16](https://adoptopenjdk.net/?variant=openjdk16&jvmVariant=hotspot)
 
 ### Windows
 `git clone https://github.com/abueide/harry-plotter.git`
@@ -67,10 +67,15 @@ JDK 16 (https://adoptopenjdk.net/?variant=openjdk16&jvmVariant=hotspot)
 
 # Roadmap
 [ ] Official Pooling Protocol Support
+
 [ ] Magical auto plot tuning algorithm
+
 [ ] Easy to use harvester setup on multiple machines
+
 [ ] Logs & Harvester monitoring
+
 [ ] Cool dashboard with stats
+
 [ ] Alerts/Notifications when harvester or plotter is having problems
 
 ## Contributing
