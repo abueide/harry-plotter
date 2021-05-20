@@ -17,61 +17,61 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:UseSerializers(MutableStateFlowSerializer::class)
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.model.records.JobDescription
-import com.abysl.harryplotter.util.invoke
+import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import java.io.File
 
 @Serializable
-class PlotJob(var description: JobDescription, val stats: JobStats = JobStats()) {
+class PlotJob(
+    var description: JobDescription,
+    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats())
+) {
+
     @Transient
-    val state: JobState = JobState()
+    val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
 
     @Transient
     lateinit var chia: ChiaCli
+
+    var stats
+        get() = statsFlow.value
+        set(jobStats) {
+            statsFlow.value = jobStats
+        }
+    var state
+        get() = stateFlow.value
+        set(jobState) {
+            stateFlow.value = jobState
+        }
 
     fun init(chia: ChiaCli) {
         this.chia = chia
     }
 
     fun start() {
-        if (state.running() || state.proc()?.isAlive == true) {
+        if (state.running || state.proc?.isAlive == true) {
             println("Trying to start new process while old one is still running, ignoring start job.")
         } else {
-            state.running(true)
-
-            val args = mutableListOf<String>()
-            args.addAll(listOf("plots", "create", "-k", "32"))
-            if (description.key.fingerprint.isNotBlank()) args.addAll(listOf("-a", description.key.fingerprint))
-            else if (description.key.farmerKey.isNotBlank() && description.key.poolKey.isNotBlank()) {
-                args.addAll(listOf("-f", description.key.farmerKey, "-p", description.key.poolKey))
-            }
-            if (description.ram > MINIMUM_RAM) args.addAll(listOf("-b", description.ram.toString()))
-            if (description.threads > 0) args.addAll(listOf("-r", description.threads.toString()))
-            state.proc(
-                chia.runCommandAsync(
-                    ioDelay = 10,
-                    outputCallback = ::parseLine,
-                    completedCallback = ::whenDone,
-                    "plots",
-                    "create",
-                    "-k", "32",
-                    "-a", description.key.fingerprint,
-                    "-b", description.ram.toString(),
-                    "-r", description.threads.toString(),
-                    "-t", description.tempDir.toString(),
-                    "-d", description.destDir.toString(),
-                )
+            val proc = description.launch(
+                chia = chia,
+                ioDelay = 10,
+                onOutput = ::parseLine,
+                onCompleted = ::whenDone,
             )
+            state = state.copy(running = true, proc = proc)
         }
     }
 
@@ -79,9 +79,9 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
         // Store in immutable variable so it doesn't try to delete files after state is wiped out
-        deleteTempFiles(state.plotId(), block)
-        state.proc()?.destroyForcibly()
-        state.reset()
+        state.proc?.destroyForcibly()
+        deleteTempFiles(state.plotId, block)
+        state = state.reset()
     }
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
@@ -115,73 +115,22 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
         }
 
     private fun whenDone() {
-        stats.plotsDone.value++
-        stats.results.value += state.currentResult()
-        if (state.running() && (stats.plotsDone() < description.plotsToFinish || description.plotsToFinish == 0)) {
+        if (state.currentResult.totalTime != 0.0) {
+            stats = stats.plotDone(state.currentResult)
+        }
+        if (state.running && (stats.plotsDone < description.plotsToFinish || description.plotsToFinish == 0)) {
             stop()
             start()
         } else {
-//            stop()
+            stop()
         }
     }
 
     fun parseLine(line: String) {
-        state.logs.value += line.trim()
-        try {
-            if (line.contains("ID: ")) {
-                state.plotId(line.split("ID: ").last())
-            }
-            when {
-                line.contains("Starting phase") -> {
-                    val phase = line
-                        .split("Starting phase ").last()
-                        .split("/").first()
-                        .toInt()
-                    state.phase(phase)
-                    println(state.phase)
-                }
-                line.contains("tables") -> {
-                    val subphase = line.split("tables ").last()
-                    state.subphase(subphase)
-                    println(state.subphase)
-                }
-                line.contains("table") -> {
-                    state.subphase(line.split("table ").last())
-                    println(state.subphase)
-                }
-                line.contains("Time for phase") -> {
-                    val phase: Int = line.split("phase ")[1].split(" =").first().toInt()
-                    val seconds: Double = line.split("= ")[1].split(" seconds").first().toDouble()
-                    when (phase) {
-                        1 -> state.currentResult.value += JobResult(phaseOneTime = seconds)
-                        2 -> state.currentResult.value += JobResult(phaseTwoTime = seconds)
-                        3 -> state.currentResult.value += JobResult(phaseThreeTime = seconds)
-                        4 -> state.currentResult.value += JobResult(phaseFourTime = seconds)
-                    }
-                    println(state.currentResult)
-                }
-                line.contains("Total time") -> {
-                    val seconds: Double = line.split("= ")[1].split(" seconds").first().toDouble()
-                    state.currentResult.value += JobResult(totalTime = seconds)
-                    println(state.currentResult)
-                }
-                line.contains("Copy time") -> {
-                    val seconds: Double = line.split("= ")[1].split(" seconds").first().toDouble()
-                    state.currentResult.value += JobResult(copyTime = seconds)
-                    println(state.currentResult)
-                }
-            }
-        } catch (e: NoSuchElementException) {
-            println("WARNING: Fix Line Parser")
-            println(e)
-        }
+        state = state.parse(line)
     }
 
     override fun toString(): String {
-        return if (state.running()) "$description - ${state.percentage()}%" else description.toString()
-    }
-
-    companion object {
-        private const val MINIMUM_RAM = 2500 // MiB
+        return if (state.running) "$description - ${state.percentage}%" else description.toString()
     }
 }

@@ -19,31 +19,38 @@
 
 package com.abysl.harryplotter.model
 
-import com.abysl.harryplotter.util.invoke
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.abysl.harryplotter.logparser.PlotLogParser
 
 data class JobState(
-    val proc: MutableStateFlow<Process?> = MutableStateFlow(null),
-    val running: MutableStateFlow<Boolean> = MutableStateFlow(false),
-    val phase: MutableStateFlow<Int> = MutableStateFlow(1),
-    val subphase: MutableStateFlow<String> = MutableStateFlow(""),
-    val plotId: MutableStateFlow<String> = MutableStateFlow(""),
-    val percentage: MutableStateFlow<Double> = MutableStateFlow(0.0),
-    val secondsRunning: MutableStateFlow<Long> = MutableStateFlow(0),
-    val currentResult: MutableStateFlow<JobResult> = MutableStateFlow(JobResult()),
-    val results: MutableStateFlow<List<JobResult>> = MutableStateFlow(mutableListOf()),
-    val logs: MutableStateFlow<List<String>> = MutableStateFlow(mutableListOf()),
+    val proc: Process? = null,
+    val running: Boolean = false,
+    val phase: Int = 1,
+    val subphase: String = "",
+    val plotId: String = "",
+    val percentage: Double = 0.0,
+    val secondsRunning: Long = 0,
+    val currentResult: JobResult = JobResult(),
+    val results: List<JobResult> = listOf(),
+    val logs: List<String> = listOf(),
 ) {
-    fun reset() {
-        proc(null)
-        running(false)
-        phase(1)
-        subphase("")
-        plotId("")
-        percentage(0.0)
-        secondsRunning(0)
-        currentResult(JobResult())
-        results(listOf())
-        logs(listOf())
+    val status by lazy {
+        if (running) {
+            "$RUNNING: Phase $phase/4"
+        } else {
+            STOPPED
+        }
+    }
+
+    fun parse(line: String): JobState {
+        return PlotLogParser.parseLine(this, line)
+    }
+
+    fun reset(): JobState {
+        return JobState()
+    }
+
+    companion object {
+        private const val RUNNING = "Running"
+        private const val STOPPED = "Stopped"
     }
 }

@@ -30,30 +30,27 @@ import kotlinx.coroutines.flow.onEach
 
 class JobStatusViewModel {
     var logsScope = CoroutineScope(Dispatchers.IO)
-    var shownLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
-    var shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-
-    private var lastLogsSize = 0
+    val shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
+    val shownLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+    var lastLogSize = 0
 
     fun loadJob(job: PlotJob) {
         clearJob()
         shownJob.value = job
-        logsScope = CoroutineScope(Dispatchers.IO)
-        job.state.logs
-            .onEach { logsList ->
-                lastLogsSize = shownLogs().size
-                shownLogs.value = logsList
-            }
-            .launchIn(logsScope)
+        job.stateFlow.onEach {
+            lastLogSize = it.logs.size
+            shownLogs.value = it.logs
+        }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     fun clearJob() {
         logsScope.cancel()
+        logsScope = CoroutineScope(Dispatchers.IO)
         shownJob.value = null
         shownLogs.value = listOf()
     }
 
     fun shouldAppend(): Boolean {
-        return shownLogs().size == lastLogsSize + 1
+        return shownLogs().size - lastLogSize == 1
     }
 }

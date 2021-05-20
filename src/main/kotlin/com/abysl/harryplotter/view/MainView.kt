@@ -74,7 +74,7 @@ class MainView {
 
     fun onExit() {
         val jobs = viewModel.jobsListViewModel.plotJobs()
-        if (jobs.any { it.state.running() }) {
+        if (jobs.any { it.state.running }) {
             val alert = Alert(Alert.AlertType.CONFIRMATION)
             alert.title = "Let plot jobs finish?"
             alert.headerText = "Let plot jobs finish?"

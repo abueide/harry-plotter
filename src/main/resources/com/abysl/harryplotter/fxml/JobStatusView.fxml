@@ -29,7 +29,7 @@
                 </VBox>
                 <VBox maxWidth="150.0" prefWidth="150.0" spacing="20.0" HBox.hgrow="ALWAYS">
                   <children>
-                    <Label fx:id="currentStatus1" layoutX="10.0" layoutY="199.0" text="Not Running" />
+                    <Label fx:id="currentStatus" layoutX="10.0" layoutY="199.0" text="Not Running" />
                     <Label fx:id="plotId" text="?" />
                     <Label fx:id="lastPlotTime" text="6 hr 50 s (21650s)" />
                     <Label fx:id="averagePlotTime" text="6 hr 30 s (21630)" />

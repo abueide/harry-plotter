@@ -21,6 +21,6 @@ jobs:
           configuration-cache-enabled: true
       - uses: softprops/action-gh-release@v1
         with:
-          files: build/jpackage/*.msi
+          files: build/jpackage/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -18,19 +18,38 @@
  */
 
 @file:UseSerializers(MutableStateFlowSerializer::class)
+
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
-@Serializable()
+@Serializable
 data class JobStats(
-    val lastPlotTime: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
-    val averagePlotTime: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
-    val plotsDone: MutableStateFlow<Int> = MutableStateFlow(0),
-    val estimatedPlotsDay: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
-    val averagePlotsDay: MutableStateFlow<Double> = MutableStateFlow(0.0), // seconds
-    val results: MutableStateFlow<List<JobResult>> = MutableStateFlow(listOf())
-)
+    val plotsDone: Int = 0,
+    val results: List<JobResult> = mutableListOf()
+) {
+    val lastPlotTime: Double by lazy { results.lastOrNull()?.totalTime ?: 0.0 }
+    val averagePlotTime: Double by lazy {
+        when {
+            results.isEmpty() -> 0.0
+            else -> results.sumOf { it.totalTime } / results.size
+        }
+    }
+    val estimatedPlotsDay: Double by lazy {
+        when (lastPlotTime) {
+            0.0 -> 0.0
+            else -> SECONDS_IN_DAY / lastPlotTime
+        }
+    }
+    val averagePlotsDay: Double by lazy { if (averagePlotTime != 0.0) SECONDS_IN_DAY / averagePlotTime else 0.0 }
+
+    fun plotDone(result: JobResult): JobStats {
+        return copy(plotsDone = plotsDone + 1, results = results + result)
+    }
+
+    companion object {
+        private const val SECONDS_IN_DAY: Int = 86400
+    }
+}

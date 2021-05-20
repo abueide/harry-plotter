@@ -1,0 +1,15 @@
+Hello, thanks for trying out the new version of Harry Plotter! I've put a lot of work into building & maintaining Harry Plotter so please consider donating using one of the addresses below! In addition you can post your transaction ID on a github issue (feature, bug or setup question) and I'll work through them by order of tip amount. You can also feel free to shoot me an email. However: it is still a tip and I cannot guarantee I will be able to solve your problem satisfactorily in a reasonable amount of time.
+
+Chia Address: xch1ktqlc03wpetne9e0e6frz497xhhx4yx08gzn63tvjwlrlg2cg2ksf7ls24
+
+Eth Address: 0x039c1c74e3AaCCB74457880099F441f61C9c9bAc
+
+BTC Address: bc1qlrujsyrspf587pj2ydrz9h0k5070wfzqwq3pxf
+
+PayPal: andrew@abueide.com
+
+https://github.com/abueide/harry-plotter/releases
+
+is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
+
+Release 1.1.1 brings support for tracking the stats of your plot jobs to use for performance tuning.

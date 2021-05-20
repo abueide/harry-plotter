@@ -20,7 +20,6 @@
 package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.HarryPlotter
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.io.InputStream
@@ -59,9 +58,4 @@ fun List<String>.unwords(): String {
 // mainViewModel.jobsListViewmodel.jobsList().first().logs()
 operator fun <T> StateFlow<T>.invoke(): T {
     return this.value
-}
-
-// Same as above, but for setting values
-operator fun <T> MutableStateFlow<T>.invoke(someValue: T) {
-    this.value = someValue
 }

@@ -1,5 +1,6 @@
 package com.abysl.harryplotter.view
 
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
@@ -69,6 +70,7 @@ class JobsListView {
         it.setOnAction {
             val job = viewModel.selectedPlotJob() ?: return@setOnAction
             viewModel.plotJobs.value += PlotJob(job.description)
+            Config.savePlotJobs(viewModel.plotJobs.value)
         }
         jobsMenu.items.add(it)
     }
@@ -78,6 +80,7 @@ class JobsListView {
             val job = viewModel.selectedPlotJob() ?: return@setOnAction
             if (showConfirmation("Delete Job?", "Are you sure you want to delete ${job.description}")) {
                 viewModel.plotJobs.value -= job
+                Config.savePlotJobs(viewModel.plotJobs.value)
             }
         }
         jobsMenu.items.add(it)
@@ -93,8 +96,10 @@ class JobsListView {
 
     fun staggerRoutine() = CoroutineScope(Dispatchers.Default).launch {
         viewModel.plotJobs().forEach {
-            it.start()
-            delay(Prefs.stagger * MILLIS_PER_MINUTE)
+            if (!it.state.running) {
+                it.start()
+                delay(Prefs.stagger * MILLIS_PER_MINUTE)
+            }
         }
     }
 
