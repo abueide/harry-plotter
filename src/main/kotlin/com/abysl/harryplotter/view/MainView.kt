@@ -52,7 +52,8 @@ class MainView {
     lateinit var viewModel: MainViewModel
 
     fun initialized() {
-        viewModel = MainViewModel(findChia())
+        val chia = findChia()
+        viewModel = MainViewModel(chia)
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)

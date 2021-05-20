@@ -36,6 +36,10 @@ class MainViewModel(val chia: ChiaCli) {
     init {
         jobEditorViewModel.initialized(savedCallback = jobsListViewModel::saveJob)
 
+        jobsListViewModel.plotJobs.onEach {
+            println("Added job!")
+            it.forEach { plotJob -> plotJob.init(chia) }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
         jobsListViewModel.plotJobs.value += Config.getPlotJobs().map {
             it.init(chia)
             return@map it

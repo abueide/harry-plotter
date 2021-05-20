@@ -48,26 +48,19 @@ data class JobDescription(
         val args = mutableListOf<String>()
 
         args.addAll(listOf("plots", "create", "-k", "32"))
-
         if (key.fingerprint.isNotBlank()) args.addAll(listOf("-a", key.fingerprint))
         else if (key.farmerKey.isNotBlank() && key.poolKey.isNotBlank()) {
             args.addAll(listOf("-f", key.farmerKey, "-p", key.poolKey))
         }
         if (ram > MINIMUM_RAM) args.addAll(listOf("-b", ram.toString()))
         if (threads > 0) args.addAll(listOf("-r", threads.toString()))
+        args.addAll(listOf("-t", tempDir.toString(), "-d", destDir.toString()))
 
         return chia.runCommandAsync(
             ioDelay = ioDelay,
             outputCallback = onOutput,
             completedCallback = onCompleted,
-            "plots",
-            "create",
-            "-k", "32",
-            "-a", key.fingerprint,
-            "-b", ram.toString(),
-            "-r", threads.toString(),
-            "-t", tempDir.toString(),
-            "-d", destDir.toString(),
+            *args.toTypedArray()
         )
     }
 

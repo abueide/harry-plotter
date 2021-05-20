@@ -9,5 +9,6 @@
     <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getExePath(): File</ID>
     <ID>ReturnCount:JobEditorViewModel.kt$JobEditorViewModel$fun getJobDescription(defaultName: String = "Unnamed Job"): JobDescription?</ID>
     <ID>ReturnCount:PlotLogParser.kt$PlotLogParser$fun parseResult(line: String): JobResult?</ID>
+    <ID>SpreadOperator:JobDescription.kt$JobDescription$( ioDelay = ioDelay, outputCallback = onOutput, completedCallback = onCompleted, *args.toTypedArray() )</ID>
   </CurrentIssues>
 </SmellBaseline>
