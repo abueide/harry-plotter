@@ -70,6 +70,7 @@ runtime {
 //    modules.set(listOf("java.desktop"))
     launcher {
         noConsole = !console
+        //jvmArgs.addAll(jvmOptions)
     }
 
     jpackage {

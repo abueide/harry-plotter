@@ -21,7 +21,6 @@ package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.model.records.JobDescription
-import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -44,10 +43,10 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
     }
 
     fun start() {
-        if (state.running() || state.proc()?.isAlive == true) {
+        if (state.running || state.proc?.isAlive == true) {
             println("Trying to start new process while old one is still running, ignoring start job.")
         } else {
-            state.running(true)
+            state.running = true
 
             val args = mutableListOf<String>()
             args.addAll(listOf("plots", "create", "-k", "32"))
@@ -57,7 +56,7 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
             }
             if (description.ram > MINIMUM_RAM) args.addAll(listOf("-b", description.ram.toString()))
             if (description.threads > 0) args.addAll(listOf("-r", description.threads.toString()))
-            state.proc(
+            state.proc =
                 chia.runCommandAsync(
                     ioDelay = 10,
                     outputCallback = ::parseLine,
@@ -71,7 +70,7 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
                     "-t", description.tempDir.toString(),
                     "-d", description.destDir.toString(),
                 )
-            )
+
         }
     }
 
@@ -79,8 +78,8 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
         // Store in immutable variable so it doesn't try to delete files after state is wiped out
-        deleteTempFiles(state.plotId(), block)
-        state.proc()?.destroyForcibly()
+        deleteTempFiles(state.plotId, block)
+        state.proc?.destroyForcibly()
         state.reset()
     }
 
@@ -115,21 +114,21 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
         }
 
     private fun whenDone() {
-        stats.plotsDone.value++
-        stats.results.value += state.currentResult()
-        if (state.running() && (stats.plotsDone() < description.plotsToFinish || description.plotsToFinish == 0)) {
+        stats.plotsDone++
+        stats.results += state.currentResult
+        if (state.running && (stats.plotsDone < description.plotsToFinish || description.plotsToFinish == 0)) {
             stop()
             start()
         } else {
-//            stop()
+            stop()
         }
     }
 
     fun parseLine(line: String) {
-        state.logs.value += line.trim()
+        state.logs += line.trim()
         try {
             if (line.contains("ID: ")) {
-                state.plotId(line.split("ID: ").last())
+                state.plotId = line.split("ID: ").last()
             }
             when {
                 line.contains("Starting phase") -> {
@@ -137,37 +136,37 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
                         .split("Starting phase ").last()
                         .split("/").first()
                         .toInt()
-                    state.phase(phase)
+                    state.phase = phase
                     println(state.phase)
                 }
                 line.contains("tables") -> {
                     val subphase = line.split("tables ").last()
-                    state.subphase(subphase)
+                    state.subphase = subphase
                     println(state.subphase)
                 }
                 line.contains("table") -> {
-                    state.subphase(line.split("table ").last())
+                    state.subphase = line.split("table ").last()
                     println(state.subphase)
                 }
                 line.contains("Time for phase") -> {
                     val phase: Int = line.split("phase ")[1].split(" =").first().toInt()
                     val seconds: Double = line.split("= ")[1].split(" seconds").first().toDouble()
                     when (phase) {
-                        1 -> state.currentResult.value += JobResult(phaseOneTime = seconds)
-                        2 -> state.currentResult.value += JobResult(phaseTwoTime = seconds)
-                        3 -> state.currentResult.value += JobResult(phaseThreeTime = seconds)
-                        4 -> state.currentResult.value += JobResult(phaseFourTime = seconds)
+                        1 -> state.currentResult += JobResult(phaseOneTime = seconds)
+                        2 -> state.currentResult += JobResult(phaseTwoTime = seconds)
+                        3 -> state.currentResult += JobResult(phaseThreeTime = seconds)
+                        4 -> state.currentResult += JobResult(phaseFourTime = seconds)
                     }
                     println(state.currentResult)
                 }
                 line.contains("Total time") -> {
                     val seconds: Double = line.split("= ")[1].split(" seconds").first().toDouble()
-                    state.currentResult.value += JobResult(totalTime = seconds)
+                    state.currentResult += JobResult(totalTime = seconds)
                     println(state.currentResult)
                 }
                 line.contains("Copy time") -> {
                     val seconds: Double = line.split("= ")[1].split(" seconds").first().toDouble()
-                    state.currentResult.value += JobResult(copyTime = seconds)
+                    state.currentResult += JobResult(copyTime = seconds)
                     println(state.currentResult)
                 }
             }
@@ -178,7 +177,7 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
     }
 
     override fun toString(): String {
-        return if (state.running()) "$description - ${state.percentage()}%" else description.toString()
+        return if (state.running) "$description - ${state.percentage}%" else description.toString()
     }
 
     companion object {

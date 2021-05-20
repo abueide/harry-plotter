@@ -25,15 +25,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class JobStatusViewModel {
     var logsScope = CoroutineScope(Dispatchers.IO)
-    var shownLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
     var shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
 
     private var lastLogsSize = 0
+
+    val logsFlow = flow {
+        emit(shownJob.value?.state?.logs ?: listOf())
+    }
 
     fun loadJob(job: PlotJob) {
         clearJob()
