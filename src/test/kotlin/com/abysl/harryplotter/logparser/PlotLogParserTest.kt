@@ -35,22 +35,25 @@ internal class PlotLogParserTest {
 
     @Test
     fun parsePlotId() {
+        val test = idTest
         val expected = JobState(plotId = "47861611e2574d6ea75573afe1222784341a6afb1a70ed22e6d45df9dc6a79c9")
-        val actual = PlotLogParser.parseLine(line = idTest)
+        val actual = PlotLogParser.parseLine(line = test, appendLog = false)
         assertEquals(expected, actual)
     }
 
     @Test
     fun parsePhase() {
+        val test = phaseTest
         val expected = JobState(phase = 2)
-        val actual = PlotLogParser.parseLine(line = phaseTest)
+        val actual = PlotLogParser.parseLine(line = test, appendLog = false)
         assertEquals(expected, actual)
     }
 
     @Test
     fun parseTable() {
+        val test = subphaseTest
         val expected = JobState(subphase = "4")
-        val actual = PlotLogParser.parseLine(line = subphaseTest)
+        val actual = PlotLogParser.parseLine(line = test, appendLog = false)
         assertEquals(expected, actual)
     }
 
