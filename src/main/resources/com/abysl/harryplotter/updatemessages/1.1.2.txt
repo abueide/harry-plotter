@@ -14,4 +14,5 @@ is the only OFFICIAL source of updates. As Harry Plotter is open source under th
 
 Release 1.1.2
 
-* Quick hotfix release to make it work when using default values for threads/ram.
+* Fix bug to make it work using default values for threads/ram.
+* Fix bug where PlotJobs were not being initialized
