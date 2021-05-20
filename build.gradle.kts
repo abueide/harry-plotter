@@ -55,7 +55,7 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.test{
+tasks.test {
     useJUnitPlatform()
 }
 
@@ -75,7 +75,7 @@ runtime {
 //    modules.set(listOf("java.desktop"))
     launcher {
         noConsole = !console
-        //jvmArgs.addAll(jvmOptions)
+        // jvmArgs.addAll(jvmOptions)
     }
 
     jpackage {

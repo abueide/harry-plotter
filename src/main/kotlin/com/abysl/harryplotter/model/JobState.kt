@@ -20,8 +20,6 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.logparser.PlotLogParser
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 data class JobState(
     val proc: Process? = null,

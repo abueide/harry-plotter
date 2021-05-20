@@ -21,7 +21,6 @@ import kotlinx.coroutines.runBlocking
 
 class JobStatusView {
 
-
     @FXML
     private lateinit var plotId: Label
 
@@ -76,7 +75,6 @@ class JobStatusView {
                 estimatedPlotsDay.text = it.estimatedPlotsDay.toString()
                 averagePlotsDay.text = it.averagePlotsDay.toString()
             }
-
         }.launchIn(jobBinding)
         plotJob.stateFlow.onEach {
             Platform.runLater {

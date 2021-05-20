@@ -96,7 +96,7 @@ class JobsListView {
 
     fun staggerRoutine() = CoroutineScope(Dispatchers.Default).launch {
         viewModel.plotJobs().forEach {
-            if(!it.state.running) {
+            if (!it.state.running) {
                 it.start()
                 delay(Prefs.stagger * MILLIS_PER_MINUTE)
             }

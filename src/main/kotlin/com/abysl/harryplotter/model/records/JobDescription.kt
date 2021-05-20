@@ -20,7 +20,6 @@
 package com.abysl.harryplotter.model.records
 
 import com.abysl.harryplotter.chia.ChiaCli
-import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -43,7 +42,8 @@ data class JobDescription(
         chia: ChiaCli,
         ioDelay: Long = 10,
         onOutput: (String) -> Unit,
-        onCompleted: () -> Unit): Process {
+        onCompleted: () -> Unit
+    ): Process {
 
         val args = mutableListOf<String>()
 

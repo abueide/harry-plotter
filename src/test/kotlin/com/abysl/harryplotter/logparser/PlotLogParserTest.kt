@@ -19,9 +19,8 @@
 
 package com.abysl.harryplotter.logparser
 
-import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.JobState
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class PlotLogParserTest {
@@ -30,10 +29,9 @@ internal class PlotLogParserTest {
     val idTest = "ID: 47861611e2574d6ea75573afe1222784341a6afb1a70ed22e6d45df9dc6a79c9"
     val resultsTest = ""
 
-    @Test
-    fun parseLine() {
-
-    }
+//    @Test
+//    fun parseLine() {
+//    }
 
     @Test
     fun parsePlotId() {
@@ -56,10 +54,10 @@ internal class PlotLogParserTest {
         assertEquals(expected, actual)
     }
 
-    @Test
-    fun parseResult() {
+//    @Test
+//    fun parseResult() {
 //        val expected = JobState(phase = 2)
 //        val actual = PlotLogParser.parseLine(line = resultsTest)
 //        assertEquals(expected, actual)
-    }
+//    }
 }

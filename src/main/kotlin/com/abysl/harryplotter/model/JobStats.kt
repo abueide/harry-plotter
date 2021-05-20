@@ -22,9 +22,6 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.last
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
@@ -35,10 +32,10 @@ data class JobStats(
 ) {
     val lastPlotTime: Double by lazy { results.lastOrNull()?.totalTime ?: 0.0 }
     val averagePlotTime: Double by lazy {
-        if (results.isEmpty())
-            0.0
-        else
-            results.sumOf { it.totalTime } / results.size
+        when {
+            results.isEmpty() -> 0.0
+            else -> results.sumOf { it.totalTime } / results.size
+        }
     }
     val estimatedPlotsDay: Double by lazy {
         when (lastPlotTime) {
@@ -46,7 +43,7 @@ data class JobStats(
             else -> SECONDS_IN_DAY / lastPlotTime
         }
     }
-    val averagePlotsDay: Double by lazy { if(averagePlotTime != 0.0) SECONDS_IN_DAY / averagePlotTime else 0.0}
+    val averagePlotsDay: Double by lazy { if (averagePlotTime != 0.0) SECONDS_IN_DAY / averagePlotTime else 0.0 }
 
     fun plotDone(result: JobResult): JobStats {
         return copy(plotsDone = plotsDone + 1, results = results + result)
@@ -56,4 +53,3 @@ data class JobStats(
         private const val SECONDS_IN_DAY: Int = 86400
     }
 }
-

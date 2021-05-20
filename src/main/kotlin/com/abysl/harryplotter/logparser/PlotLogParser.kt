@@ -22,7 +22,6 @@ package com.abysl.harryplotter.logparser
 import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.JobState
 
-
 object PlotLogParser {
     fun parseLine(jobState: JobState = JobState(), line: String): JobState {
         return jobState.copy(

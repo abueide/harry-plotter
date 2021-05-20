@@ -46,7 +46,6 @@ class PlotJob(
     @Transient
     lateinit var chia: ChiaCli
 
-
     var stats
         get() = statsFlow.value
         set(jobStats) {
@@ -116,7 +115,7 @@ class PlotJob(
         }
 
     private fun whenDone() {
-        if(state.currentResult.totalTime != 0.0) {
+        if (state.currentResult.totalTime != 0.0) {
             stats = stats.plotDone(state.currentResult)
         }
         if (state.running && (stats.plotsDone < description.plotsToFinish || description.plotsToFinish == 0)) {
