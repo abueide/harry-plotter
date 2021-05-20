@@ -74,9 +74,8 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
         completedCallback: () -> Unit,
         vararg commandArgs: String,
     ): Process {
-        val command: List<String> = listOf(exe.name) + commandArgs.toList()
+        val command: List<String> = listOf(exe.path) + commandArgs.toList()
         val proc: Process = ProcessBuilder(command)
-            .directory(exe.parentFile)
             .start()
         val input = BufferedReader(InputStreamReader(proc.inputStream))
         val err = BufferedReader(InputStreamReader(proc.errorStream))
