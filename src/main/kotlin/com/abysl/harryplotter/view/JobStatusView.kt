@@ -15,7 +15,11 @@ import javafx.scene.control.TextArea
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 
 class JobStatusView {
@@ -51,7 +55,7 @@ class JobStatusView {
 
     fun initialized(jobStatusViewModel: JobStatusViewModel) {
         this.viewModel = jobStatusViewModel
-        viewModel.shownJob.onEach { bind(it) }.launchIn(CoroutineScope(Dispatchers.IO))
+        viewModel.shownJob.onEach{ bind(it) }.launchIn(CoroutineScope(Dispatchers.IO))
         viewModel.shownLogs.onEach {
             Platform.runLater {
                 if (viewModel.shouldAppend()) {
@@ -64,7 +68,6 @@ class JobStatusView {
     }
 
 
-
     private suspend fun <T> Flow<T>.asStringFlow(): StateFlow<String> {
         return this.map { it.toString() }.toStateFlow(jobBinding)
     }
@@ -72,32 +75,33 @@ class JobStatusView {
     fun bind(plotJob: PlotJob?) {
         unbind()
         plotJob ?: return
-        runBlocking {
-            plotJob.state.let {  state ->
-                currentStatus.textProperty().bind(state.statusFlow.asStringFlow())
-                plotId.textProperty().bind(state.plotIdFlow.asStringFlow())
+            runBlocking {
+                plotJob.state.let { state ->
+                    currentStatus.textProperty().bind(state.statusFlow.asStringFlow())
+                    plotId.textProperty().bind(state.plotIdFlow.asStringFlow())
+                }
+                plotJob.stats.let { stats ->
+                    totalPlotsCreated.textProperty().bind(stats.plotsDoneFlow.asStringFlow())
+                    lastPlotTime.textProperty().bind(stats.lastPlotTime.asStringFlow())
+                    averagePlotTime.textProperty().bind(stats.averagePlotTime.asStringFlow())
+                    estimatedPlotsDay.textProperty().bind(stats.estimatedPlotsDay.asStringFlow())
+                    averagePlotsDay.textProperty().bind(stats.averagePlotsDay.asStringFlow())
+                }
             }
-            plotJob.stats.let { stats ->
-                totalPlotsCreated.textProperty().bind(stats.plotsDoneFlow.asStringFlow())
-                lastPlotTime.textProperty().bind(stats.lastPlotTime.asStringFlow())
-                averagePlotTime.textProperty().bind(stats.averagePlotTime.asStringFlow())
-                estimatedPlotsDay.textProperty().bind(stats.estimatedPlotsDay.asStringFlow())
-                averagePlotsDay.textProperty().bind(stats.averagePlotsDay.asStringFlow())
-            }
-        }
     }
 
-
     fun unbind() {
-        jobBinding.cancel()
-        jobBinding = CoroutineScope(Dispatchers.IO)
-        currentStatus.text = ""
-        plotId.text = ""
-        lastPlotTime.text = ""
-        totalPlotsCreated.text = ""
-        averagePlotTime.text = ""
-        estimatedPlotsDay.text = ""
-        averagePlotsDay.text = ""
+        Platform.runLater {
+            jobBinding.cancel()
+            jobBinding = CoroutineScope(Dispatchers.IO)
+            currentStatus.text = ""
+            plotId.text = ""
+            lastPlotTime.text = ""
+            totalPlotsCreated.text = ""
+            averagePlotTime.text = ""
+            estimatedPlotsDay.text = ""
+            averagePlotsDay.text = ""
+        }
     }
 
     fun onStart() {

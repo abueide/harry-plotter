@@ -21,6 +21,7 @@ package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.HarryPlotter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -65,12 +66,13 @@ operator fun <T> StateFlow<T>.invoke(): T {
     return this.value
 }
 
-suspend fun <T> Flow<T>.toStateFlow(scope: CoroutineScope): StateFlow<T> {
+suspend fun <T> Flow<T>.toStateFlow(scope: CoroutineScope, delay: Long = 10): StateFlow<T> {
     println("Creating StateFlow")
     val oldFlow = this
     return flow {
         while (true) {
             oldFlow.collect { this.emit(it) }
+            delay(delay)
         }
     }.stateIn(scope)
 }
