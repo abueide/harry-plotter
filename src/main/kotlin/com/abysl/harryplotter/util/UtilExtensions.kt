@@ -20,8 +20,12 @@
 package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.HarryPlotter
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import java.io.File
 import java.io.InputStream
 import java.net.URL
@@ -61,7 +65,12 @@ operator fun <T> StateFlow<T>.invoke(): T {
     return this.value
 }
 
-// Same as above, but for setting values
-operator fun <T> MutableStateFlow<T>.invoke(someValue: T) {
-    this.value = someValue
+suspend fun <T> Flow<T>.toStateFlow(scope: CoroutineScope): StateFlow<T> {
+    println("Creating StateFlow")
+    val oldFlow = this
+    return flow {
+        while (true) {
+            oldFlow.collect { this.emit(it) }
+        }
+    }.stateIn(scope)
 }

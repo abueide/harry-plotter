@@ -21,43 +21,42 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
+import com.abysl.harryplotter.util.toStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class JobStatusViewModel {
     var logsScope = CoroutineScope(Dispatchers.IO)
-    var shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
+    val shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
+    val shownLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+    var lastLogSize = 0
 
-    private var lastLogsSize = 0
-
-    val logsFlow = flow {
-        emit(shownJob.value?.state?.logs ?: listOf())
-    }
 
     fun loadJob(job: PlotJob) {
         clearJob()
         shownJob.value = job
-        logsScope = CoroutineScope(Dispatchers.IO)
-        job.state.logs
-            .onEach { logsList ->
-                lastLogsSize = shownLogs().size
-                shownLogs.value = logsList
-            }
-            .launchIn(logsScope)
+        CoroutineScope(Dispatchers.Default).launch {
+            job.state.logsFlow.toStateFlow(logsScope).onEach {
+                lastLogSize = shownLogs().size
+                shownLogs.value = it
+            }.launchIn(logsScope)
+        }
     }
 
     fun clearJob() {
         logsScope.cancel()
+        logsScope = CoroutineScope(Dispatchers.IO)
         shownJob.value = null
         shownLogs.value = listOf()
     }
 
     fun shouldAppend(): Boolean {
-        return shownLogs().size == lastLogsSize + 1
+        return shownLogs().size - lastLogSize  == 1
     }
 }

@@ -3,6 +3,7 @@ package com.abysl.harryplotter.view
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.bindings.bind
 import com.abysl.harryplotter.util.invoke
+import com.abysl.harryplotter.util.toStateFlow
 import com.abysl.harryplotter.util.unlines
 import com.abysl.harryplotter.viewmodel.JobStatusViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
@@ -50,6 +51,7 @@ class JobStatusView {
 
     fun initialized(jobStatusViewModel: JobStatusViewModel) {
         this.viewModel = jobStatusViewModel
+        viewModel.shownJob.onEach { bind(it) }.launchIn(CoroutineScope(Dispatchers.IO))
         viewModel.shownLogs.onEach {
             Platform.runLater {
                 if (viewModel.shouldAppend()) {
@@ -61,14 +63,20 @@ class JobStatusView {
         }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
+
+
     private suspend fun <T> Flow<T>.asStringFlow(): StateFlow<String> {
-        return this.map { it.toString() }.stateIn(jobBinding)
+        return this.map { it.toString() }.toStateFlow(jobBinding)
     }
 
     fun bind(plotJob: PlotJob?) {
         unbind()
         plotJob ?: return
         runBlocking {
+            plotJob.state.let {  state ->
+                currentStatus.textProperty().bind(state.statusFlow.asStringFlow())
+                plotId.textProperty().bind(state.plotIdFlow.asStringFlow())
+            }
             plotJob.stats.let { stats ->
                 totalPlotsCreated.textProperty().bind(stats.plotsDoneFlow.asStringFlow())
                 lastPlotTime.textProperty().bind(stats.lastPlotTime.asStringFlow())

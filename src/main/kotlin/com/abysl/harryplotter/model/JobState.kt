@@ -31,17 +31,21 @@ data class JobState(
     var percentage: Double = 0.0,
     var secondsRunning: Long = 0,
     var currentResult: JobResult = JobResult(),
-    var results: List<JobResult> = mutableListOf(),
-    var logs: List<String> = mutableListOf(),
+    var results: List<JobResult> = listOf(),
+    var logs: List<String> = listOf(),
 ) {
+
     val statusFlow: Flow<String> = flow {
-       if(running){
-           emit(RUNNING)
-       } else {
-           emit(STOPPED)
-       }
+        if (running) {
+            emit(RUNNING)
+        } else {
+            emit(STOPPED)
+        }
     }
-    
+
+    val plotIdFlow: Flow<String> = flow { emit(plotId) }
+    val logsFlow = flow { emit(logs) }
+
     fun reset() {
         proc = null
         running = false
@@ -51,10 +55,10 @@ data class JobState(
         percentage = 0.0
         secondsRunning = 0
         currentResult = JobResult()
-        results = listOf()
+        logs = listOf()
         logs = listOf()
     }
-    
+
     companion object {
         private const val RUNNING = "Running"
         private const val STOPPED = "Stopped"

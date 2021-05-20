@@ -78,8 +78,8 @@ class PlotJob(var description: JobDescription, val stats: JobStats = JobStats())
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
         // Store in immutable variable so it doesn't try to delete files after state is wiped out
-        deleteTempFiles(state.plotId, block)
         state.proc?.destroyForcibly()
+        deleteTempFiles(state.plotId, block)
         state.reset()
     }
 
