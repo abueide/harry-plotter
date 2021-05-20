@@ -44,7 +44,6 @@ class MainViewModel(val chia: ChiaCli) {
         jobEditorViewModel.chiaKeys.value += chia.readKeys()
         jobEditorViewModel.selectedKey.value = jobEditorViewModel.chiaKeys().firstOrNull()
 
-        jobEditorViewModel.loadJob(jobsListViewModel.selectedPlotJob())
         jobsListViewModel.selectedPlotJob.onEach {
             if (it == null) {
                 jobEditorViewModel.clearJob()

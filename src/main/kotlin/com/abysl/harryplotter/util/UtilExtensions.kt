@@ -65,14 +65,3 @@ fun List<String>.unwords(): String {
 operator fun <T> StateFlow<T>.invoke(): T {
     return this.value
 }
-
-suspend fun <T> Flow<T>.toStateFlow(scope: CoroutineScope, delay: Long = 10): StateFlow<T> {
-    println("Creating StateFlow")
-    val oldFlow = this
-    return flow {
-        while (true) {
-            oldFlow.collect { this.emit(it) }
-            delay(delay)
-        }
-    }.stateIn(scope)
-}

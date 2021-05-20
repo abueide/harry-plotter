@@ -19,44 +19,36 @@
 
 package com.abysl.harryplotter.model
 
+import com.abysl.harryplotter.logparser.PlotLogParser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 data class JobState(
-    var proc: Process? = null,
-    var running: Boolean = false,
-    var phase: Int = 1,
-    var subphase: String = "",
-    var plotId: String = "",
-    var percentage: Double = 0.0,
-    var secondsRunning: Long = 0,
-    var currentResult: JobResult = JobResult(),
-    var results: List<JobResult> = listOf(),
-    var logs: List<String> = listOf(),
+    val proc: Process? = null,
+    val running: Boolean = false,
+    val phase: Int = 1,
+    val subphase: String = "",
+    val plotId: String = "",
+    val percentage: Double = 0.0,
+    val secondsRunning: Long = 0,
+    val currentResult: JobResult = JobResult(),
+    val results: List<JobResult> = listOf(),
+    val logs: List<String> = listOf(),
 ) {
-
-    val statusFlow: Flow<String> = flow {
+    val status by lazy {
         if (running) {
-            emit(RUNNING)
+            "$RUNNING: Phase $phase/4"
         } else {
-            emit(STOPPED)
+            STOPPED
         }
     }
 
-    val plotIdFlow: Flow<String> = flow { emit(plotId) }
-    val logsFlow = flow { emit(logs) }
+    fun parse(line: String): JobState {
+        return PlotLogParser.parseLine(this, line)
+    }
 
-    fun reset() {
-        proc = null
-        running = false
-        phase = 1
-        subphase = ""
-        plotId = ""
-        percentage = 0.0
-        secondsRunning = 0
-        currentResult = JobResult()
-        logs = listOf()
-        logs = listOf()
+    fun reset(): JobState {
+        return JobState()
     }
 
     companion object {

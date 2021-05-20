@@ -30,24 +30,27 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 data class JobStats(
-    var plotsDone: Int = 0,
-    val results: MutableList<JobResult> = mutableListOf()
+    val plotsDone: Int = 0,
+    val results: List<JobResult> = mutableListOf()
 ) {
-    val plotsDoneFlow: Flow<Int> = flow { emit(plotsDone) }
-    val lastPlotTime: Flow<Double> = flow { emit(results.lastOrNull()?.totalTime ?: 0.0) }
-    val averagePlotTime: Flow<Double> = flow {
+    val lastPlotTime: Double by lazy { results.lastOrNull()?.totalTime ?: 0.0 }
+    val averagePlotTime: Double by lazy {
         if (results.isEmpty())
-            emit(0.0)
+            0.0
         else
-            emit(results.sumOf { it.totalTime } / results.size)
+            results.sumOf { it.totalTime } / results.size
     }
-    val estimatedPlotsDay: Flow<Double> = flow {
-        when (val time = lastPlotTime.last()) {
-            0.0 -> emit(0.0)
-            else -> emit(SECONDS_IN_DAY / time)
+    val estimatedPlotsDay: Double by lazy {
+        when (lastPlotTime) {
+            0.0 -> 0.0
+            else -> SECONDS_IN_DAY / lastPlotTime
         }
     }
-    val averagePlotsDay: Flow<Double> = flow { SECONDS_IN_DAY / averagePlotTime.last() }
+    val averagePlotsDay: Double by lazy { if(averagePlotTime != 0.0) SECONDS_IN_DAY / averagePlotTime else 0.0}
+
+    fun plotDone(result: JobResult): JobStats {
+        return copy(plotsDone = plotsDone + 1, results = results + result)
+    }
 
     companion object {
         private const val SECONDS_IN_DAY: Int = 86400

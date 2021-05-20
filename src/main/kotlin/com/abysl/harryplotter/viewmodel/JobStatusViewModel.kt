@@ -21,14 +21,12 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
-import com.abysl.harryplotter.util.toStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class JobStatusViewModel {
@@ -41,12 +39,10 @@ class JobStatusViewModel {
     fun loadJob(job: PlotJob) {
         clearJob()
         shownJob.value = job
-        CoroutineScope(Dispatchers.Default).launch {
-            job.state.logsFlow.toStateFlow(logsScope).onEach {
-                lastLogSize = shownLogs().size
-                shownLogs.value = it
-            }.launchIn(logsScope)
-        }
+        job.stateFlow.onEach {
+            lastLogSize = it.logs.size
+            shownLogs.value = it.logs
+        }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     fun clearJob() {
@@ -57,6 +53,6 @@ class JobStatusViewModel {
     }
 
     fun shouldAppend(): Boolean {
-        return shownLogs().size - lastLogSize  == 1
+        return shownLogs().size - lastLogSize == 1
     }
 }

@@ -30,7 +30,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 object Config {
-    private val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
+    private val plotterHome = File(System.getProperty("user.home") + "/.harryplotterdev/")
     private val jobsFile = File(plotterHome.path + "/jobs.json")
 
     val devkey = ChiaKey(

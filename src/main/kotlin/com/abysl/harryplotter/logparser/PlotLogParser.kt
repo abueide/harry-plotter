@@ -19,4 +19,74 @@
 
 package com.abysl.harryplotter.logparser
 
-class PlotLogParser
+import com.abysl.harryplotter.model.JobResult
+import com.abysl.harryplotter.model.JobState
+
+
+object PlotLogParser {
+    fun parseLine(jobState: JobState = JobState(), line: String): JobState {
+        return jobState.copy(
+            plotId = parsePlotId(line) ?: jobState.plotId,
+            phase = parsePhase(line) ?: jobState.phase,
+            subphase = parseTable(line) ?: jobState.subphase,
+            currentResult = parseResult(line) ?: jobState.currentResult,
+            logs = jobState.logs + line
+        )
+    }
+
+    fun parsePlotId(line: String): String? {
+        if (!line.contains("ID: ")) return null
+        return line.split("ID: ").lastOrNull()
+    }
+
+    fun parsePhase(line: String): Int? {
+        if (!line.contains("Starting phase")) return null
+        return line
+            .split("Starting phase ").lastOrNull()
+            ?.split("/")?.firstOrNull()
+            ?.toInt()
+    }
+
+    fun parseTable(line: String): String? {
+        return when {
+            line.contains("tables") -> {
+                line.split("tables ").lastOrNull()
+            }
+            line.contains("table") -> {
+                line.split("table ").lastOrNull()
+            }
+            else -> null
+        }
+    }
+
+    fun parseResult(line: String): JobResult? {
+        if (!line.contains("seconds")) return null
+        val seconds: Double = line
+            .split("= ").lastOrNull()
+            ?.split(" seconds")?.firstOrNull()
+            ?.toDouble() ?: return null
+
+        when {
+            line.contains("Time for phase") -> {
+                val phase: Int = line
+                    .split("phase ").lastOrNull()
+                    ?.split(" =")?.firstOrNull()
+                    ?.toInt() ?: return null
+                return when (phase) {
+                    1 -> JobResult(phaseOneTime = seconds)
+                    2 -> JobResult(phaseTwoTime = seconds)
+                    3 -> JobResult(phaseThreeTime = seconds)
+                    4 -> JobResult(phaseFourTime = seconds)
+                    else -> null
+                }
+            }
+            line.contains("Total time") -> {
+                return JobResult(totalTime = seconds)
+            }
+            line.contains("Copy time") -> {
+                return JobResult(copyTime = seconds)
+            }
+            else -> return null
+        }
+    }
+}
