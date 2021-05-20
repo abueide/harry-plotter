@@ -1,6 +1,5 @@
 package com.abysl.harryplotter.view
 
-import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
@@ -35,7 +34,6 @@ class JobsListView {
     private var staggerRoutines: MutableList<Job> = mutableListOf()
 
     lateinit var viewModel: JobsListViewModel
-    lateinit var chia: ChiaCli
 
     fun initialized(jobsListViewModel: JobsListViewModel) {
         this.viewModel = jobsListViewModel
