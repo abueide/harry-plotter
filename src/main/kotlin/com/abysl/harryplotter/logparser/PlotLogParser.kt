@@ -24,13 +24,18 @@ import com.abysl.harryplotter.model.JobState
 
 object PlotLogParser {
     fun parseLine(jobState: JobState = JobState(), line: String, appendLog: Boolean = true): JobState {
-        return jobState.copy(
-            plotId = parsePlotId(line) ?: jobState.plotId,
-            phase = parsePhase(line) ?: jobState.phase,
-            subphase = parseTable(line) ?: jobState.subphase,
-            currentResult = parseResult(line) ?: jobState.currentResult,
-            logs = if (appendLog) jobState.logs + line else jobState.logs
-        )
+        return try {
+            jobState.copy(
+                plotId = parsePlotId(line) ?: jobState.plotId,
+                phase = parsePhase(line) ?: jobState.phase,
+                subphase = parseTable(line) ?: jobState.subphase,
+                currentResult = parseResult(line) ?: jobState.currentResult,
+                logs = if (appendLog) jobState.logs + line else jobState.logs
+            )
+        } catch (e: Exception) {
+            println("Parser failed! $e")
+            jobState
+        }
     }
 
     fun parsePlotId(line: String): String? {
@@ -60,6 +65,10 @@ object PlotLogParser {
 
     fun parseResult(line: String): JobResult? {
         if (!line.contains("seconds")) return null
+        if (line.contains("F1 complete")) {
+            println(line)
+            return null
+        }
         val seconds: Double = line
             .split("= ").lastOrNull()
             ?.split(" seconds")?.firstOrNull()
