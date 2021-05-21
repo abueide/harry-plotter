@@ -118,7 +118,7 @@ data class PlotJob(
         }
 
     private fun whenDone(time: Double) {
-        if(state.phase == 4) {
+        if(state.phase == 4 && state.currentResult.totalTime == 0.0) {
             state = state.copy(currentResult = JobResult(totalTime = time))
         }
         if (state.currentResult.totalTime > 0.0) {
