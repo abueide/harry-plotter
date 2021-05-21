@@ -22,6 +22,7 @@ package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,9 +36,9 @@ import kotlinx.serialization.UseSerializers
 import java.io.File
 
 @Serializable
-class PlotJob(
+data class PlotJob(
     var description: JobDescription,
-    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats())
+    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats(plotsDone = 1, results = listOf(JobResult(totalTime = 25000.0))))
 ) {
 
     @Transient

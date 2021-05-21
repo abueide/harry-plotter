@@ -21,6 +21,7 @@ package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.chia.ChiaLocator
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.MainViewModel
@@ -89,6 +90,7 @@ class MainView {
                 }
             }
         }
+        Config.savePlotJobs(jobs)
         (mainBox.scene.window as Stage).close()
     }
 
