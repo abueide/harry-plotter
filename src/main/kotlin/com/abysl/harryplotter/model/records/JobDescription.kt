@@ -36,14 +36,15 @@ data class JobDescription(
     val ram: Int,
     val key: ChiaKey,
     val plotsToFinish: Int,
-    val kSize: Int = 32
+    val kSize: Int = 32,
+    val additionalParams: List<String> = listOf()
 ) {
 
     fun launch(
         chia: ChiaCli,
         ioDelay: Long = 10,
         onOutput: (String) -> Unit,
-        onCompleted: () -> Unit
+        onCompleted: (Double) -> Unit
     ): Process {
 
         val args = mutableListOf<String>()
@@ -56,6 +57,7 @@ data class JobDescription(
         if (ram > MINIMUM_RAM) args.addAll(listOf("-b", ram.toString()))
         if (threads > 0) args.addAll(listOf("-r", threads.toString()))
         args.addAll(listOf("-t", tempDir.toString(), "-d", destDir.toString()))
+        additionalParams.forEach { if(it.isNotBlank()) args.add(it) }
 
         return chia.runCommandAsync(
             ioDelay = ioDelay,

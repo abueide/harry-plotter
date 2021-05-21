@@ -45,8 +45,8 @@ data class JobState(
         return PlotLogParser.parseLine(this, line)
     }
 
-    fun reset(): JobState {
-        return JobState()
+    fun reset(clearLogs: Boolean = false): JobState {
+        return JobState(logs = if(clearLogs) listOf() else logs)
     }
 
     companion object {

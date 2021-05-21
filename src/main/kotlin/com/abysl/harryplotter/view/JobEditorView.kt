@@ -64,6 +64,10 @@ class JobEditorView {
     @FXML
     private lateinit var kSize: TextField
 
+
+    @FXML
+    private lateinit var additionalParams: TextField
+
     private lateinit var fileChooser: SimpleFileChooser
 
     lateinit var viewModel: JobEditorViewModel
@@ -86,6 +90,7 @@ class JobEditorView {
         viewModel.ram.bindBidirectional(ram.textProperty())
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
         viewModel.kSize.bindBidirectional(kSize.textProperty())
+        viewModel.additionalParams.bindBidirectional(additionalParams.textProperty())
 
         viewModel.plotsToFinish.onEach {
             stopAfterCheck.selectedProperty().set(it.toIntOrNull() ?: 0 > 0)

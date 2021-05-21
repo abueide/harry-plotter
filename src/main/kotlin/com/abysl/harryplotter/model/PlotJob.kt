@@ -34,11 +34,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import java.io.File
+import java.time.Duration
+import java.time.Instant
 
 @Serializable
 data class PlotJob(
     var description: JobDescription,
-    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats(plotsDone = 1, results = listOf(JobResult(totalTime = 25000.0))))
+    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats())
 ) {
 
     @Transient
@@ -115,11 +117,17 @@ data class PlotJob(
             }
         }
 
-    private fun whenDone() {
-        if (state.currentResult.totalTime != 0.0) {
+    private fun whenDone(time: Double) {
+        if(state.phase == 4) {
+            state = state.copy(currentResult = JobResult(totalTime = time))
+        }
+        if (state.currentResult.totalTime > 0.0) {
             stats = stats.plotDone(state.currentResult)
         }
-        if (state.running && (stats.plotsDone < description.plotsToFinish || description.plotsToFinish == 0)) {
+        if (state.running
+            && state.currentResult.totalTime > 0.0
+            && (stats.plotsDone < description.plotsToFinish || description.plotsToFinish == 0)) {
+
             stop()
             start()
         } else {

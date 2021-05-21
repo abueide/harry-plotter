@@ -29,6 +29,8 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
@@ -71,7 +73,7 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
     fun runCommandAsync(
         ioDelay: Long = 10,
         outputCallback: (String) -> Unit,
-        completedCallback: () -> Unit,
+        completedCallback: (Double) -> Unit,
         vararg commandArgs: String,
     ): Process {
         val command: List<String> = listOf(exe.path) + commandArgs.toList()
@@ -91,7 +93,13 @@ class ChiaCli(val exe: File, val config: File) : CoroutineScope {
             }
             input.close()
             err.close()
-            completedCallback()
+            val time = proc?.info()
+                ?.startInstant()
+                ?.map { Duration.between(it, Instant.now()) }
+                ?.orElse(null)
+                ?.seconds?.toDouble() ?: 0.0
+
+            completedCallback(time)
         }
         return proc
     }

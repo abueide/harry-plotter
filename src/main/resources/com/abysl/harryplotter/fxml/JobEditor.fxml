@@ -34,13 +34,15 @@
         <HBox alignment="CENTER_LEFT" spacing="10.0">
           <children>
             <TextField fx:id="threads" prefHeight="25.0" prefWidth="35.0" promptText="2" />
-                  <Label text="K Size" />
-                  <TextField fx:id="kSize" prefHeight="25.0" prefWidth="35.0" text="32" />
+                  <Label minWidth="35.0" text="K Size" />
+                  <TextField fx:id="kSize" prefHeight="25.0" prefWidth="35.0" promptText="32" />
             <Label minWidth="85.0" text="Max Ram (MiB)" />
-            <TextField fx:id="ram" prefHeight="25.0" prefWidth="101.0" promptText="4608" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="ram" prefHeight="25.0" prefWidth="45.0" promptText="4608" />
+                  <Label minWidth="55.0" text="Extra Args" />
+                  <TextField fx:id="additionalParams" promptText="-e -2 C:\path\to\secondary\dir ..." HBox.hgrow="ALWAYS" />
           </children>
         </HBox>
-        <HBox spacing="10.0">
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
           <children>
             <Button minWidth="65.0" mnemonicParsing="false" onAction="#onEdit" prefWidth="65.0" text="Edit" />
             <Button minWidth="65.0" mnemonicParsing="false" onAction="#onAdd" text="Add" />
