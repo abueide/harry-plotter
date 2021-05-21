@@ -49,7 +49,7 @@ class JobsListView {
         }
         jobsView.contextMenu = jobsMenu
         stagger.limitToInt()
-        stagger.text = Prefs.stagger.toString()
+        stagger.text = Prefs.staticStagger.toString()
         stagger.textProperty().addListener(staggerListener)
     }
 
@@ -88,9 +88,9 @@ class JobsListView {
 
     private val staggerListener = ChangeListener<String> { _, _, new ->
         if (new.isBlank()) {
-            Prefs.stagger = 0
+            Prefs.staticStagger = 0
         } else {
-            new.toLongOrNull()?.let { Prefs.stagger = it }
+            new.toIntOrNull()?.let { Prefs.staticStagger = it }
         }
     }
 
@@ -98,7 +98,7 @@ class JobsListView {
         viewModel.plotJobs().forEach {
             if (!it.state.running) {
                 it.start()
-                delay(Prefs.stagger * MILLIS_PER_MINUTE)
+                delay(Prefs.staticStagger.toLong() * MILLIS_PER_MINUTE)
             }
         }
     }

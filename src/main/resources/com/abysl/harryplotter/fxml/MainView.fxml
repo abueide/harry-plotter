@@ -19,23 +19,22 @@
   ~     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox fx:id="mainBox" minHeight="400.0" minWidth="640.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.view.MainView">
+<VBox fx:id="mainBox" minHeight="400.0" minWidth="640.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.view.MainView">
   <children>
     <HBox>
       <children>
         <MenuBar HBox.hgrow="ALWAYS">
           <menus>
+                  <Menu mnemonicParsing="false" text="Settings">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onChiaSettings" text="Chia Settings" />
+                        <MenuItem mnemonicParsing="false" onAction="#onStaggerSettings" text="Stagger Settings" />
+                     </items>
+                  </Menu>
             <Menu mnemonicParsing="false" text="Help">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About Harry Plotter" />

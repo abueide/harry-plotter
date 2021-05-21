@@ -25,6 +25,8 @@ import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.MainViewModel
+import com.abysl.harryplotter.windows.ChiaSettingsWindow
+import com.abysl.harryplotter.windows.StaggerSettingsWindow
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
 import javafx.fxml.FXML
@@ -68,6 +70,14 @@ class MainView {
 
     fun onBugReport() {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/issues/new")
+    }
+
+    fun onChiaSettings(){
+        ChiaSettingsWindow().show()
+    }
+
+    fun onStaggerSettings(){
+        StaggerSettingsWindow().show()
     }
 
     fun onToggleTheme() {
