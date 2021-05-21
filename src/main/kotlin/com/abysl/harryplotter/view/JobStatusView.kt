@@ -58,7 +58,6 @@ class JobStatusView {
                     logsWindow.appendText(viewModel.shownLogs().last() + "\n")
                 } else {
                     logsWindow.text = viewModel.shownLogs().unlines()
-                    logsWindow.appendText("\n")
                 }
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))

@@ -35,7 +35,8 @@ data class JobDescription(
     val threads: Int,
     val ram: Int,
     val key: ChiaKey,
-    val plotsToFinish: Int, // -1  = keep going forever
+    val plotsToFinish: Int,
+    val kSize: Int = 32
 ) {
 
     fun launch(
@@ -47,7 +48,7 @@ data class JobDescription(
 
         val args = mutableListOf<String>()
 
-        args.addAll(listOf("plots", "create", "-k", "32"))
+        args.addAll(listOf("plots", "create", "-k", kSize.toString()))
         if (key.fingerprint.isNotBlank()) args.addAll(listOf("-a", key.fingerprint))
         else if (key.farmerKey.isNotBlank() && key.poolKey.isNotBlank()) {
             args.addAll(listOf("-f", key.farmerKey, "-p", key.poolKey))

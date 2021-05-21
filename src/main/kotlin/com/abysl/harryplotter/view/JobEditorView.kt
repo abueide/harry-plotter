@@ -61,6 +61,9 @@ class JobEditorView {
     @FXML
     private lateinit var plotsToFinish: TextField
 
+    @FXML
+    private lateinit var kSize: TextField
+
     private lateinit var fileChooser: SimpleFileChooser
 
     lateinit var viewModel: JobEditorViewModel
@@ -73,6 +76,7 @@ class JobEditorView {
         threads.limitToInt()
         ram.limitToInt()
         plotsToFinish.limitToInt()
+        kSize.limitToInt()
 
         // Bind JobDescription to viewmodel bidirectionally
         viewModel.jobName.bindBidirectional(jobName.textProperty())
@@ -81,6 +85,7 @@ class JobEditorView {
         viewModel.threads.bindBidirectional(threads.textProperty())
         viewModel.ram.bindBidirectional(ram.textProperty())
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
+        viewModel.kSize.bindBidirectional(kSize.textProperty())
 
         viewModel.plotsToFinish.onEach {
             stopAfterCheck.selectedProperty().set(it.toIntOrNull() ?: 0 > 0)

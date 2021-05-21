@@ -34,6 +34,7 @@ class JobEditorViewModel {
     val tempDir = MutableStateFlow("")
     val destDir = MutableStateFlow("")
     val threads = MutableStateFlow("")
+    val kSize = MutableStateFlow("")
     val ram = MutableStateFlow("")
     val plotsToFinish = MutableStateFlow("")
 
@@ -53,6 +54,7 @@ class JobEditorViewModel {
         jobName.value = desc.name
         tempDir.value = desc.tempDir.path
         destDir.value = desc.destDir.path
+        kSize.value = desc.kSize.toString()
         threads.value = desc.threads.toString()
         ram.value = desc.ram.toString()
         plotsToFinish.value = desc.plotsToFinish.toString()
@@ -136,7 +138,8 @@ class JobEditorViewModel {
             threads.value.ifBlank { "0" }.toInt(),
             ram.value.ifBlank { "0" }.toInt(),
             key,
-            plotsToFinish.value.ifBlank { "0" }.toInt()
+            plotsToFinish.value.ifBlank { "0" }.toInt(),
+            kSize.value.ifBlank { "32" }.toInt()
         )
         return newDescription
     }

@@ -34,6 +34,8 @@
         <HBox alignment="CENTER_LEFT" spacing="10.0">
           <children>
             <TextField fx:id="threads" prefHeight="25.0" prefWidth="35.0" promptText="2" />
+                  <Label text="K Size" />
+                  <TextField fx:id="kSize" prefHeight="25.0" prefWidth="35.0" text="32" />
             <Label minWidth="85.0" text="Max Ram (MiB)" />
             <TextField fx:id="ram" prefHeight="25.0" prefWidth="101.0" promptText="4608" HBox.hgrow="ALWAYS" />
           </children>
