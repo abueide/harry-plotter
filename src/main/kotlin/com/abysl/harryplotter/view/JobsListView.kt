@@ -28,11 +28,6 @@ class JobsListView {
     @FXML
     lateinit var jobsView: ListView<PlotJob>
 
-    @FXML
-    private lateinit var stagger: TextField
-
-    private var staggerRoutines: MutableList<Job> = mutableListOf()
-
     lateinit var viewModel: JobsListViewModel
 
     fun initialized(jobsListViewModel: JobsListViewModel) {
@@ -48,19 +43,15 @@ class JobsListView {
             viewModel.selectedPlotJob.value = new
         }
         jobsView.contextMenu = jobsMenu
-        stagger.limitToInt()
-        stagger.text = Prefs.staticStagger.toString()
-        stagger.textProperty().addListener(staggerListener)
     }
 
     fun onStartAll() {
-        staggerRoutines.add(staggerRoutine())
+        viewModel.onStartAll()
     }
 
     fun onStopAll() {
         if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
-            staggerRoutines.forEach { it.cancel(CancellationException("User Stopped All")) }
-            viewModel.plotJobs().forEach { it.stop() }
+            onStopAll()
         }
     }
 
@@ -84,26 +75,5 @@ class JobsListView {
             }
         }
         jobsMenu.items.add(it)
-    }
-
-    private val staggerListener = ChangeListener<String> { _, _, new ->
-        if (new.isBlank()) {
-            Prefs.staticStagger = 0
-        } else {
-            new.toIntOrNull()?.let { Prefs.staticStagger = it }
-        }
-    }
-
-    fun staggerRoutine() = CoroutineScope(Dispatchers.Default).launch {
-        viewModel.plotJobs().forEach {
-            if (!it.state.running) {
-                it.start()
-                delay(Prefs.staticStagger.toLong() * MILLIS_PER_MINUTE)
-            }
-        }
-    }
-
-    companion object {
-        private const val MILLIS_PER_MINUTE = 60000
     }
 }

@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox maxWidth="350.0" prefHeight="650.0" prefWidth="350.0" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.view.JobsListView">
   <children>
     <ListView fx:id="jobsView" maxWidth="350.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="635.0" spacing="10.0">
+    <HBox alignment="CENTER" layoutX="10.0" layoutY="635.0" spacing="10.0">
       <children>
         <Button minWidth="60.0" mnemonicParsing="false" onAction="#onStopAll" text="Stop All" />
         <Button minWidth="60.0" mnemonicParsing="false" onAction="#onStartAll" text="Start All" />
-        <TextField fx:id="stagger" minWidth="60.0" prefHeight="25.0" prefWidth="60.0" promptText="0" />
-            <Label text="Minute Stagger" />
       </children>
     </HBox>
   </children>

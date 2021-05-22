@@ -42,6 +42,9 @@ class StaggerSettingsView: Initializable {
         firstPhaseStagger.limitToInt()
         otherPhaseStagger.limitToInt()
         staticStagger.limitToInt()
+        firstPhaseStagger.text = Prefs.firstStagger.toString()
+        otherPhaseStagger.text = Prefs.otherStagger.toString()
+        staticStagger.text = Prefs.staticStagger.toString()
     }
 
     fun onCancel(){
@@ -50,8 +53,10 @@ class StaggerSettingsView: Initializable {
     }
 
     fun onSave(){
+        Prefs.firstStagger = firstPhaseStagger.text.ifBlank { "0" }.toInt()
+        Prefs.otherStagger = otherPhaseStagger.text.ifBlank { "0" }.toInt()
         Prefs.staticStagger = staticStagger.text.ifBlank { "0" }.toInt()
-        Prefs.firstStagger = firstPhaseStagger.text.ifBlank { "0" }.toInt()
-        Prefs.firstStagger = firstPhaseStagger.text.ifBlank { "0" }.toInt()
+        val stage = firstPhaseStagger.scene.window as Stage
+        stage.close()
     }
 }
