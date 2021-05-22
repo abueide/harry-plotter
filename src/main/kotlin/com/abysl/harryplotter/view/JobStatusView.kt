@@ -54,11 +54,8 @@ class JobStatusView {
         viewModel.shownJob.onEach(::bind).launchIn(CoroutineScope(Dispatchers.IO))
         viewModel.shownLogs.onEach {
             Platform.runLater {
-                if (viewModel.shouldAppend()) {
-                    logsWindow.appendText(viewModel.shownLogs().last() + "\n")
-                } else {
-                    logsWindow.text = viewModel.shownLogs().unlines()
-                }
+                logsWindow.text = viewModel.shownLogs().unlines()
+                logsWindow.appendText("")
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
     }
@@ -105,7 +102,7 @@ class JobStatusView {
                 showAlert("No job selected!", "You must save & select your plot job before you run it.")
             }
             else -> {
-                viewModel.shownJob()?.start()
+                viewModel.shownJob()?.also { it.tempDone = 0 }?.start(true)
             }
         }
     }

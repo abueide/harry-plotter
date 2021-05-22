@@ -92,11 +92,12 @@ class JobEditorView {
         viewModel.additionalParams.bindBidirectional(additionalParams.textProperty())
 
         viewModel.plotsToFinish.onEach {
-            stopAfterCheck.selectedProperty().set(it.toIntOrNull() ?: 0 > 0)
+            if (it.isNotBlank()) stopAfterCheck.selectedProperty().set((it.toIntOrNull() ?: 0) > 0)
         }.launchIn(CoroutineScope(Dispatchers.IO))
 
         stopAfterCheck.selectedProperty().addListener { observable, old, new ->
             plotsToFinish.isDisable = !new
+            if (!new) plotsToFinish.clear()
         }
 
         // Bind Chia Keys Combo Box Items to ViewModel
@@ -121,11 +122,6 @@ class JobEditorView {
                 }
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
-    }
-
-    fun onStopAfter() {
-        plotsToFinish.disableProperty().value = !stopAfterCheck.selectedProperty().value
-        plotsToFinish.clear()
     }
 
     fun onTempBrowse() {

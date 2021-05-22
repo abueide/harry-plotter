@@ -13,7 +13,7 @@
         <Label text="* Destination Directory" />
         <Label text="Number of Threads" />
         <Label text="Chia Key to Use" />
-        <CheckBox fx:id="stopAfterCheck" mnemonicParsing="false" onAction="#onStopAfter" text="Stop after" />
+        <CheckBox fx:id="stopAfterCheck" mnemonicParsing="false" text="Stop after" />
       </children>
     </VBox>
     <VBox prefHeight="306.0" prefWidth="228.0" spacing="10.0" HBox.hgrow="ALWAYS">

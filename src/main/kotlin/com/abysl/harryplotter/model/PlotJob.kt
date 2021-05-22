@@ -56,8 +56,10 @@ class PlotJob(
         }
 
     var tempDone = 0
+    var manageSelf = false
 
-    fun start() {
+    fun start(manageSelf: Boolean = false) {
+        this.manageSelf = manageSelf
         if (state.running || state.proc?.isAlive == true) {
             println("Trying to start new process while old one is still running, ignoring start job.")
         } else {
@@ -117,7 +119,13 @@ class PlotJob(
             stats = stats.plotDone(state.currentResult)
             tempDone++
         }
-        stop()
+        if (manageSelf && state.running && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
+            stop()
+            start(manageSelf = true)
+        } else {
+            stop()
+            tempDone = 0
+        }
     }
 
     fun parseLine(line: String) {
