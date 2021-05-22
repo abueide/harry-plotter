@@ -36,7 +36,7 @@ import kotlinx.serialization.UseSerializers
 import java.io.File
 
 @Serializable
-data class PlotJob(
+class PlotJob(
     var description: JobDescription,
     val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats())
 ) {
@@ -112,7 +112,6 @@ data class PlotJob(
     private fun whenDone(time: Double) {
         if (state.phase == 4 && state.currentResult.totalTime == 0.0) {
             state = state.copy(currentResult = JobResult(totalTime = time))
-            tempDone++
         }
         if (state.currentResult.totalTime > 0.0) {
             stats = stats.plotDone(state.currentResult)
