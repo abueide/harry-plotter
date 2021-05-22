@@ -92,7 +92,7 @@ class JobEditorView {
         viewModel.additionalParams.bindBidirectional(additionalParams.textProperty())
 
         viewModel.plotsToFinish.onEach {
-            stopAfterCheck.selectedProperty().set(it.toIntOrNull() ?: 0 > 0)
+            if(it.isNotBlank()) stopAfterCheck.selectedProperty().set((it.toIntOrNull() ?: 0) > 0)
         }.launchIn(CoroutineScope(Dispatchers.IO))
 
         stopAfterCheck.selectedProperty().addListener { observable, old, new ->
