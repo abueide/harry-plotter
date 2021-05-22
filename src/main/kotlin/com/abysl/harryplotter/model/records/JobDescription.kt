@@ -20,6 +20,7 @@
 package com.abysl.harryplotter.model.records
 
 import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -41,12 +42,11 @@ data class JobDescription(
 ) {
 
     fun launch(
-        chia: ChiaCli,
         ioDelay: Long = 10,
         onOutput: (String) -> Unit,
         onCompleted: (Double) -> Unit
     ): Process {
-
+        val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
         val args = mutableListOf<String>()
 
         args.addAll(listOf("plots", "create", "-k", kSize.toString()))

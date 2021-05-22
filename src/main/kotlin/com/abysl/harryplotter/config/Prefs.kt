@@ -51,6 +51,11 @@ object Prefs {
         set(value) {
             prefNode.put(EXE_PATH, value)
         }
+    var configPath: String
+        get() = prefNode.get(CONFIG_PATH, "PATH/TO/FILE")
+        set(value) {
+            prefNode.put(CONFIG_PATH, value)
+        }
     var staticStagger: Int
         get() = prefNode.getInt(STATIC_STAGGER, 0)
         set(value) {

@@ -20,22 +20,39 @@
 package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.fxml.FXML
+import javafx.fxml.Initializable
 import javafx.scene.control.TextField
 import javafx.stage.Stage
+import java.net.URL
+import java.util.*
 
-class ChiaSettingsView {
+class ChiaSettingsView: Initializable{
     @FXML
     private lateinit var exePath: TextField
     @FXML
     private lateinit var configPath: TextField
 
-    fun onExeBrowse(){
+    private lateinit var fileChooser: SimpleFileChooser
 
+
+    override fun initialize(location: URL?, resources: ResourceBundle?) {
+        fileChooser = SimpleFileChooser(exePath)
+        exePath.text = Prefs.exePath
+        configPath.text = Prefs.configPath
+    }
+
+    fun onExeBrowse(){
+        fileChooser.chooseFileMaybe("Select chia executable")?.let {
+            exePath.text = it.path
+        }
     }
 
     fun onConfigBrowse(){
-
+        fileChooser.chooseFileMaybe("Select chia config.yaml")?.let {
+            exePath.text = it.path
+        }
     }
 
     fun onCancel(){
@@ -45,5 +62,8 @@ class ChiaSettingsView {
 
     fun onSave(){
         Prefs.exePath = exePath.text
+        val stage = exePath.scene.window as Stage
+        stage.close()
     }
+
 }
