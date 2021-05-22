@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.logparser
 
+import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.JobState
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -27,7 +28,15 @@ internal class PlotLogParserTest {
     val phaseTest = "Starting phase 2/4: Forward Propagation into tmp files... Thu May 20 11:12:05 2021"
     val subphaseTest = "Computing table 4"
     val idTest = "ID: 47861611e2574d6ea75573afe1222784341a6afb1a70ed22e6d45df9dc6a79c9"
-    val resultsTest = ""
+    val time = 1204.32
+    val resultsTotalTest = listOf(
+        "Total time = $time seconds",
+        "Total time = $time",
+    )
+    val resultsPhaseTime = listOf(
+        "Time for phase 2 = $time seconds",
+        "Time for phase 2 = $time"
+    )
 
 //    @Test
 //    fun parseLine() {
@@ -57,10 +66,17 @@ internal class PlotLogParserTest {
         assertEquals(expected, actual)
     }
 
-//    @Test
-//    fun parseResult() {
-//        val expected = JobState(phase = 2)
-//        val actual = PlotLogParser.parseLine(line = resultsTest)
-//        assertEquals(expected, actual)
-//    }
+    @Test
+    fun parseResult() {
+        val expectedTotal = JobState(currentResult = JobResult(totalTime = time))
+        resultsTotalTest.forEach {
+            val actual = PlotLogParser.parseLine(line = it, appendLog = false)
+            assertEquals(expectedTotal, actual)
+        }
+        val expectedPhase = JobState(currentResult = JobResult(phaseTwoTime = time))
+        resultsPhaseTime.forEach {
+            val actual = PlotLogParser.parseLine(line = it, appendLog = false)
+            assertEquals(expectedPhase, actual)
+        }
+    }
 }

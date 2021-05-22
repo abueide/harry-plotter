@@ -23,10 +23,10 @@ import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.util.invoke
+import com.abysl.harryplotter.util.unwords
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import java.io.File
 
 class JobEditorViewModel {
@@ -34,6 +34,8 @@ class JobEditorViewModel {
     val tempDir = MutableStateFlow("")
     val destDir = MutableStateFlow("")
     val threads = MutableStateFlow("")
+    val kSize = MutableStateFlow("")
+    val additionalParams = MutableStateFlow("")
     val ram = MutableStateFlow("")
     val plotsToFinish = MutableStateFlow("")
 
@@ -53,6 +55,8 @@ class JobEditorViewModel {
         jobName.value = desc.name
         tempDir.value = desc.tempDir.path
         destDir.value = desc.destDir.path
+        kSize.value = desc.kSize.toString()
+        additionalParams.value = desc.additionalParams.unwords()
         threads.value = desc.threads.toString()
         ram.value = desc.ram.toString()
         plotsToFinish.value = desc.plotsToFinish.toString()
@@ -136,7 +140,9 @@ class JobEditorViewModel {
             threads.value.ifBlank { "0" }.toInt(),
             ram.value.ifBlank { "0" }.toInt(),
             key,
-            plotsToFinish.value.ifBlank { "0" }.toInt()
+            plotsToFinish.value.ifBlank { "0" }.toInt(),
+            kSize.value.ifBlank { "32" }.toInt(),
+            additionalParams.value.split(" ")
         )
         return newDescription
     }

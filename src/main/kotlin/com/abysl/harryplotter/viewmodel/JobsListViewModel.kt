@@ -20,14 +20,43 @@
 package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.util.invoke
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class JobsListViewModel {
     val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
+    var staggerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+
+    fun onStartAll(delay: Long = 1000) {
+        cancelStagger()
+        var first = true
+        staggerScope.launch {
+            while (true) {
+                var staticTimer = if (first) Prefs.staticStagger * MILLIS_PER_MINUTE else 0L
+                while (checkPhaseBlocked() || staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE) {
+                    println("$staticTimer, ${Prefs.staticStagger * MILLIS_PER_MINUTE}")
+                    delay(delay)
+                    staticTimer += delay
+                }
+                plotJobs.value.firstOrNull { it.isReady() }?.start()
+                first = false
+            }
+        }
+    }
+
+    fun onStopAll() {
+        cancelStagger()
+        plotJobs.value.filter { it.state.running }.forEach { it.stop() }
+    }
 
     fun saveJob(description: JobDescription) {
         val selectedJob = selectedPlotJob()
@@ -39,5 +68,30 @@ class JobsListViewModel {
             selectedJob.description = description
         }
         Config.savePlotJobs(plotJobs())
+    }
+
+    fun cancelStagger() {
+        staggerScope?.cancel()
+        staggerScope = CoroutineScope(Dispatchers.IO)
+    }
+
+    fun checkPhaseBlocked(): Boolean {
+        return checkPhaseOneBlocked() || checkOtherBlocked()
+    }
+
+    fun checkPhaseOneBlocked(): Boolean {
+        val phaseOneStagger = Prefs.firstStagger
+        if (phaseOneStagger == 0) return false
+        return plotJobs.value.filter { it.state.phase == 1 && it.state.running }.size >= phaseOneStagger
+    }
+
+    fun checkOtherBlocked(): Boolean {
+        val otherStagger = Prefs.otherStagger
+        if (otherStagger == 0) return false
+        return plotJobs.value.filter { it.state.phase != 1 && it.state.running }.size >= otherStagger
+    }
+
+    companion object {
+        private const val MILLIS_PER_MINUTE = 60000L
     }
 }

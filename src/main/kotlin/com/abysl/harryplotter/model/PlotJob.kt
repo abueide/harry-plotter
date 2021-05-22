@@ -18,10 +18,11 @@
  */
 
 @file:UseSerializers(MutableStateFlowSerializer::class)
+
 package com.abysl.harryplotter.model
 
-import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,9 +44,6 @@ class PlotJob(
     @Transient
     val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
 
-    @Transient
-    lateinit var chia: ChiaCli
-
     var stats
         get() = statsFlow.value
         set(jobStats) {
@@ -57,16 +55,13 @@ class PlotJob(
             stateFlow.value = jobState
         }
 
-    fun init(chia: ChiaCli) {
-        this.chia = chia
-    }
+    var tempDone = 0
 
     fun start() {
         if (state.running || state.proc?.isAlive == true) {
             println("Trying to start new process while old one is still running, ignoring start job.")
         } else {
             val proc = description.launch(
-                chia = chia,
                 ioDelay = 10,
                 onOutput = ::parseLine,
                 onCompleted = ::whenDone,
@@ -114,20 +109,23 @@ class PlotJob(
             }
         }
 
-    private fun whenDone() {
-        if (state.currentResult.totalTime != 0.0) {
+    private fun whenDone(time: Double) {
+        if (state.phase == 4 && state.currentResult.totalTime == 0.0) {
+            state = state.copy(currentResult = JobResult(totalTime = time))
+        }
+        if (state.currentResult.totalTime > 0.0) {
             stats = stats.plotDone(state.currentResult)
+            tempDone++
         }
-        if (state.running && (stats.plotsDone < description.plotsToFinish || description.plotsToFinish == 0)) {
-            stop()
-            start()
-        } else {
-            stop()
-        }
+        stop()
     }
 
     fun parseLine(line: String) {
         state = state.parse(line)
+    }
+
+    fun isReady(): Boolean {
+        return !state.running && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 
     override fun toString(): String {

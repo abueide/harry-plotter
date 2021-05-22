@@ -26,7 +26,11 @@ object Prefs {
     private const val VERSION_PROMPT = "VERSION_PROMPT"
     private const val DARK_MODE = "DARK_MODE"
     private const val EXE_PATH = "EXE_PATH"
-    private const val STAGGER = "STAGGER"
+    private const val CONFIG_PATH = "CONFIG_PATH"
+    private const val STATIC_STAGGER = "STATIC_STAGGER"
+    private const val FIRST_PHASE_STAGGER = "FIRST_PHASE_STAGGER"
+    private const val OTHER_PHASE_STAGGER = "OTHER_PHASE_STAGGER"
+
     private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
 
@@ -46,9 +50,26 @@ object Prefs {
         set(value) {
             prefNode.put(EXE_PATH, value)
         }
-    var stagger: Long
-        get() = prefNode.getLong(STAGGER, 0)
+    var configPath: String
+        get() = prefNode.get(CONFIG_PATH, "PATH/TO/FILE")
         set(value) {
-            prefNode.putLong(STAGGER, value)
+            prefNode.put(CONFIG_PATH, value)
+        }
+    var staticStagger: Int
+        get() = prefNode.getInt(STATIC_STAGGER, 0)
+        set(value) {
+            prefNode.putInt(STATIC_STAGGER, value)
+        }
+
+    var firstStagger: Int
+        get() = prefNode.getInt(FIRST_PHASE_STAGGER, 0)
+        set(value) {
+            prefNode.putInt(FIRST_PHASE_STAGGER, value)
+        }
+
+    var otherStagger: Int
+        get() = prefNode.getInt(OTHER_PHASE_STAGGER, 0)
+        set(value) {
+            prefNode.putInt(OTHER_PHASE_STAGGER, value)
         }
 }

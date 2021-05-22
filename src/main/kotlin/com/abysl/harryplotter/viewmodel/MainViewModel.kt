@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class MainViewModel(val chia: ChiaCli) {
+class MainViewModel {
 
     val jobsListViewModel: JobsListViewModel = JobsListViewModel()
     val jobEditorViewModel: JobEditorViewModel = JobEditorViewModel()
@@ -35,17 +35,9 @@ class MainViewModel(val chia: ChiaCli) {
 
     init {
         jobEditorViewModel.initialized(savedCallback = jobsListViewModel::saveJob)
+        jobsListViewModel.plotJobs.value += Config.getPlotJobs()
 
-        jobsListViewModel.plotJobs.onEach {
-            println("Added job!")
-            it.forEach { plotJob -> plotJob.init(chia) }
-        }.launchIn(CoroutineScope(Dispatchers.IO))
-        jobsListViewModel.plotJobs.value += Config.getPlotJobs().map {
-            it.init(chia)
-            return@map it
-        }
-
-        jobEditorViewModel.chiaKeys.value += chia.readKeys()
+        jobEditorViewModel.chiaKeys.value += ChiaCli().readKeys()
         jobEditorViewModel.selectedKey.value = jobEditorViewModel.chiaKeys().firstOrNull()
 
         jobsListViewModel.selectedPlotJob.onEach {

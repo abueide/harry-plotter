@@ -19,21 +19,26 @@
 
 package com.abysl.harryplotter.view
 
-import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.chia.ChiaLocator
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.MainViewModel
+import com.abysl.harryplotter.windows.ChiaSettingsWindow
+import com.abysl.harryplotter.windows.StaggerSettingsWindow
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
 import javafx.fxml.FXML
+import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
+import java.net.URL
+import java.util.ResourceBundle
 
-class MainView {
+class MainView : Initializable {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
     private lateinit var mainBox: VBox
@@ -51,9 +56,12 @@ class MainView {
     lateinit var toggleTheme: () -> Unit
     lateinit var viewModel: MainViewModel
 
+    override fun initialize(location: URL?, resources: ResourceBundle?) {
+        findChia()
+    }
+
     fun initialized() {
-        val chia = findChia()
-        viewModel = MainViewModel(chia)
+        viewModel = MainViewModel()
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)
@@ -67,6 +75,14 @@ class MainView {
 
     fun onBugReport() {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/issues/new")
+    }
+
+    fun onChiaSettings() {
+        ChiaSettingsWindow().show()
+    }
+
+    fun onStaggerSettings() {
+        StaggerSettingsWindow().show()
     }
 
     fun onToggleTheme() {
@@ -89,13 +105,13 @@ class MainView {
                 }
             }
         }
+        Config.savePlotJobs(jobs)
         (mainBox.scene.window as Stage).close()
     }
 
-    fun findChia(): ChiaCli {
+    fun findChia() {
         val chiaLocator = ChiaLocator(mainBox)
-        val exePath = chiaLocator.getExePath()
-        Prefs.exePath = exePath.path
-        return ChiaCli(exePath, chiaLocator.getConfigFile())
+        Prefs.exePath = chiaLocator.getExePath().path
+        Prefs.configPath = chiaLocator.getConfigFile().path
     }
 }

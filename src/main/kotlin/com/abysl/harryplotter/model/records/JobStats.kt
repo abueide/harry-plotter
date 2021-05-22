@@ -19,8 +19,9 @@
 
 @file:UseSerializers(MutableStateFlowSerializer::class)
 
-package com.abysl.harryplotter.model
+package com.abysl.harryplotter.model.records
 
+import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers

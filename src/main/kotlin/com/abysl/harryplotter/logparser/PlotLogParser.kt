@@ -64,37 +64,35 @@ object PlotLogParser {
     }
 
     fun parseResult(line: String): JobResult? {
-        if (!line.contains("seconds")) return null
-        if (line.contains("F1 complete")) {
-            println(line)
-            return null
-        }
-        val seconds: Double = line
-            .split("= ").lastOrNull()
-            ?.split(" seconds")?.firstOrNull()
-            ?.toDouble() ?: return null
+        if (line.contains("Time for phase") || line.contains("Total time") || line.contains("Copy time")) {
+            val seconds: Double = line
+                .split("= ").lastOrNull()
+                ?.split(" seconds")?.firstOrNull()
+                ?.toDouble() ?: return null
 
-        when {
-            line.contains("Time for phase") -> {
-                val phase: Int = line
-                    .split("phase ").lastOrNull()
-                    ?.split(" =")?.firstOrNull()
-                    ?.toInt() ?: return null
-                return when (phase) {
-                    1 -> JobResult(phaseOneTime = seconds)
-                    2 -> JobResult(phaseTwoTime = seconds)
-                    3 -> JobResult(phaseThreeTime = seconds)
-                    4 -> JobResult(phaseFourTime = seconds)
-                    else -> null
+            when {
+                line.contains("Time for phase") -> {
+                    val phase: Int = line
+                        .split("phase ").lastOrNull()
+                        ?.split(" =")?.firstOrNull()
+                        ?.toInt() ?: return null
+                    return when (phase) {
+                        1 -> JobResult(phaseOneTime = seconds)
+                        2 -> JobResult(phaseTwoTime = seconds)
+                        3 -> JobResult(phaseThreeTime = seconds)
+                        4 -> JobResult(phaseFourTime = seconds)
+                        else -> null
+                    }
                 }
+                line.contains("Total time") -> {
+                    return JobResult(totalTime = seconds)
+                }
+                line.contains("Copy time") -> {
+                    return JobResult(copyTime = seconds)
+                }
+                else -> return null
             }
-            line.contains("Total time") -> {
-                return JobResult(totalTime = seconds)
-            }
-            line.contains("Copy time") -> {
-                return JobResult(copyTime = seconds)
-            }
-            else -> return null
-        }
+        } else
+            return null
     }
 }
