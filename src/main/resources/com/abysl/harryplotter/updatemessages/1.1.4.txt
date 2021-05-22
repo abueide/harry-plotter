@@ -12,8 +12,9 @@ https://github.com/abueide/harry-plotter/releases
 
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
-Release 1.1.4 brings several new QoL features & bugfixes:
+Release 1.1.4 brings several new features & bugfixes:
 * Set maximum number of concurrent plots by phase
 * Support custom arguments to the chia CLI
 * Support different K sizes
 * Fix some bugs with calculating/saving stats
+* Fix bug where plots were appending logs even when not selected
