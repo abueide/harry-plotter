@@ -57,7 +57,7 @@ data class JobDescription(
         if (ram > MINIMUM_RAM) args.addAll(listOf("-b", ram.toString()))
         if (threads > 0) args.addAll(listOf("-r", threads.toString()))
         args.addAll(listOf("-t", tempDir.toString(), "-d", destDir.toString()))
-        additionalParams.forEach { if(it.isNotBlank()) args.add(it) }
+        additionalParams.forEach { if (it.isNotBlank()) args.add(it) }
 
         return chia.runCommandAsync(
             ioDelay = ioDelay,

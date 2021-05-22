@@ -21,7 +21,6 @@ package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.limitToInt
-import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.TextField
@@ -29,7 +28,7 @@ import javafx.stage.Stage
 import java.net.URL
 import java.util.ResourceBundle
 
-class StaggerSettingsView: Initializable {
+class StaggerSettingsView : Initializable {
     @FXML
     private lateinit var firstPhaseStagger: TextField
 
@@ -48,12 +47,12 @@ class StaggerSettingsView: Initializable {
         staticStagger.text = Prefs.staticStagger.toString()
     }
 
-    fun onCancel(){
+    fun onCancel() {
         val stage = firstPhaseStagger.scene.window as Stage
         stage.close()
     }
 
-    fun onSave(){
+    fun onSave() {
         Prefs.firstStagger = firstPhaseStagger.text.ifBlank { "0" }.toInt()
         Prefs.otherStagger = otherPhaseStagger.text.ifBlank { "0" }.toInt()
         Prefs.staticStagger = staticStagger.text.ifBlank { "0" }.toInt()

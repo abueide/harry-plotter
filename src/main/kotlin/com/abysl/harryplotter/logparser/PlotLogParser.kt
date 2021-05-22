@@ -64,7 +64,7 @@ object PlotLogParser {
     }
 
     fun parseResult(line: String): JobResult? {
-        if(line.contains("Time for phase") || line.contains("Total time") || line.contains("Copy time")) {
+        if (line.contains("Time for phase") || line.contains("Total time") || line.contains("Copy time")) {
             val seconds: Double = line
                 .split("= ").lastOrNull()
                 ?.split(" seconds")?.firstOrNull()
@@ -92,7 +92,7 @@ object PlotLogParser {
                 }
                 else -> return null
             }
-        }else
+        } else
             return null
     }
 }

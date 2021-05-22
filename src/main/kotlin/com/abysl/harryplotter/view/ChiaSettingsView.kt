@@ -26,9 +26,9 @@ import javafx.fxml.Initializable
 import javafx.scene.control.TextField
 import javafx.stage.Stage
 import java.net.URL
-import java.util.*
+import java.util.ResourceBundle
 
-class ChiaSettingsView: Initializable{
+class ChiaSettingsView : Initializable {
     @FXML
     private lateinit var exePath: TextField
     @FXML
@@ -36,34 +36,32 @@ class ChiaSettingsView: Initializable{
 
     private lateinit var fileChooser: SimpleFileChooser
 
-
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         fileChooser = SimpleFileChooser(exePath)
         exePath.text = Prefs.exePath
         configPath.text = Prefs.configPath
     }
 
-    fun onExeBrowse(){
+    fun onExeBrowse() {
         fileChooser.chooseFileMaybe("Select chia executable")?.let {
             exePath.text = it.path
         }
     }
 
-    fun onConfigBrowse(){
+    fun onConfigBrowse() {
         fileChooser.chooseFileMaybe("Select chia config.yaml")?.let {
             exePath.text = it.path
         }
     }
 
-    fun onCancel(){
+    fun onCancel() {
         val stage = exePath.scene.window as Stage
         stage.close()
     }
 
-    fun onSave(){
+    fun onSave() {
         Prefs.exePath = exePath.text
         val stage = exePath.scene.window as Stage
         stage.close()
     }
-
 }

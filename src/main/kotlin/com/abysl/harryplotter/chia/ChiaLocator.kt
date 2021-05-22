@@ -34,7 +34,7 @@ class ChiaLocator(node: Node) {
 
     fun getConfigFile(): File {
         val prefsDir = File(Prefs.configPath)
-        if(prefsDir.exists()){
+        if (prefsDir.exists()) {
             return prefsDir
         }
         val configDir = File(System.getProperty("user.home") + "/.chia/mainnet/config/config.yaml")

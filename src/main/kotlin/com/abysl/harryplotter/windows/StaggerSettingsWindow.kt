@@ -20,9 +20,7 @@
 package com.abysl.harryplotter.windows
 
 import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.util.FxUtil
-import com.abysl.harryplotter.view.KeyEditorView
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -31,7 +29,7 @@ import javafx.stage.Stage
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class StaggerSettingsWindow() {
+class StaggerSettingsWindow {
 
     fun show() {
         try {
@@ -47,7 +45,7 @@ class StaggerSettingsWindow() {
             FxUtil.setTheme(stage)
             stage.show()
         } catch (ex: IOException) {
-            System.err.println(ex)
+            System.err.println(ex.stackTrace)
             exitProcess(1)
         }
     }

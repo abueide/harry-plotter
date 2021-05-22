@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class MainViewModel() {
+class MainViewModel {
 
     val jobsListViewModel: JobsListViewModel = JobsListViewModel()
     val jobEditorViewModel: JobEditorViewModel = JobEditorViewModel()

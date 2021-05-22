@@ -40,7 +40,7 @@ class JobStatusViewModel {
         job.stateFlow.onEach {
             lastLogSize = it.logs.size
             shownLogs.value = it.logs
-        }.launchIn(CoroutineScope(Dispatchers.IO))
+        }.launchIn(logsScope)
     }
 
     fun clearJob() {

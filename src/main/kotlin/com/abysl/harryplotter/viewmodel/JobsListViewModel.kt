@@ -27,11 +27,9 @@ import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.time.Instant
 
 class JobsListViewModel {
     val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
@@ -42,8 +40,8 @@ class JobsListViewModel {
         cancelStagger()
         var first = true
         staggerScope.launch {
-            while (true){
-                var staticTimer = if(first) Prefs.staticStagger * MILLIS_PER_MINUTE else 0L
+            while (true) {
+                var staticTimer = if (first) Prefs.staticStagger * MILLIS_PER_MINUTE else 0L
                 while (checkPhaseBlocked() || staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE) {
                     println("$staticTimer, ${Prefs.staticStagger * MILLIS_PER_MINUTE}")
                     delay(delay)
@@ -83,13 +81,13 @@ class JobsListViewModel {
 
     fun checkPhaseOneBlocked(): Boolean {
         val phaseOneStagger = Prefs.firstStagger
-        if(phaseOneStagger == 0) return false
+        if (phaseOneStagger == 0) return false
         return plotJobs.value.filter { it.state.phase == 1 && it.state.running }.size >= phaseOneStagger
     }
 
     fun checkOtherBlocked(): Boolean {
         val otherStagger = Prefs.otherStagger
-        if(otherStagger == 0) return false
+        if (otherStagger == 0) return false
         return plotJobs.value.filter { it.state.phase != 1 && it.state.running }.size >= otherStagger
     }
 

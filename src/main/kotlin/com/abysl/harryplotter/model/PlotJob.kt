@@ -125,7 +125,7 @@ data class PlotJob(
         state = state.parse(line)
     }
 
-    fun isReady(): Boolean{
+    fun isReady(): Boolean {
         return !state.running && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 

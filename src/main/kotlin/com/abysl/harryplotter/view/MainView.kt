@@ -19,7 +19,6 @@
 
 package com.abysl.harryplotter.view
 
-import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
@@ -37,9 +36,9 @@ import javafx.scene.control.ButtonType
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.net.URL
-import java.util.*
+import java.util.ResourceBundle
 
-class MainView: Initializable {
+class MainView : Initializable {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
     private lateinit var mainBox: VBox
@@ -78,11 +77,11 @@ class MainView: Initializable {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/issues/new")
     }
 
-    fun onChiaSettings(){
+    fun onChiaSettings() {
         ChiaSettingsWindow().show()
     }
 
-    fun onStaggerSettings(){
+    fun onStaggerSettings() {
         StaggerSettingsWindow().show()
     }
 
@@ -115,6 +114,4 @@ class MainView: Initializable {
         Prefs.exePath = chiaLocator.getExePath().path
         Prefs.configPath = chiaLocator.getConfigFile().path
     }
-
-
 }

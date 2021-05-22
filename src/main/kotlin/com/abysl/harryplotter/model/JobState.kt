@@ -46,7 +46,7 @@ data class JobState(
     }
 
     fun reset(clearLogs: Boolean = false): JobState {
-        return JobState(logs = if(clearLogs) listOf() else logs)
+        return JobState(logs = if (clearLogs) listOf() else logs)
     }
 
     companion object {

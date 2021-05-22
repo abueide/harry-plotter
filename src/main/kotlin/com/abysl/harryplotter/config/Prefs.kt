@@ -31,7 +31,6 @@ object Prefs {
     private const val FIRST_PHASE_STAGGER = "FIRST_PHASE_STAGGER"
     private const val OTHER_PHASE_STAGGER = "OTHER_PHASE_STAGGER"
 
-
     private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
 

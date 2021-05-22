@@ -2,8 +2,11 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>ComplexMethod:PlotLogParser.kt$PlotLogParser$fun parseResult(line: String): JobResult?</ID>
+    <ID>MagicNumber:PlotJob.kt$PlotJob$4</ID>
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$3</ID>
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$4</ID>
+    <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:96</ID>
     <ID>ReturnCount:ChiaKey.kt$ChiaKey$fun parseLine(line: String): ChiaKey</ID>
     <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getConfigFile(): File</ID>
     <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getExePath(): File</ID>

@@ -64,7 +64,6 @@ class JobEditorView {
     @FXML
     private lateinit var kSize: TextField
 
-
     @FXML
     private lateinit var additionalParams: TextField
 
