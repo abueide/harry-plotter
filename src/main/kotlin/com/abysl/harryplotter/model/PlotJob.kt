@@ -18,9 +18,9 @@
  */
 
 @file:UseSerializers(MutableStateFlowSerializer::class)
+
 package com.abysl.harryplotter.model
 
-import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
@@ -34,8 +34,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import java.io.File
-import java.time.Duration
-import java.time.Instant
 
 @Serializable
 data class PlotJob(
@@ -56,6 +54,8 @@ data class PlotJob(
         set(jobState) {
             stateFlow.value = jobState
         }
+
+    var tempDone = 0
 
     fun start() {
         if (state.running || state.proc?.isAlive == true) {
@@ -110,25 +110,23 @@ data class PlotJob(
         }
 
     private fun whenDone(time: Double) {
-        if(state.phase == 4 && state.currentResult.totalTime == 0.0) {
+        if (state.phase == 4 && state.currentResult.totalTime == 0.0) {
             state = state.copy(currentResult = JobResult(totalTime = time))
+            tempDone++
         }
         if (state.currentResult.totalTime > 0.0) {
             stats = stats.plotDone(state.currentResult)
+            tempDone++
         }
-        if (state.running
-            && state.currentResult.totalTime > 0.0
-            && (stats.plotsDone < description.plotsToFinish || description.plotsToFinish == 0)) {
-
-            stop()
-            start()
-        } else {
-            stop()
-        }
+        stop()
     }
 
     fun parseLine(line: String) {
         state = state.parse(line)
+    }
+
+    fun isReady(): Boolean{
+        return !state.running && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 
     override fun toString(): String {

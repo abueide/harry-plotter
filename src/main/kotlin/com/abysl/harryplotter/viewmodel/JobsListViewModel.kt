@@ -27,31 +27,31 @@ import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 class JobsListViewModel {
     val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-
-    var staggerJob = CoroutineScope(Dispatchers.IO)
+    var staggerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     fun onStartAll(delay: Long = 1000) {
         cancelStagger()
-        staggerJob.launch {
-            var staticTimer = Prefs.staticStagger * MILLIS_PER_MINUTE
-            plotJobs.value
-                .filter { !it.state.running }
-                .forEach {
-                    while (checkPhaseBlocked() || staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE) {
-                        println("$staticTimer, ${Prefs.staticStagger * MILLIS_PER_MINUTE}")
-                        delay(delay)
-                        staticTimer += delay
-                    }
-                    staticTimer = 0L
-                    it.start()
+        var first = true
+        staggerScope.launch {
+            while (true){
+                var staticTimer = if(first) Prefs.staticStagger * MILLIS_PER_MINUTE else 0L
+                while (checkPhaseBlocked() || staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE) {
+                    println("$staticTimer, ${Prefs.staticStagger * MILLIS_PER_MINUTE}")
+                    delay(delay)
+                    staticTimer += delay
                 }
+                plotJobs.value.firstOrNull { it.isReady() }?.start()
+                first = false
+            }
         }
     }
 
@@ -73,8 +73,8 @@ class JobsListViewModel {
     }
 
     fun cancelStagger() {
-        staggerJob.cancel()
-        staggerJob = CoroutineScope(Dispatchers.IO)
+        staggerScope?.cancel()
+        staggerScope = CoroutineScope(Dispatchers.IO)
     }
 
     fun checkPhaseBlocked(): Boolean {
