@@ -97,6 +97,7 @@ class JobEditorView {
 
         stopAfterCheck.selectedProperty().addListener { observable, old, new ->
             plotsToFinish.isDisable = !new
+            if (!new) plotsToFinish.clear()
         }
 
         // Bind Chia Keys Combo Box Items to ViewModel
@@ -121,11 +122,6 @@ class JobEditorView {
                 }
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
-    }
-
-    fun onStopAfter() {
-        plotsToFinish.disableProperty().value = !stopAfterCheck.selectedProperty().value
-        plotsToFinish.clear()
     }
 
     fun onTempBrowse() {

@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>ComplexCondition:PlotJob.kt$PlotJob$manageSelf &amp;&amp; state.running &amp;&amp; (tempDone &lt; description.plotsToFinish || description.plotsToFinish == 0)</ID>
     <ID>ComplexMethod:PlotLogParser.kt$PlotLogParser$fun parseResult(line: String): JobResult?</ID>
     <ID>MagicNumber:PlotJob.kt$PlotJob$4</ID>
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$3</ID>

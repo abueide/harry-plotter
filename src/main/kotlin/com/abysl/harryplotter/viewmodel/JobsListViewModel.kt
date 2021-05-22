@@ -39,6 +39,7 @@ class JobsListViewModel {
     fun onStartAll(delay: Long = 1000) {
         cancelStagger()
         var first = true
+        plotJobs.value.forEach { it.tempDone = 0 }
         staggerScope.launch {
             while (true) {
                 var staticTimer = if (first) Prefs.staticStagger * MILLIS_PER_MINUTE else 0L
