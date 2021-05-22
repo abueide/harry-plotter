@@ -59,6 +59,8 @@ You can also toggle dark/light mode by clicking the opposite colored button at t
 
 `git clone https://github.com/abueide/harry-plotter.git`
 
+`cd harry-plotter`
+
 `chmod +x gradlew`
 
 `./gradlew run` --  runs the application
