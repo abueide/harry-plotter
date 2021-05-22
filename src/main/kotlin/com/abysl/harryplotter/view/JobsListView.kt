@@ -51,7 +51,7 @@ class JobsListView {
 
     fun onStopAll() {
         if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
-            onStopAll()
+            viewModel.onStopAll()
         }
     }
 

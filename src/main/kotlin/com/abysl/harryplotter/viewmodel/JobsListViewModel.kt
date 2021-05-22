@@ -40,14 +40,16 @@ class JobsListViewModel {
     fun onStartAll(delay: Long = 1000) {
         cancelStagger()
         staggerJob.launch {
+            var staticTimer = Prefs.staticStagger * MILLIS_PER_MINUTE
             plotJobs.value
                 .filter { !it.state.running }
                 .forEach {
-                    var staticTimer = 0L
-                    while (checkPhaseBlocked() && staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE) {
+                    while (checkPhaseBlocked() || staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE) {
+                        println("$staticTimer, ${Prefs.staticStagger * MILLIS_PER_MINUTE}")
                         delay(delay)
                         staticTimer += delay
                     }
+                    staticTimer = 0L
                     it.start()
                 }
         }
@@ -92,6 +94,6 @@ class JobsListViewModel {
     }
 
     companion object {
-        private const val MILLIS_PER_MINUTE = 60000
+        private const val MILLIS_PER_MINUTE = 60000L
     }
 }
