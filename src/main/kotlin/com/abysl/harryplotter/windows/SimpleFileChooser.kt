@@ -29,6 +29,13 @@ import kotlin.system.exitProcess
 
 class SimpleFileChooser(val node: Node) {
 
+    fun chooseFileMaybe(title: String): File? {
+        val fileChooser = FileChooser()
+        fileChooser.title = title
+        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("All Files", "*.*"))
+        return fileChooser.showOpenDialog(node.scene.window)
+    }
+
     fun chooseFile(title: String, vararg extensions: FileChooser.ExtensionFilter): File {
         val fileChooser = FileChooser()
         fileChooser.title = title

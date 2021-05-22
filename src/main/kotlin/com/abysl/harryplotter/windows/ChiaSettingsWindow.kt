@@ -22,6 +22,7 @@ package com.abysl.harryplotter.windows
 import com.abysl.harryplotter.HarryPlotter
 import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.util.FxUtil
+import com.abysl.harryplotter.view.ChiaSettingsView
 import com.abysl.harryplotter.view.KeyEditorView
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -38,7 +39,6 @@ class ChiaSettingsWindow() {
             // Load scene
             val loader = FXMLLoader(HarryPlotter::class.java.getResource("fxml/ChiaSettings.fxml"))
             val root = loader.load<Parent>()
-
             val stage = Stage()
             stage.scene = Scene(root)
             stage.title = "Chia Settings"
@@ -47,7 +47,8 @@ class ChiaSettingsWindow() {
             FxUtil.setTheme(stage)
             stage.show()
         } catch (ex: IOException) {
-            System.err.println(ex)
+            println(ex)
+            ex.printStackTrace()
             exitProcess(1)
         }
     }

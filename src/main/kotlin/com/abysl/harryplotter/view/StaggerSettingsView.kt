@@ -21,6 +21,7 @@ package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.limitToInt
+import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.TextField

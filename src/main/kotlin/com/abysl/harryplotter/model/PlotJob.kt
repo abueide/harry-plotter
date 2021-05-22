@@ -46,9 +46,6 @@ data class PlotJob(
     @Transient
     val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
 
-    @Transient
-    lateinit var chia: ChiaCli
-
     var stats
         get() = statsFlow.value
         set(jobStats) {
@@ -60,16 +57,11 @@ data class PlotJob(
             stateFlow.value = jobState
         }
 
-    fun init(chia: ChiaCli) {
-        this.chia = chia
-    }
-
     fun start() {
         if (state.running || state.proc?.isAlive == true) {
             println("Trying to start new process while old one is still running, ignoring start job.")
         } else {
             val proc = description.launch(
-                chia = chia,
                 ioDelay = 10,
                 onOutput = ::parseLine,
                 onCompleted = ::whenDone,

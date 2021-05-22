@@ -27,7 +27,6 @@
   ~     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-
 <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.view.StaggerSettingsView">
    <children>
       <VBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
@@ -39,7 +38,7 @@
             </Label>
             <HBox alignment="CENTER" spacing="10.0">
                <children>
-                  <TextField fx:id="firstPhaseStagger">
+                  <TextField fx:id="firstPhaseStagger" alignment="CENTER">
                      <tooltip>
                         <Tooltip text="Stops starting new plot jobs until the number of currently running jobs in phase 1 is below this number." />
                      </tooltip>
@@ -53,7 +52,7 @@
             </Label>
             <HBox alignment="CENTER" spacing="10.0">
                <children>
-                  <TextField fx:id="otherPhaseStagger">
+                  <TextField fx:id="otherPhaseStagger" alignment="CENTER">
                      <tooltip>
                         <Tooltip text="Stops starting new plot jobs until the number of currently running jobs in phases 2-4 is below this number." />
                      </tooltip>

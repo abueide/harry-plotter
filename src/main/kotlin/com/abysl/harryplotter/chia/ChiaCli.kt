@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.chia
 
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.ChiaKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,7 @@ import java.time.Instant
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
-class ChiaCli(val exe: File, val config: File) : CoroutineScope {
+class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs.configPath)) : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.JavaFx
 
