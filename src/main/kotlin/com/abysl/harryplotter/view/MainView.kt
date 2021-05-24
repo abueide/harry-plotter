@@ -38,7 +38,7 @@ import javafx.stage.Stage
 import java.net.URL
 import java.util.ResourceBundle
 
-class MainView : Initializable {
+class MainView {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
     private lateinit var mainBox: VBox
@@ -56,11 +56,8 @@ class MainView : Initializable {
     lateinit var toggleTheme: () -> Unit
     lateinit var viewModel: MainViewModel
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
-        findChia()
-    }
-
     fun initialized() {
+        findChia()
         viewModel = MainViewModel()
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)

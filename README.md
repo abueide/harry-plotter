@@ -46,6 +46,8 @@ You can also toggle dark/light mode by clicking the opposite colored button at t
 
 [JDK 16](https://adoptopenjdk.net/?variant=openjdk16&jvmVariant=hotspot)
 
+Ubuntu/Debian users: `sudo apt install openjdk-16-jdk`
+
 ### Windows
 `git clone https://github.com/abueide/harry-plotter.git`
 

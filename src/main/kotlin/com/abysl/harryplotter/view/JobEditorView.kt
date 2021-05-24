@@ -113,7 +113,6 @@ class JobEditorView {
             }
         }
         jobEditorViewModel.selectedKey.onEach {
-            println("Selecting")
             Platform.runLater {
                 if (it == null) {
                     keysCombo.selectionModel.clearSelection()
