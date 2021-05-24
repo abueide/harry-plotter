@@ -88,7 +88,6 @@ runtime {
             "--resource-dir", "build/resources",
             "--vendor", "Abysl",
             "--description", "You're a farmer, Harry!",
-            ""
         )
 
         if (currentOs.isWindows) {
