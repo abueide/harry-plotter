@@ -40,7 +40,7 @@ class ObservableToFlowBinding<T>(val writableValue: WritableValue<T>, val stateF
     override fun start() {
         job = stateFlow.onEach { newValue ->
             CoroutineScope(Dispatchers.JavaFx).launch {
-                if (writableValue.value?.equals(newValue) != true) {
+                if (writableValue.value != newValue) {
                     writableValue.value = newValue
                 }
             }

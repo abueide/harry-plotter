@@ -43,9 +43,11 @@ class JobEditorViewModel {
     val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
 
     private lateinit var savedCallback: (JobDescription) -> Unit
+    private lateinit var cancelCallback: () -> Unit
 
-    fun initialized(savedCallback: (JobDescription) -> Unit) {
+    fun initialized(savedCallback: (JobDescription) -> Unit, cancelCallback: () -> Unit) {
         this.savedCallback = savedCallback
+        this.cancelCallback = cancelCallback
     }
 
     fun loadJob(plotJob: PlotJob?) {
@@ -94,6 +96,7 @@ class JobEditorViewModel {
         threads.value = ""
         ram.value = ""
         selectedKey.value = chiaKeys.value.firstOrNull()
+        cancelCallback()
     }
 
     fun onSave() {

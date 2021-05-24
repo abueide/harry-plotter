@@ -94,7 +94,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
             }
             input.close()
             err.close()
-            val time = proc?.info()
+            val time = proc.info()
                 ?.startInstant()
                 ?.map { Duration.between(it, Instant.now()) }
                 ?.orElse(null)

@@ -25,7 +25,7 @@ plugins {
     kotlin("jvm") version "1.5.0"
     kotlin("plugin.serialization") version "1.5.0"
     id("org.openjfx.javafxplugin") version "0.0.10"
-    id("org.beryx.runtime") version "1.12.4"
+    id("org.beryx.runtime") version "1.12.5"
     id("io.gitlab.arturbosch.detekt") version "1.17.0-RC2"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
@@ -35,7 +35,8 @@ val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
 group = "com.abysl"
-version = File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
+version = "1.1.5"
+// version = File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
 
 repositories {
     mavenCentral()
@@ -70,6 +71,7 @@ javafx {
     modules = listOf("javafx.base", "javafx.controls", "javafx.fxml", "javafx.web")
 }
 
+val resourcesPath = "build/resources/"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
 //    modules.set(listOf("java.desktop"))
@@ -79,21 +81,31 @@ runtime {
     }
 
     jpackage {
-        installerOptions = listOf("--resource-dir", "src/main/resources", "--vendor", "Abysl")
-        installerName = project.application.applicationName
-        imageName = project.application.applicationName
         appVersion = project.version.toString()
+        imageName = project.application.applicationName
+        installerName = "harry-plotter-setup"
+        installerOptions = listOf(
+            "--resource-dir", resourcesPath,
+            "--vendor", "Abysl",
+            "--description", "You're a farmer, Harry!",
+        )
 
         if (currentOs.isWindows) {
+            installerType = "exe"
             installerOptions = installerOptions + listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu")
-            imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.ico")
+            imageOptions = listOf("--icon", "$resourcesPath/main/com/abysl/harryplotter/icons/snitch.ico")
             if (console) {
                 imageOptions = imageOptions + listOf("--win-console")
             }
         } else if (currentOs.isLinux) {
-            imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.ico")
+            installerType = "deb"
+            installerOptions = installerOptions + listOf(
+                "--linux-shortcut",
+            )
+            imageOptions = listOf("--icon", "$resourcesPath/main/com/abysl/harryplotter/icons/snitch.png")
         } else if (currentOs.isMacOsX) {
-            imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.icns")
+            installerType = "pkg"
+            imageOptions = listOf("--icon", "$resourcesPath/main/com/abysl/harryplotter/icons/snitch.icns")
         }
     }
 }
