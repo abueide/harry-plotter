@@ -83,8 +83,6 @@ runtime {
 
     jpackage {
 
-        imageName = "Harry Plotter"
-        installerName = "harry-plotter-setup"
         appVersion = project.version.toString()
         installerOptions = listOf(
             "--resource-dir", resourcesPath,
@@ -100,12 +98,13 @@ runtime {
                 imageOptions = imageOptions + listOf("--win-console")
             }
         } else if (currentOs.isLinux) {
-            imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.png")
             installerType = "deb"
             installerOptions = installerOptions +  listOf(
-//                "--linux-package-name", "Harry Plotter",
+                "--resource-dir", resourcesPath,
+                "--linux-package-name", "harry-plotter",
                 "--linux-shortcut",
             )
+            imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.png")
         } else if (currentOs.isMacOsX) {
             installerType = "pkg"
             imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.icns")
