@@ -72,7 +72,7 @@ javafx {
 }
 
 
-val resourcesPath = "build/jpackage/"
+val resourcesPath = "build/resources/"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
 //    modules.set(listOf("java.desktop"))
