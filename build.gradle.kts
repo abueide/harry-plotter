@@ -83,7 +83,8 @@ runtime {
 
     jpackage {
         appVersion = project.version.toString()
-        installerName = project.name
+        imageName = project.application.applicationName
+        installerName = "harry-plotter-setup"
         installerOptions = listOf(
             "--resource-dir", resourcesPath,
             "--vendor", "Abysl",
@@ -100,8 +101,6 @@ runtime {
         } else if (currentOs.isLinux) {
             installerType = "deb"
             installerOptions = installerOptions +  listOf(
-                "--resource-dir", resourcesPath,
-                "--linux-package-name", "harry-plotter",
                 "--linux-shortcut",
             )
             imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.png")
