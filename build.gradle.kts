@@ -61,7 +61,7 @@ tasks.test {
 }
 
 application {
-    applicationName = "Harry Plotter"
+    applicationName = "harry-plotter"
     mainClass.set("com.abysl.harryplotter.HarryPlotterKt")
     applicationDefaultJvmArgs = jvmOptions
 }
@@ -83,6 +83,7 @@ runtime {
 
     jpackage {
 
+        imageName = "Harry Plotter"
         installerName = "harry-plotter-setup"
         appVersion = project.version.toString()
         installerOptions = listOf(
@@ -101,7 +102,10 @@ runtime {
         } else if (currentOs.isLinux) {
             imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.png")
             installerType = "deb"
-            installerOptions = installerOptions +  listOf("--linux-shortcut")
+            installerOptions = installerOptions +  listOf(
+//                "--linux-package-name", "Harry Plotter",
+                "--linux-shortcut",
+            )
         } else if (currentOs.isMacOsX) {
             installerType = "pkg"
             imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.icns")
