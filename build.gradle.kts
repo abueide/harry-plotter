@@ -86,6 +86,7 @@ runtime {
         appVersion = project.version.toString()
 
         if (currentOs.isWindows) {
+            installerType = "exe"
             installerOptions = installerOptions + listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu")
             imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.ico")
             if (console) {
@@ -93,7 +94,9 @@ runtime {
             }
         } else if (currentOs.isLinux) {
             imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.png")
+            installerType = "deb"
         } else if (currentOs.isMacOsX) {
+            installerType = "pkg"
             imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.icns")
         }
     }
