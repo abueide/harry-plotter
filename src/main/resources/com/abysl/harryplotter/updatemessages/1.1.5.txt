@@ -12,10 +12,11 @@ https://github.com/abueide/harry-plotter/releases
 
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
-Release 1.1.5 is a small bugfix release
-* Implement Percentage Completion Estimation based on the last plot time
-   * Later, I will improve this to factor in its current progress compared to where it was at the last time the job ran.
+Release 1.1.5 is a small feature/bugfix release
+* Implement Percentage Completion Estimation based on average plot time
+   * Later, I will improve this to factor in its current progress compared to its average progress.
 * Fix bug where clicking cancel was not clearing the selected job making it impossible to create new jobs with the save button
-* Fix bug where having an old chia version installed caused a "Failed to Launch JVM erro"
-* Tested on linux
+* Fix bug where having an old chia version installed caused a "Failed to Launch JVM error"
+* Fix bug where program was crashing if it couldn't automatically find chia executable
 * Provide linux install instructions
+* Log plot job outputs to ~/.harryplotter and reattach to currently running jobs from old plotter instances

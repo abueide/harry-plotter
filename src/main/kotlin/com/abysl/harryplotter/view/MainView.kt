@@ -56,11 +56,8 @@ class MainView : Initializable {
     lateinit var toggleTheme: () -> Unit
     lateinit var viewModel: MainViewModel
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
-        findChia()
-    }
-
     fun initialized() {
+        findChia()
         viewModel = MainViewModel()
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)

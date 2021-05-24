@@ -44,7 +44,6 @@ class JobsListViewModel {
             while (true) {
                 var staticTimer = if (first) Prefs.staticStagger * MILLIS_PER_MINUTE else 0L
                 while (checkPhaseBlocked() || staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE) {
-                    println("$staticTimer, ${Prefs.staticStagger * MILLIS_PER_MINUTE}")
                     delay(delay)
                     staticTimer += delay
                 }
