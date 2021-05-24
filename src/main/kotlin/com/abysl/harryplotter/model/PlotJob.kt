@@ -38,6 +38,7 @@ import kotlinx.serialization.UseSerializers
 import java.io.File
 import java.time.Duration
 import java.time.Instant
+import java.util.Locale
 
 @Serializable
 class PlotJob(
@@ -47,7 +48,6 @@ class PlotJob(
 
     @Transient
     val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
-
 
     @Transient
     var timerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -65,7 +65,6 @@ class PlotJob(
 
     var tempDone = 0
     var manageSelf = false
-
 
     fun start(manageSelf: Boolean = false) {
         this.manageSelf = manageSelf
@@ -167,8 +166,8 @@ class PlotJob(
     override fun toString(): String {
         val roundedPercentage =
             if (state.percentage.isNaN() || state.percentage.isInfinite()) "?"
-            else String.format("%.2f", state.percentage)
-        return if (state.running) "$description - ${roundedPercentage}%" else description.toString()
+            else String.format(Locale.US, "%.2f", state.percentage)
+        return if (state.running) "$description - $roundedPercentage%" else description.toString()
     }
 
     companion object {

@@ -29,14 +29,11 @@ import com.abysl.harryplotter.windows.StaggerSettingsWindow
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
-import java.net.URL
-import java.util.ResourceBundle
 
 class MainView {
     // UI Components ---------------------------------------------------------------------------------------------------

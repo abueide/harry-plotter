@@ -94,7 +94,7 @@ class JobsListViewModel {
         return plotJobs.value.filter { it.state.phase != 1 && it.state.running }.size >= otherStagger
     }
 
-    fun clearSelected(){
+    fun clearSelected() {
         selectedPlotJob.value = null
     }
 

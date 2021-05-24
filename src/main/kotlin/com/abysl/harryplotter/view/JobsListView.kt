@@ -12,7 +12,6 @@ import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -29,7 +28,7 @@ class JobsListView {
     fun initialized(jobsListViewModel: JobsListViewModel) {
         this.viewModel = jobsListViewModel.also { it.refreshCallback = jobsView::refresh }
 
-        jobsListViewModel.plotJobs.onEach {jobList ->
+        jobsListViewModel.plotJobs.onEach { jobList ->
             stateRefreshScope.cancel()
             stateRefreshScope = CoroutineScope(Dispatchers.IO)
             jobList.onEach {
@@ -42,14 +41,14 @@ class JobsListView {
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
         jobsListViewModel.selectedPlotJob.onEach {
-            if(it != null){
+            if (it != null) {
                 jobsView.selectionModel.select(it)
-            }else {
+            } else {
                 jobsView.selectionModel.clearSelection()
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
         jobsView.selectionModel.selectedItemProperty().addListener { obs, old, new ->
-                viewModel.selectedPlotJob.value = new
+            viewModel.selectedPlotJob.value = new
         }
         jobsView.contextMenu = jobsMenu
     }

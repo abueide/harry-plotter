@@ -60,12 +60,12 @@ class ChiaLocator(node: Node) {
         val macChiaExe = File(MAC_CHIA_PATH)
         if (macChiaExe.exists()) return macChiaExe
 
-        var chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
+        val chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
 
         if (chiaAppData.exists()) {
             chiaAppData.list()
-            ?.lastOrNull { it.contains("app-") }
-            ?.let { return File(chiaAppData.path + "/$it/resources/app.asar.unpacked/daemon/chia.exe") }
+                ?.lastOrNull { it.contains("app-") }
+                ?.let { return File(chiaAppData.path + "/$it/resources/app.asar.unpacked/daemon/chia.exe") }
         }
         showAlert("Chia Executable Not Found", "Please specify the chia executable location")
         val file = fileChooser.chooseFile(

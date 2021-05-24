@@ -71,7 +71,6 @@ javafx {
     modules = listOf("javafx.base", "javafx.controls", "javafx.fxml", "javafx.web")
 }
 
-
 val resourcesPath = "build/resources/"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
@@ -94,19 +93,19 @@ runtime {
         if (currentOs.isWindows) {
             installerType = "exe"
             installerOptions = installerOptions + listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu")
-            imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.ico")
+            imageOptions = listOf("--icon", "$resourcesPath/main/com/abysl/harryplotter/icons/snitch.ico")
             if (console) {
                 imageOptions = imageOptions + listOf("--win-console")
             }
         } else if (currentOs.isLinux) {
             installerType = "deb"
-            installerOptions = installerOptions +  listOf(
+            installerOptions = installerOptions + listOf(
                 "--linux-shortcut",
             )
-            imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.png")
+            imageOptions = listOf("--icon", "$resourcesPath/main/com/abysl/harryplotter/icons/snitch.png")
         } else if (currentOs.isMacOsX) {
             installerType = "pkg"
-            imageOptions = listOf("--icon", "${resourcesPath}/main/com/abysl/harryplotter/icons/snitch.icns")
+            imageOptions = listOf("--icon", "$resourcesPath/main/com/abysl/harryplotter/icons/snitch.icns")
         }
     }
 }
