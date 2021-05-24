@@ -80,10 +80,16 @@ runtime {
     }
 
     jpackage {
-        installerOptions = listOf("--resource-dir", "src/main/resources", "--vendor", "Abysl")
+
         installerName = project.application.applicationName
         imageName = project.application.applicationName
         appVersion = project.version.toString()
+        installerOptions = listOf(
+            "--resource-dir", "build/resources",
+            "--vendor", "Abysl",
+            "--description", "You're a farmer, Harry!",
+            ""
+        )
 
         if (currentOs.isWindows) {
             installerType = "exe"
@@ -95,6 +101,7 @@ runtime {
         } else if (currentOs.isLinux) {
             imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.png")
             installerType = "deb"
+            installerOptions = installerOptions +  listOf("--linux-shortcut")
         } else if (currentOs.isMacOsX) {
             installerType = "pkg"
             imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.icns")
