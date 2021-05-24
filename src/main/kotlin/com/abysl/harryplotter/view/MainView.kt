@@ -38,7 +38,7 @@ import javafx.stage.Stage
 import java.net.URL
 import java.util.ResourceBundle
 
-class MainView : Initializable {
+class MainView {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
     private lateinit var mainBox: VBox
