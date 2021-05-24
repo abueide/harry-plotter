@@ -72,7 +72,7 @@ javafx {
 }
 
 
-val resourcesPath = "build/resources/"
+val resourcesPath = "build/jpackage/"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
 //    modules.set(listOf("java.desktop"))
@@ -83,8 +83,7 @@ runtime {
 
     jpackage {
 
-        installerName = project.application.applicationName
-        imageName = project.application.applicationName
+        installerName = "harry-plotter-setup"
         appVersion = project.version.toString()
         installerOptions = listOf(
             "--resource-dir", resourcesPath,
