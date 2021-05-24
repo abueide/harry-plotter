@@ -25,7 +25,7 @@ plugins {
     kotlin("jvm") version "1.5.0"
     kotlin("plugin.serialization") version "1.5.0"
     id("org.openjfx.javafxplugin") version "0.0.10"
-    id("org.beryx.runtime") version "1.12.4"
+    id("org.beryx.runtime") version "1.12.5"
     id("io.gitlab.arturbosch.detekt") version "1.17.0-RC2"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
@@ -61,7 +61,7 @@ tasks.test {
 }
 
 application {
-    applicationName = "harry-plotter"
+    applicationName = "Harry Plotter"
     mainClass.set("com.abysl.harryplotter.HarryPlotterKt")
     applicationDefaultJvmArgs = jvmOptions
 }
@@ -82,8 +82,8 @@ runtime {
     }
 
     jpackage {
-
         appVersion = project.version.toString()
+        installerName = project.name
         installerOptions = listOf(
             "--resource-dir", resourcesPath,
             "--vendor", "Abysl",
