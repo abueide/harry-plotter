@@ -36,6 +36,8 @@ class JobsListViewModel {
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
     var staggerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
+    lateinit var refreshCallback: () -> Unit
+
     fun onStartAll(delay: Long = 1000) {
         cancelStagger()
         var first = true
@@ -68,10 +70,11 @@ class JobsListViewModel {
             selectedJob.description = description
         }
         Config.savePlotJobs(plotJobs())
+        refreshCallback()
     }
 
     fun cancelStagger() {
-        staggerScope?.cancel()
+        staggerScope.cancel()
         staggerScope = CoroutineScope(Dispatchers.IO)
     }
 
@@ -89,6 +92,10 @@ class JobsListViewModel {
         val otherStagger = Prefs.otherStagger
         if (otherStagger == 0) return false
         return plotJobs.value.filter { it.state.phase != 1 && it.state.running }.size >= otherStagger
+    }
+
+    fun clearSelected(){
+        selectedPlotJob.value = null
     }
 
     companion object {

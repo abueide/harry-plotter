@@ -34,7 +34,7 @@ class MainViewModel {
     val jobStatusViewModel: JobStatusViewModel = JobStatusViewModel()
 
     init {
-        jobEditorViewModel.initialized(savedCallback = jobsListViewModel::saveJob)
+        jobEditorViewModel.initialized(savedCallback = jobsListViewModel::saveJob, cancelCallback = jobsListViewModel::clearSelected)
         jobsListViewModel.plotJobs.value += Config.getPlotJobs()
 
         jobEditorViewModel.chiaKeys.value += ChiaCli().readKeys()
