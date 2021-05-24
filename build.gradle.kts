@@ -91,7 +91,7 @@ runtime {
                 imageOptions = imageOptions + listOf("--win-console")
             }
         } else if (currentOs.isLinux) {
-            imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.ico")
+            imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.png")
         } else if (currentOs.isMacOsX) {
             imageOptions = listOf("--icon", "src/main/resources/com/abysl/harryplotter/icons/snitch.icns")
         }
