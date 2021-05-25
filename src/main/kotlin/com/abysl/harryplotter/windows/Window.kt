@@ -20,7 +20,6 @@
 package com.abysl.harryplotter.windows
 
 import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.util.FxUtil
 import com.abysl.harryplotter.view.KeyEditorView
 import javafx.fxml.FXMLLoader
@@ -29,14 +28,31 @@ import javafx.scene.Scene
 import javafx.stage.Modality
 import javafx.stage.Stage
 import java.io.IOException
+import java.net.URL
 import kotlin.system.exitProcess
 
-class KeyEditorWindow(val key: ChiaKey? = null): Window<KeyEditorView>() {
-    fun show(callback: (key: ChiaKey?) -> Unit) {
-        val controller = create("Add Key", "fxml/KeyEditor")
-        if(key != null){
-            controller.writeKey(key)
+abstract class Window<T> {
+
+    protected val stage: Stage = Stage()
+
+    protected fun create(title: String, fxml: String): T {
+        try {
+            // Load scene
+            val loader = FXMLLoader(HarryPlotter::class.java.getResource(fxml))
+            val root = loader.load<Parent>()
+            // Get controller from scene
+            val controller: T  = loader.getController()
+            stage.scene = Scene(root)
+            stage.title = title
+            stage.isAlwaysOnTop = true
+            stage.initModality(Modality.APPLICATION_MODAL)
+            FxUtil.setTheme(stage)
+            stage.show()
+            return controller
+        } catch (ex: IOException) {
+            System.err.println(ex)
+            ex.printStackTrace()
+            exitProcess(1)
         }
-        controller.callback = callback
     }
 }

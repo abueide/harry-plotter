@@ -41,14 +41,13 @@ class HarryPlotter : Application() {
         val root: Parent = loader.load()
         val view: MainView = loader.getController()
         val scene = Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT)
-        view.initialized()
+        view.initialized(hostServices)
 
         stage.icons.add(Image("icons/snitch.png".getResourceAsStream()))
         stage.scene = scene
         FxUtil.setTheme(stage)
         stage.show()
         view.toggleTheme = ::toggleTheme
-        view.hostServices = hostServices
         stage.setOnCloseRequest {
             view.onExit()
         }

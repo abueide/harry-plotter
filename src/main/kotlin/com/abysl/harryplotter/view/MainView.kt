@@ -25,6 +25,7 @@ import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.ChiaSettingsWindow
+import com.abysl.harryplotter.windows.ReleaseWindow
 import com.abysl.harryplotter.windows.StaggerSettingsWindow
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
@@ -64,13 +65,16 @@ class MainView {
     lateinit var toggleTheme: () -> Unit
     lateinit var viewModel: MainViewModel
 
-    fun initialized() {
+    fun initialized(hostServices: HostServices) {
+        this.hostServices = hostServices
         findChia()
         viewModel = MainViewModel()
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)
         setButtonTheme()
+        ReleaseWindow(hostServices).show()
+        Prefs.printNodePath()
     }
 
     // Calls after the JavaFX vars are populated so they aren't null

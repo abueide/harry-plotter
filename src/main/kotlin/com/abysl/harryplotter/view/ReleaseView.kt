@@ -17,26 +17,35 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.windows
+package com.abysl.harryplotter.view
 
-import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.util.FxUtil
-import com.abysl.harryplotter.view.KeyEditorView
-import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
-import javafx.scene.Scene
-import javafx.stage.Modality
+import com.abysl.harryplotter.model.records.GithubRelease
+import javafx.application.HostServices
+import javafx.fxml.FXML
+import javafx.scene.control.Label
+import javafx.scene.control.TextArea
 import javafx.stage.Stage
-import java.io.IOException
-import kotlin.system.exitProcess
 
-class KeyEditorWindow(val key: ChiaKey? = null): Window<KeyEditorView>() {
-    fun show(callback: (key: ChiaKey?) -> Unit) {
-        val controller = create("Add Key", "fxml/KeyEditor")
-        if(key != null){
-            controller.writeKey(key)
-        }
-        controller.callback = callback
+class ReleaseView {
+
+    @FXML
+    lateinit var releaseVersion: Label
+    @FXML
+    lateinit var changeLog: TextArea
+
+    lateinit var hostServices: HostServices
+
+    fun initialized(release: GithubRelease, hostServices: HostServices){
+        releaseVersion.text = release.version
+        changeLog.text = release.changeLog
+        this.hostServices = hostServices
+    }
+
+    fun onCancel(){
+        (releaseVersion.scene.window as Stage).close()
+    }
+
+    fun onDownload(){
+        hostServices.showDocument("https://github.com/abueide/harry-plotter/releases")
     }
 }

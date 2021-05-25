@@ -20,6 +20,7 @@
 package com.abysl.harryplotter.config
 
 import com.abysl.harryplotter.util.getResource
+import java.io.File
 import java.util.prefs.Preferences
 
 object Prefs {
@@ -30,9 +31,14 @@ object Prefs {
     private const val STATIC_STAGGER = "STATIC_STAGGER"
     private const val FIRST_PHASE_STAGGER = "FIRST_PHASE_STAGGER"
     private const val OTHER_PHASE_STAGGER = "OTHER_PHASE_STAGGER"
+    private const val LAST_RELEASE_SHOWN = "LAST_RELEASE_SHOWN"
 
     private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
+
+    fun printNodePath(){
+        println(prefNode)
+    }
 
     var versionPrompt: Boolean
         get() = prefNode.getBoolean(VERSION_PROMPT + version, true)
@@ -54,6 +60,14 @@ object Prefs {
         get() = prefNode.get(CONFIG_PATH, "PATH/TO/FILE")
         set(value) {
             prefNode.put(CONFIG_PATH, value)
+        }
+    var lastReleaseShown: String
+        get() = prefNode.get(
+            LAST_RELEASE_SHOWN,
+            File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
+        )
+        set(value) {
+            prefNode.put(LAST_RELEASE_SHOWN, value)
         }
     var staticStagger: Int
         get() = prefNode.getInt(STATIC_STAGGER, 0)
