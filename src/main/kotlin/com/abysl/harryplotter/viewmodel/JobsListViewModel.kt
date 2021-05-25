@@ -49,7 +49,9 @@ class JobsListViewModel {
                     delay(delay)
                     staticTimer += delay
                 }
-                plotJobs.value.firstOrNull { it.isReady() }?.start()
+                plotJobs.value.firstOrNull {
+                    it.isReady() && !it.manageSelf && it.tempDone < it.description.plotsToFinish
+                }?.start()
                 first = false
             }
         }
