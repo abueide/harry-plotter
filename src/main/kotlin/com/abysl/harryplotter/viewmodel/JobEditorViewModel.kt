@@ -45,9 +45,9 @@ class JobEditorViewModel {
     private lateinit var savedCallback: (JobDescription) -> Unit
     private lateinit var cancelCallback: () -> Unit
 
-    fun initialized(savedCallback: (JobDescription) -> Unit, cancelCallback: () -> Unit) {
+    fun initialized(savedCallback: (JobDescription) -> Unit, selectCallback: () -> Unit) {
         this.savedCallback = savedCallback
-        this.cancelCallback = cancelCallback
+        this.cancelCallback = selectCallback
     }
 
     fun loadJob(plotJob: PlotJob?) {
@@ -57,10 +57,10 @@ class JobEditorViewModel {
         jobName.value = desc.name
         tempDir.value = desc.tempDir.path
         destDir.value = desc.destDir.path
-        kSize.value = desc.kSize.toString()
+        kSize.value = if(desc.kSize == 32) "" else desc.kSize.toString()
         additionalParams.value = desc.additionalParams.unwords()
-        threads.value = desc.threads.toString()
-        ram.value = desc.ram.toString()
+        threads.value = if(desc.threads == 0) "" else desc.threads.toString()
+        ram.value = if(desc.ram == 0) "" else desc.ram.toString()
         plotsToFinish.value = desc.plotsToFinish.toString()
     }
 
@@ -89,6 +89,11 @@ class JobEditorViewModel {
         }
     }
 
+    fun onNew() {
+        onCancel()
+        onSave(false)
+    }
+
     fun onCancel() {
         jobName.value = ""
         tempDir.value = ""
@@ -99,38 +104,40 @@ class JobEditorViewModel {
         cancelCallback()
     }
 
-    fun onSave() {
-        val newDesc = getJobDescription() ?: return
+    fun onSave(check: Boolean = true) {
+        val newDesc = getJobDescription(check = check) ?: return
         savedCallback(newDesc)
     }
 
-    fun getJobDescription(defaultName: String = "Unnamed Job"): JobDescription? {
+    fun getJobDescription(defaultName: String = "Unnamed Job", check: Boolean = true): JobDescription? {
         val tempDirPath = tempDir.value
         val destDirPath = destDir.value
-        if (tempDirPath.isBlank() || destDirPath.isBlank()) {
-            SimpleDialogs.showAlert(
-                "Directory Not Selected",
-                "Please make sure to select a destination & temporary directory."
-            )
-            return null
-        }
-        val temp = File(tempDirPath)
-        val dest = File(destDirPath)
-        if (!temp.exists()) {
-            SimpleDialogs.showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
-            return null
-        }
-        if (!dest.exists()) {
-            SimpleDialogs.showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
-            return null
-        }
-        if (!temp.isDirectory) {
-            SimpleDialogs.showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
-            return null
-        }
-        if (!dest.isDirectory) {
-            SimpleDialogs.showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
-            return null
+        if (check) {
+            if (tempDirPath.isBlank() || destDirPath.isBlank()) {
+                SimpleDialogs.showAlert(
+                    "Directory Not Selected",
+                    "Please make sure to select a destination & temporary directory."
+                )
+                return null
+            }
+            val temp = File(tempDirPath)
+            val dest = File(destDirPath)
+            if (!temp.exists()) {
+                SimpleDialogs.showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
+                return null
+            }
+            if (!dest.exists()) {
+                SimpleDialogs.showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
+                return null
+            }
+            if (!temp.isDirectory) {
+                SimpleDialogs.showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
+                return null
+            }
+            if (!dest.isDirectory) {
+                SimpleDialogs.showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
+                return null
+            }
         }
         val key = selectedKey()
         if (key == null) {
