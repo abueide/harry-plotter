@@ -151,7 +151,6 @@ class PlotJob(
             start(manageSelf = true)
         } else {
             stop()
-            tempDone = 0
         }
     }
 

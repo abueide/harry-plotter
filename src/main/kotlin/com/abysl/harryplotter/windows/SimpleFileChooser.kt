@@ -32,7 +32,7 @@ class SimpleFileChooser(val node: Node) {
     fun chooseFileMaybe(title: String): File? {
         val fileChooser = FileChooser()
         fileChooser.title = title
-        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("All Files", "*.*"))
+        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("All Files", "*"))
         return fileChooser.showOpenDialog(node.scene.window)
     }
 
@@ -51,7 +51,7 @@ class SimpleFileChooser(val node: Node) {
     }
 
     fun chooseFile(title: String): File {
-        return chooseFile(title, FileChooser.ExtensionFilter("All", "*.*"))
+        return chooseFile(title, FileChooser.ExtensionFilter("All", "*"))
     }
 
     fun chooseDir(title: String, required: Boolean = false): File? {
