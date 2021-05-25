@@ -16,3 +16,4 @@ Release 1.1.6 is a small bugfix release
 * Automatically detects the chia location on linux in the /usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/ folder.
 * Fixes black/frozen screen when using over remote desktop
 * Fixes an issue where the chia locator wouldn't let you select the chia executable on linux
+* Fix bug where percentage was in decimal form instead of an actual percentage.

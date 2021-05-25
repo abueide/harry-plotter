@@ -166,7 +166,7 @@ class PlotJob(
     override fun toString(): String {
         val roundedPercentage =
             if (state.percentage.isNaN() || state.percentage.isInfinite()) "?"
-            else String.format(Locale.US, "%.2f", state.percentage)
+            else String.format(Locale.US, "%.2f", state.percentage * 100)
         return if (state.running) "$description - $roundedPercentage%" else description.toString()
     }
 
