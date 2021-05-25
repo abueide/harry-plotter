@@ -20,8 +20,8 @@
 package com.abysl.harryplotter.config
 
 import com.abysl.harryplotter.util.getResource
-import java.io.File
 import java.util.prefs.Preferences
+
 
 object Prefs {
     private const val VERSION_PROMPT = "VERSION_PROMPT"
@@ -64,7 +64,7 @@ object Prefs {
     var lastReleaseShown: String
         get() = prefNode.get(
             LAST_RELEASE_SHOWN,
-            File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
+            "version.txt".getResource().readText()
         )
         set(value) {
             prefNode.put(LAST_RELEASE_SHOWN, value)
