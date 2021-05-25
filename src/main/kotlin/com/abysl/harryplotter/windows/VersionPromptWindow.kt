@@ -39,6 +39,7 @@ object VersionPromptWindow {
             // Load scene
             val stage = Stage()
             val version = "version.txt".getResource().readText()
+            println(version)
             val textPrompt = TextArea()
             textPrompt.font = Font.font(FONT_SIZE)
             textPrompt.text = "updatemessages/$version.txt".getResource().readText()

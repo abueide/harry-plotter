@@ -44,8 +44,7 @@ class ReleaseWindow(val hostServices: HostServices): Window<ReleaseView>() {
         val release = getRelease()
         println(release?.version)
         println(Prefs.lastReleaseShown)
-        if(release != null && !release.version.contains(Prefs.lastReleaseShown)) {
-
+        if(release != null){// && !release.version.contains(Prefs.lastReleaseShown)) {
             Prefs.lastReleaseShown = release.version
             val controller = create("New Release is available, would you like to download it?", "fxml/Release.fxml")
             controller.initialized(release, hostServices)
@@ -63,7 +62,7 @@ class ReleaseWindow(val hostServices: HostServices): Window<ReleaseView>() {
                 val message = it.jsonObject["body"]?.jsonPrimitive?.content
                 if(version == null || message == null){
                     println("Release parse error")
-                }else {
+                } else {
                     release = GithubRelease(version, message)
                 }
             }
