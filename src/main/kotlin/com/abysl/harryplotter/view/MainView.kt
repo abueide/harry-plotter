@@ -29,16 +29,26 @@ import com.abysl.harryplotter.windows.StaggerSettingsWindow
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
 import javafx.fxml.FXML
+import javafx.geometry.Pos
+import javafx.geometry.VPos
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
+import javafx.scene.text.TextAlignment
 import javafx.stage.Stage
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular
+import org.kordamp.ikonli.javafx.FontIcon
 
 class MainView {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
     private lateinit var mainBox: VBox
+
+    @FXML
+    private lateinit var themeToggle: Button
 
     @FXML
     private lateinit var jobsListViewController: JobsListView
@@ -59,6 +69,7 @@ class MainView {
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)
+        setButtonTheme()
     }
 
     // Calls after the JavaFX vars are populated so they aren't null
@@ -81,6 +92,7 @@ class MainView {
 
     fun onToggleTheme() {
         toggleTheme()
+        setButtonTheme()
     }
 
     fun onExit() {
@@ -101,6 +113,22 @@ class MainView {
         }
         Config.savePlotJobs(jobs)
         (mainBox.scene.window as Stage).close()
+    }
+
+    private val sun = FontIcon(FontAwesomeRegular.SUN).also {
+        it.iconColor = Color.BLACK
+        it.iconSize = 18
+    }
+    private val moon = FontIcon(FontAwesomeRegular.MOON).also {
+        it.iconColor = Color.WHITE
+        it.iconSize = 18
+    }
+    fun setButtonTheme(){
+        if(Prefs.darkMode){
+            themeToggle.graphic = sun
+        }else {
+            themeToggle.graphic = moon
+        }
     }
 
     fun findChia() {
