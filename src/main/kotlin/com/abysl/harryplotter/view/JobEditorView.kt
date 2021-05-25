@@ -143,6 +143,10 @@ class JobEditorView {
         viewModel.onAdd()
     }
 
+    fun onNew(){
+        viewModel.onNew()
+    }
+
     fun onCancel() {
         viewModel.onCancel()
     }

@@ -36,7 +36,7 @@ class MainViewModel {
     init {
         jobEditorViewModel.initialized(
             savedCallback = jobsListViewModel::saveJob,
-            cancelCallback = jobsListViewModel::clearSelected
+            selectCallback = jobsListViewModel::clearSelected
         )
         jobsListViewModel.plotJobs.value += Config.getPlotJobs()
 
