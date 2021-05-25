@@ -30,7 +30,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
 
-val jvmOptions = listOf("-Xms256m", "-Xmx2048m", "-Dprism.order=sw")
+val jvmOptions = listOf("-Xms256m", "-Xmx2048m")
 val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
