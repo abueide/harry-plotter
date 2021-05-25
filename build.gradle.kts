@@ -50,6 +50,8 @@ dependencies {
     implementation("io.ktor:ktor-server-core:1.5.4")
     implementation("io.ktor:ktor-server-netty:1.5.4")
     implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("org.kordamp.ikonli:ikonli-core:12.2.0")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
