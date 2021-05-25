@@ -18,6 +18,9 @@
                <children>
                 <VBox maxWidth="150.0" prefWidth="150.0" spacing="10.0" HBox.hgrow="ALWAYS">
                   <children>
+                    <Label text="Total Plots Created" />
+                    <Label text="Estimated Plots Per Day" />
+                    <Label text="Average Plot Time" />
                     <Label layoutX="10.0" layoutY="193.0" text="Current Status" />
                     <Label text="Plot ID" />
                     <Label text="Last Plot Time" />
@@ -26,9 +29,6 @@
                         <Label layoutX="10.0" layoutY="253.0" text="Phase 3 Time" />
                         <Label layoutX="10.0" layoutY="226.0" text="Phase 4 Time" />
                         <Label layoutX="10.0" layoutY="280.0" text="Copy Time" />
-                    <Label text="Average Plot Time" />
-                    <Label text="Total Plots Created" />
-                    <Label text="Estimated Plots Per Day" />
                   </children>
                      <HBox.margin>
                         <Insets />
@@ -36,17 +36,17 @@
                 </VBox>
                 <VBox maxWidth="150.0" prefWidth="150.0" spacing="10.0" HBox.hgrow="ALWAYS">
                   <children>
+                    <Label fx:id="totalPlotsCreated" prefWidth="10.0" text="3" />
+                    <Label fx:id="estimatedPlotsDay" text="1.7" />
+                    <Label fx:id="averagePlotTime" text="6 hr 30 s (21630)" />
                     <Label fx:id="currentStatus" layoutX="10.0" layoutY="199.0" text="Not Running" />
                     <Label fx:id="plotId" text="?" />
-                    <Label fx:id="lastPlotTime" text="6 hr 50 s (21650s)" />
-                        <Label fx:id="p1Time" layoutX="10.0" layoutY="64.0" text="6 hr 50 s (21650s)" />
-                        <Label fx:id="p2Time" layoutX="10.0" layoutY="91.0" text="6 hr 50 s (21650s)" />
-                        <Label fx:id="p3Time" layoutX="10.0" layoutY="118.0" text="6 hr 50 s (21650s)" />
-                        <Label fx:id="p4Time" layoutX="10.0" layoutY="172.0" text="6 hr 50 s (21650s)" />
-                        <Label fx:id="copyTime" layoutX="10.0" layoutY="172.0" text="6 hr 50 s (21650s)" />
-                    <Label fx:id="averagePlotTime" text="6 hr 30 s (21630)" />
-                    <Label fx:id="totalPlotsCreated" text="3" />
-                    <Label fx:id="estimatedPlotsDay" text="1.7" />
+                    <Label fx:id="lastPlotTime" text="?" />
+                        <Label fx:id="p1Time" layoutX="10.0" layoutY="64.0" text="?" />
+                        <Label fx:id="p2Time" layoutX="10.0" layoutY="91.0" text="?" />
+                        <Label fx:id="p3Time" layoutX="10.0" layoutY="118.0" text="?" />
+                        <Label fx:id="p4Time" layoutX="10.0" layoutY="172.0" text="?" />
+                        <Label fx:id="copyTime" layoutX="10.0" layoutY="172.0" text="?" />
                   </children>
                 </VBox>
                </children>

@@ -63,6 +63,10 @@ class JobsListView {
         }
     }
 
+    fun onClear(){
+        viewModel.onClear()
+    }
+
     val jobsMenu = ContextMenu()
 
     val duplicate = MenuItem("Duplicate").also {
@@ -84,4 +88,6 @@ class JobsListView {
         }
         jobsMenu.items.add(it)
     }
+
+
 }

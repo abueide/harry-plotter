@@ -23,6 +23,7 @@ package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
+import com.abysl.harryplotter.util.IOUtil.deleteFile
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -120,23 +121,6 @@ class PlotJob(
             }
         }
     }
-
-    private fun deleteFile(file: File, delayTime: Long = 100, maxTries: Int = 100) =
-        CoroutineScope(Dispatchers.IO).async {
-            var timeout = 0
-            while (file.exists() && !file.delete() && timeout++ < maxTries) {
-                if (timeout > 1) {
-                    println("Couldn't delete file, trying again in $delayTime ms. ${file.name}")
-                }
-                delay(delayTime)
-            }
-            if (timeout < maxTries) {
-                println("Deleted: " + file.name)
-                return@async true
-            } else {
-                return@async false
-            }
-        }
 
     private fun whenDone(time: Double) {
         if (state.phase == 4 && state.currentResult.totalTime == 0.0) {
