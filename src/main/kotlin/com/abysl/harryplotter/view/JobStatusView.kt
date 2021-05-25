@@ -1,6 +1,7 @@
 package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.util.formatted
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.unlines
 import com.abysl.harryplotter.viewmodel.JobStatusViewModel
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.runBlocking
+import java.time.Duration
 
 class JobStatusView {
 
@@ -40,10 +42,19 @@ class JobStatusView {
     private lateinit var estimatedPlotsDay: Label
 
     @FXML
-    private lateinit var averagePlotsDay: Label
+    private lateinit var logsWindow: TextArea
 
     @FXML
-    private lateinit var logsWindow: TextArea
+    private lateinit var p1Time: Label
+    @FXML
+    private lateinit var p2Time: Label
+    @FXML
+    private lateinit var p3Time: Label
+    @FXML
+    private lateinit var p4Time: Label
+    @FXML
+    private lateinit var copyTime: Label
+
 
     lateinit var viewModel: JobStatusViewModel
 
@@ -66,10 +77,17 @@ class JobStatusView {
         plotJob.statsFlow.onEach {
             Platform.runLater {
                 totalPlotsCreated.text = it.plotsDone.toString()
-                lastPlotTime.text = it.lastPlotTime.toString()
-                averagePlotTime.text = it.averagePlotTime.toString()
+                lastPlotTime.text = Duration.ofSeconds(it.lastPlotTime.toLong()).formatted()
+                averagePlotTime.text = Duration.ofSeconds(it.averagePlotTime.toLong()).formatted()
                 estimatedPlotsDay.text = it.estimatedPlotsDay.toString()
-                averagePlotsDay.text = it.averagePlotsDay.toString()
+                val result = it.results.lastOrNull()
+                if(result != null){
+                    p1Time.text = Duration.ofSeconds(result.phaseOneTime.toLong()).formatted()
+                    p2Time.text = Duration.ofSeconds(result.phaseTwoTime.toLong()).formatted()
+                    p3Time.text = Duration.ofSeconds(result.phaseThreeTime.toLong()).formatted()
+                    p4Time.text = Duration.ofSeconds(result.phaseFourTime.toLong()).formatted()
+                    copyTime.text = Duration.ofSeconds(result.copyTime.toLong()).formatted()
+                }
             }
         }.launchIn(jobBinding)
         plotJob.stateFlow.onEach {
@@ -91,7 +109,11 @@ class JobStatusView {
                 totalPlotsCreated.text = ""
                 averagePlotTime.text = ""
                 estimatedPlotsDay.text = ""
-                averagePlotsDay.text = ""
+                p1Time.text = ""
+                p2Time.text = ""
+                p3Time.text = ""
+                p4Time.text = ""
+                copyTime.text = ""
             }.await()
         }
     }

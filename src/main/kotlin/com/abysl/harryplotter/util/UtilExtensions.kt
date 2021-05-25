@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.io.InputStream
 import java.net.URL
+import java.time.Duration
 
 fun String.getResource(): URL {
     return HarryPlotter::class.java.getResource(this)
@@ -58,4 +59,8 @@ fun List<String>.unwords(): String {
 // mainViewModel.jobsListViewmodel.jobsList().first().logs()
 operator fun <T> StateFlow<T>.invoke(): T {
     return this.value
+}
+
+fun Duration.formatted(): String{
+    return "${this.toHours()} h ${this.toMinutes()} m (${this.toSeconds()}s)"
 }

@@ -24,12 +24,13 @@ import com.abysl.harryplotter.model.JobState
 
 object PlotLogParser {
     fun parseLine(jobState: JobState = JobState(), line: String, appendLog: Boolean = true): JobState {
+        val result = parseResult(line) ?: jobState.currentResult
         return try {
             jobState.copy(
                 plotId = parsePlotId(line) ?: jobState.plotId,
                 phase = parsePhase(line) ?: jobState.phase,
                 subphase = parseTable(line) ?: jobState.subphase,
-                currentResult = parseResult(line) ?: jobState.currentResult,
+                currentResult = result + jobState.currentResult,
                 logs = if (appendLog) jobState.logs + line else jobState.logs
             )
         } catch (e: Exception) {
