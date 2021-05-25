@@ -93,6 +93,6 @@ class ChiaLocator(node: Node) {
         private const val CONFIG_NOT_FOUND_INSTRUCTION =
             "Please specify the chia config location, usually located at " +
                 "C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml"
-        private const val EXE_NOT_FOUND = "Looking for the chia cli executable (chia.exe lowercase). Try again?"
+        private const val EXE_NOT_FOUND = "Looking for the chia cli executable (\"chia.exe\" or \"chia\" lowercase). Try again?"
     }
 }
