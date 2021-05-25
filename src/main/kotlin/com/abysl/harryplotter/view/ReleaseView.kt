@@ -35,18 +35,18 @@ class ReleaseView {
 
     lateinit var hostServices: HostServices
 
-    fun initialized(release: GithubRelease, hostServices: HostServices){
+    fun initialized(release: GithubRelease, hostServices: HostServices) {
         changeLog.wrapTextProperty().set(true)
         releaseVersion.text = release.version
         changeLog.text = release.changeLog
         this.hostServices = hostServices
     }
 
-    fun onCancel(){
+    fun onCancel() {
         (releaseVersion.scene.window as Stage).close()
     }
 
-    fun onDownload(){
+    fun onDownload() {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/releases")
     }
 }

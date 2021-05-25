@@ -21,14 +21,12 @@ package com.abysl.harryplotter.windows
 
 import com.abysl.harryplotter.HarryPlotter
 import com.abysl.harryplotter.util.FxUtil
-import com.abysl.harryplotter.view.KeyEditorView
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.stage.Modality
 import javafx.stage.Stage
 import java.io.IOException
-import java.net.URL
 import kotlin.system.exitProcess
 
 abstract class Window<T>(val width: Int = 800, val height: Int = 600) {
@@ -40,12 +38,12 @@ abstract class Window<T>(val width: Int = 800, val height: Int = 600) {
             val loader = FXMLLoader(HarryPlotter::class.java.getResource(fxml))
             val root = loader.load<Parent>()
             // Get controller from scene
-            val controller: T  = loader.getController()
+            val controller: T = loader.getController()
             stage.isAlwaysOnTop = true
             stage.initModality(Modality.APPLICATION_MODAL)
             stage.scene = Scene(root)
             stage.title = title
-            stage.width  = width.toDouble()
+            stage.width = width.toDouble()
             stage.height = height.toDouble()
             FxUtil.setTheme(stage)
             stage.show()

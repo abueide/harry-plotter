@@ -32,15 +32,11 @@ import javafx.application.HostServices
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.geometry.Insets
-import javafx.geometry.Pos
-import javafx.geometry.VPos
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
-import javafx.scene.text.TextAlignment
 import javafx.stage.Stage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -79,7 +75,7 @@ class MainView {
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)
         setButtonTheme()
         CoroutineScope(Dispatchers.IO).launch {
-            while(true) {
+            while (true) {
                 Platform.runLater {
                     ReleaseWindow(hostServices).show()
                 }
@@ -140,11 +136,11 @@ class MainView {
         it.iconSize = 13
     }
 
-    fun setButtonTheme(){
-        if(Prefs.darkMode){
+    fun setButtonTheme() {
+        if (Prefs.darkMode) {
             themeToggle.graphic = sun
             themeToggle.padding = Insets(0.0, 0.0, 0.0, 4.0)
-        }else {
+        } else {
             themeToggle.graphic = moon
             themeToggle.padding = Insets(0.0, 0.0, 0.0, 3.0)
         }
@@ -157,7 +153,7 @@ class MainView {
     }
 
     companion object {
-        //86400000
-        private const val MS_PER_DAY =  86400000L
+        // 86400000
+        private const val MS_PER_DAY = 86400000L
     }
 }

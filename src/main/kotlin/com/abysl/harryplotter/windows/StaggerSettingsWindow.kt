@@ -21,7 +21,7 @@ package com.abysl.harryplotter.windows
 
 import com.abysl.harryplotter.view.StaggerSettingsView
 
-class StaggerSettingsWindow: Window<StaggerSettingsView>() {
+class StaggerSettingsWindow : Window<StaggerSettingsView>() {
 
     fun show() {
         create("Stagger Settings", "fxml/StaggerSettings.fxml")

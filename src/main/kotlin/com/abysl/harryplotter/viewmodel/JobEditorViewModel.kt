@@ -57,10 +57,10 @@ class JobEditorViewModel {
         jobName.value = desc.name
         tempDir.value = desc.tempDir.path
         destDir.value = desc.destDir.path
-        kSize.value = if(desc.kSize == 32) "" else desc.kSize.toString()
+        kSize.value = if (desc.kSize == 32) "" else desc.kSize.toString()
         additionalParams.value = desc.additionalParams.unwords()
-        threads.value = if(desc.threads == 0) "" else desc.threads.toString()
-        ram.value = if(desc.ram == 0) "" else desc.ram.toString()
+        threads.value = if (desc.threads == 0) "" else desc.threads.toString()
+        ram.value = if (desc.ram == 0) "" else desc.ram.toString()
         plotsToFinish.value = desc.plotsToFinish.toString()
     }
 

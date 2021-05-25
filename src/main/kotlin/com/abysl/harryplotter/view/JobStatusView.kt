@@ -55,7 +55,6 @@ class JobStatusView {
     @FXML
     private lateinit var copyTime: Label
 
-
     lateinit var viewModel: JobStatusViewModel
 
     var jobBinding: CoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -81,7 +80,7 @@ class JobStatusView {
                 averagePlotTime.text = Duration.ofSeconds(it.averagePlotTime.toLong()).formatted()
                 estimatedPlotsDay.text = it.estimatedPlotsDay.toString()
                 val result = it.results.lastOrNull()
-                if(result != null){
+                if (result != null) {
                     p1Time.text = Duration.ofSeconds(result.phaseOneTime.toLong()).formatted()
                     p2Time.text = Duration.ofSeconds(result.phaseTwoTime.toLong()).formatted()
                     p3Time.text = Duration.ofSeconds(result.phaseThreeTime.toLong()).formatted()
@@ -135,6 +134,4 @@ class JobStatusView {
             job.stop()
         }
     }
-
-
 }

@@ -19,22 +19,13 @@
 
 package com.abysl.harryplotter.windows
 
-import com.abysl.harryplotter.HarryPlotter
 import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.util.FxUtil
 import com.abysl.harryplotter.view.KeyEditorView
-import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
-import javafx.scene.Scene
-import javafx.stage.Modality
-import javafx.stage.Stage
-import java.io.IOException
-import kotlin.system.exitProcess
 
-class KeyEditorWindow(val key: ChiaKey? = null): Window<KeyEditorView>() {
+class KeyEditorWindow(val key: ChiaKey? = null) : Window<KeyEditorView>() {
     fun show(callback: (key: ChiaKey?) -> Unit) {
         val controller = create("Add Key", "fxml/KeyEditor")
-        if(key != null){
+        if (key != null) {
             controller.writeKey(key)
         }
         controller.callback = callback

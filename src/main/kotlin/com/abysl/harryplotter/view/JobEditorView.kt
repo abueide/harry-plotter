@@ -143,7 +143,7 @@ class JobEditorView {
         viewModel.onAdd()
     }
 
-    fun onNew(){
+    fun onNew() {
         viewModel.onNew()
     }
 
