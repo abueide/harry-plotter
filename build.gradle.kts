@@ -47,6 +47,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
+    implementation("io.ktor:ktor-server-core:1.5.4")
+    implementation("io.ktor:ktor-server-netty:1.5.4")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
@@ -67,7 +70,7 @@ application {
 }
 
 javafx {
-    version = "16"
+    version = "17-ea+11"
     modules = listOf("javafx.base", "javafx.controls", "javafx.fxml", "javafx.web")
 }
 
