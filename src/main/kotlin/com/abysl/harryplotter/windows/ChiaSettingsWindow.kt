@@ -19,33 +19,10 @@
 
 package com.abysl.harryplotter.windows
 
-import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.util.FxUtil
-import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
-import javafx.scene.Scene
-import javafx.stage.Modality
-import javafx.stage.Stage
-import java.io.IOException
-import kotlin.system.exitProcess
+import com.abysl.harryplotter.view.ChiaSettingsView
 
-class ChiaSettingsWindow {
-
+class ChiaSettingsWindow: Window<ChiaSettingsView>() {
     fun show() {
-        try {
-            // Load scene
-            val loader = FXMLLoader(HarryPlotter::class.java.getResource("fxml/ChiaSettings.fxml"))
-            val root = loader.load<Parent>()
-            val stage = Stage()
-            stage.scene = Scene(root)
-            stage.title = "Chia Settings"
-            stage.isAlwaysOnTop = true
-            stage.initModality(Modality.APPLICATION_MODAL)
-            FxUtil.setTheme(stage)
-            stage.show()
-        } catch (ex: IOException) {
-            System.err.println(ex.stackTrace)
-            exitProcess(1)
-        }
+        create("Chia Settings", "fxml/ChiaSettings.fxml")
     }
 }

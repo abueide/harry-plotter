@@ -17,26 +17,12 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.windows
+package com.abysl.harryplotter.model.records
 
-import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.util.FxUtil
-import com.abysl.harryplotter.view.KeyEditorView
-import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
-import javafx.scene.Scene
-import javafx.stage.Modality
-import javafx.stage.Stage
-import java.io.IOException
-import kotlin.system.exitProcess
+import kotlinx.serialization.Serializable
 
-class KeyEditorWindow(val key: ChiaKey? = null): Window<KeyEditorView>() {
-    fun show(callback: (key: ChiaKey?) -> Unit) {
-        val controller = create("Add Key", "fxml/KeyEditor")
-        if(key != null){
-            controller.writeKey(key)
-        }
-        controller.callback = callback
-    }
-}
+@Serializable
+data class GithubRelease(
+    val version: String,
+    val changeLog: String
+)

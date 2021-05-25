@@ -19,34 +19,11 @@
 
 package com.abysl.harryplotter.windows
 
-import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.util.FxUtil
-import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
-import javafx.scene.Scene
-import javafx.stage.Modality
-import javafx.stage.Stage
-import java.io.IOException
-import kotlin.system.exitProcess
+import com.abysl.harryplotter.view.StaggerSettingsView
 
-class StaggerSettingsWindow {
+class StaggerSettingsWindow: Window<StaggerSettingsView>() {
 
     fun show() {
-        try {
-            // Load scene
-            val loader = FXMLLoader(HarryPlotter::class.java.getResource("fxml/StaggerSettings.fxml"))
-            val root = loader.load<Parent>()
-
-            val stage = Stage()
-            stage.scene = Scene(root)
-            stage.title = "Stagger Settings"
-            stage.isAlwaysOnTop = true
-            stage.initModality(Modality.APPLICATION_MODAL)
-            FxUtil.setTheme(stage)
-            stage.show()
-        } catch (ex: IOException) {
-            System.err.println(ex.stackTrace)
-            exitProcess(1)
-        }
+        create("Stagger Settings", "fxml/StaggerSettings.fxml")
     }
 }
