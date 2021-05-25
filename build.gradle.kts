@@ -30,7 +30,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
 
-val jvmOptions = listOf("-Xms256m", "-Xmx2048m")
+val jvmOptions = listOf("-Xms256m", "-Xmx2048m", "-Dprism.order=sw")
 val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
@@ -47,6 +47,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
+    implementation("io.ktor:ktor-server-core:1.5.4")
+    implementation("io.ktor:ktor-server-netty:1.5.4")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
