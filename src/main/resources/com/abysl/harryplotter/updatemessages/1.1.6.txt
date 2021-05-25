@@ -12,6 +12,7 @@ https://github.com/abueide/harry-plotter/releases
 
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
-Release 1.1.6-RC is a bugfix release upgrading javafx to an untested early access build to fix a bug with connecting across rdp sessions.
-
-Use only if you're experiencing the black/frozen screen bug while using rdp.
+Release 1.1.6 is a small bugfix release
+* Automatically detects the chia location on linux in the /usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/ folder.
+* Fixes black/frozen screen when using over remote desktop
+* Fixes an issue where the chia locator wouldn't let you select the chia executable on linux

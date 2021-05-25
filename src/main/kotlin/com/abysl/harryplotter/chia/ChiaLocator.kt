@@ -56,9 +56,11 @@ class ChiaLocator(node: Node) {
 
     fun getExePath(): File {
         val lastPath = File(Prefs.exePath)
-        if (lastPath.exists()) return lastPath
+        if (checkExe(lastPath)) return lastPath
         val macChiaExe = File(MAC_CHIA_PATH)
-        if (macChiaExe.exists()) return macChiaExe
+        if (checkExe(macChiaExe)) return macChiaExe
+        val linuxChiaExe = File(LINUX_CHIA_PATH)
+        if (checkExe(linuxChiaExe)) return linuxChiaExe
 
         val chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
 
@@ -70,16 +72,19 @@ class ChiaLocator(node: Node) {
         showAlert("Chia Executable Not Found", "Please specify the chia executable location")
         val file = fileChooser.chooseFile(
             "Select Chia Executable",
-            FileChooser.ExtensionFilter("All Files", "*.*"),
-            FileChooser.ExtensionFilter("Executable File", "*.exe")
+            FileChooser.ExtensionFilter("All Files", "*"),
         )
-
-        if (file.name.startsWith("chia") && file.exists()) return file
+        if(checkExe(file)) return file
         if (showConfirmation("Wrong File", EXE_NOT_FOUND)) return getExePath() else exitProcess(0)
+    }
+
+    fun checkExe(file: File): Boolean {
+       return file.exists() && (file.name.equals("chia") || file.name.equals("chia.exe"))
     }
 
     companion object {
         private const val MAC_CHIA_PATH = "/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia"
+        private const val LINUX_CHIA_PATH = "/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia"
         private const val WRONG_CONFIG = "Looking for config.yaml, usually located at " +
             "C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml. " +
             "Try again?"
