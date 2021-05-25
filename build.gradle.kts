@@ -70,7 +70,7 @@ application {
 }
 
 javafx {
-    version = "16"
+    version = "17-ea+11"
     modules = listOf("javafx.base", "javafx.controls", "javafx.fxml", "javafx.web")
 }
 
