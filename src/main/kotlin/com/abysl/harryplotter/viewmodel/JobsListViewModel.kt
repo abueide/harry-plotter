@@ -23,6 +23,7 @@ import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +61,22 @@ class JobsListViewModel {
     fun onStopAll() {
         cancelStagger()
         plotJobs.value.filter { it.state.running }.forEach { it.stop() }
+    }
+
+    fun onClear() {
+        val plotIds = plotJobs.value.filter { it.state.plotId.isNotBlank() }.map { it.state.plotId }
+        val dirs = plotJobs.value.map { it.description.tempDir }
+        dirs.forEach { dir ->
+            val files = dir.listFiles() ?: return@forEach
+            files.forEach { file ->
+                if (file.extension == ".tmp"
+                    && file.extension != ".plot.2.tmp"
+                    && plotIds.none { file.name.contains(it) }
+                ) {
+                    CoroutineScope(Dispatchers.IO).launch { IOUtil.deleteFile(file) }
+                }
+            }
+        }
     }
 
     fun saveJob(description: JobDescription) {

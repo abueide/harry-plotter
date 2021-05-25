@@ -10,6 +10,7 @@
     <ListView fx:id="jobsView" maxWidth="350.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
     <HBox alignment="CENTER" layoutX="10.0" layoutY="635.0" spacing="10.0">
       <children>
+            <Button fx:id="onClear" mnemonicParsing="false" text="Clear Temp Dirs" />
         <Button minWidth="60.0" mnemonicParsing="false" onAction="#onStopAll" text="Stop All" />
         <Button minWidth="60.0" mnemonicParsing="false" onAction="#onStartAll" text="Start All" />
       </children>

@@ -31,7 +31,7 @@ import java.io.IOException
 import java.net.URL
 import kotlin.system.exitProcess
 
-abstract class Window<T>(val width: Int = 700, val height: Int = 500) {
+abstract class Window<T>(val width: Int = 800, val height: Int = 600) {
 
     protected val stage: Stage = Stage()
     protected fun create(title: String, fxml: String): T {
