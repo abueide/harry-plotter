@@ -31,10 +31,9 @@ import java.io.IOException
 import java.net.URL
 import kotlin.system.exitProcess
 
-abstract class Window<T> {
+abstract class Window<T>(val width: Int = 700, val height: Int = 500) {
 
     protected val stage: Stage = Stage()
-
     protected fun create(title: String, fxml: String): T {
         try {
             // Load scene
@@ -42,10 +41,12 @@ abstract class Window<T> {
             val root = loader.load<Parent>()
             // Get controller from scene
             val controller: T  = loader.getController()
-            stage.scene = Scene(root)
-            stage.title = title
             stage.isAlwaysOnTop = true
             stage.initModality(Modality.APPLICATION_MODAL)
+            stage.scene = Scene(root)
+            stage.title = title
+            stage.width  = width.toDouble()
+            stage.height = height.toDouble()
             FxUtil.setTheme(stage)
             stage.show()
             return controller

@@ -31,8 +31,6 @@ import java.io.IOException
 import kotlin.system.exitProcess
 
 object VersionPromptWindow {
-    private const val WIDTH = 700.0
-    private const val HEIGHT = 500.0
     private const val FONT_SIZE = 14.0
     fun show() {
         try {
@@ -45,8 +43,6 @@ object VersionPromptWindow {
             textPrompt.text = "updatemessages/$version.txt".getResource().readText()
             textPrompt.wrapTextProperty().set(true)
             textPrompt.editableProperty().set(false)
-            stage.width = WIDTH
-            stage.height = HEIGHT
             stage.scene = Scene(textPrompt)
             stage.title = "Version $version"
             stage.isAlwaysOnTop = true

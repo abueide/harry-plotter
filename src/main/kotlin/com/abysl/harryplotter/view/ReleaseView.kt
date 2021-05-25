@@ -36,6 +36,7 @@ class ReleaseView {
     lateinit var hostServices: HostServices
 
     fun initialized(release: GithubRelease, hostServices: HostServices){
+        changeLog.wrapTextProperty().set(true)
         releaseVersion.text = release.version
         changeLog.text = release.changeLog
         this.hostServices = hostServices
