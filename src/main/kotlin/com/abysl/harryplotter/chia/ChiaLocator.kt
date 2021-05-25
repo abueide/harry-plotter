@@ -74,12 +74,12 @@ class ChiaLocator(node: Node) {
             "Select Chia Executable",
             FileChooser.ExtensionFilter("All Files", "*"),
         )
-        if(checkExe(file)) return file
+        if (checkExe(file)) return file
         if (showConfirmation("Wrong File", EXE_NOT_FOUND)) return getExePath() else exitProcess(0)
     }
 
     fun checkExe(file: File): Boolean {
-       return file.exists() && (file.name.equals("chia") || file.name.equals("chia.exe"))
+        return file.exists() && (file.name.equals("chia") || file.name.equals("chia.exe"))
     }
 
     companion object {
@@ -93,6 +93,7 @@ class ChiaLocator(node: Node) {
         private const val CONFIG_NOT_FOUND_INSTRUCTION =
             "Please specify the chia config location, usually located at " +
                 "C:\\Users\\YourUser\\.chia\\mainnet\\config\\config.yaml"
-        private const val EXE_NOT_FOUND = "Looking for the chia cli executable (\"chia.exe\" or \"chia\" lowercase). Try again?"
+        private const val EXE_NOT_FOUND =
+            "Looking for the chia cli executable (\"chia.exe\" or \"chia\" lowercase). Try again?"
     }
 }
