@@ -69,9 +69,9 @@ class JobsListViewModel {
         dirs.forEach { dir ->
             val files = dir.listFiles() ?: return@forEach
             files.forEach { file ->
-                if (file.extension == ".tmp"
-                    && file.extension != ".plot.2.tmp"
-                    && plotIds.none { file.name.contains(it) }
+                if (file.extension == ".tmp" &&
+                    file.extension != ".plot.2.tmp" &&
+                    plotIds.none { file.name.contains(it) }
                 ) {
                     CoroutineScope(Dispatchers.IO).launch { IOUtil.deleteFile(file) }
                 }

@@ -22,7 +22,6 @@ package com.abysl.harryplotter.config
 import com.abysl.harryplotter.util.getResource
 import java.util.prefs.Preferences
 
-
 object Prefs {
     private const val VERSION_PROMPT = "VERSION_PROMPT"
     private const val DARK_MODE = "DARK_MODE"
@@ -36,7 +35,7 @@ object Prefs {
     private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
 
-    fun printNodePath(){
+    fun printNodePath() {
         println(prefNode)
     }
 

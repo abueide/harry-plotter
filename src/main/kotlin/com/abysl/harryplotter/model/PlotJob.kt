@@ -27,7 +27,6 @@ import com.abysl.harryplotter.util.IOUtil.deleteFile
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +35,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
-import java.io.File
 import java.time.Duration
 import java.time.Instant
 import java.util.Locale

@@ -61,6 +61,6 @@ operator fun <T> StateFlow<T>.invoke(): T {
     return this.value
 }
 
-fun Duration.formatted(): String{
+fun Duration.formatted(): String {
     return "${this.toHours()} h ${this.toMinutes()} m (${this.toSeconds()}s)"
 }

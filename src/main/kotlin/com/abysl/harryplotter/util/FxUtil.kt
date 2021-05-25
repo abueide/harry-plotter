@@ -21,10 +21,7 @@ package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.config.Prefs
 import javafx.scene.Scene
-import javafx.scene.control.Button
 import javafx.stage.Stage
-import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular
-import org.kordamp.ikonli.javafx.FontIcon
 
 object FxUtil {
 

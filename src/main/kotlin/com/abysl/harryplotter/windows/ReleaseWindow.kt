@@ -24,25 +24,20 @@ import com.abysl.harryplotter.model.records.GithubRelease
 import com.abysl.harryplotter.view.ReleaseView
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
-import io.ktor.client.request.request
-import io.ktor.client.statement.HttpResponse
 import javafx.application.HostServices
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-class ReleaseWindow(val hostServices: HostServices): Window<ReleaseView>() {
+class ReleaseWindow(val hostServices: HostServices) : Window<ReleaseView>() {
 
     val client = HttpClient()
 
-    fun show(){
+    fun show() {
         val release = getRelease()
-        if(release != null && !release.version.contains(Prefs.lastReleaseShown)) {
+        if (release != null && !release.version.contains(Prefs.lastReleaseShown)) {
             Prefs.lastReleaseShown = release.version
             val controller = create("New Release is available, would you like to download it?", "fxml/Release.fxml")
             controller.initialized(release, hostServices)
@@ -58,7 +53,7 @@ class ReleaseWindow(val hostServices: HostServices): Window<ReleaseView>() {
             firstRelease?.let {
                 val version = it.jsonObject["name"]?.jsonPrimitive?.content
                 val message = it.jsonObject["body"]?.jsonPrimitive?.content
-                if(version == null || message == null){
+                if (version == null || message == null) {
                     println("Release parse error")
                 } else {
                     release = GithubRelease(version, message)

@@ -63,7 +63,7 @@ class JobsListView {
         }
     }
 
-    fun onClear(){
+    fun onClear() {
         viewModel.onClear()
     }
 
@@ -88,6 +88,4 @@ class JobsListView {
         }
         jobsMenu.items.add(it)
     }
-
-
 }

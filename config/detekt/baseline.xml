@@ -4,16 +4,24 @@
   <CurrentIssues>
     <ID>ComplexCondition:PlotJob.kt$PlotJob$manageSelf &amp;&amp; state.running &amp;&amp; (tempDone &lt; description.plotsToFinish || description.plotsToFinish == 0)</ID>
     <ID>ComplexMethod:PlotLogParser.kt$PlotLogParser$fun parseResult(line: String): JobResult?</ID>
+    <ID>MagicNumber:JobEditorViewModel.kt$JobEditorViewModel$32</ID>
+    <ID>MagicNumber:MainView.kt$MainView$13</ID>
+    <ID>MagicNumber:MainView.kt$MainView$17</ID>
+    <ID>MagicNumber:MainView.kt$MainView$3.0</ID>
+    <ID>MagicNumber:MainView.kt$MainView$4.0</ID>
+    <ID>MagicNumber:PlotJob.kt$PlotJob$100</ID>
     <ID>MagicNumber:PlotJob.kt$PlotJob$4</ID>
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$3</ID>
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$4</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:96</ID>
+    <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:97</ID>
+    <ID>PrintStackTrace:Window.kt$Window$ex</ID>
     <ID>ReturnCount:ChiaKey.kt$ChiaKey$fun parseLine(line: String): ChiaKey</ID>
     <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getConfigFile(): File</ID>
     <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getExePath(): File</ID>
-    <ID>ReturnCount:JobEditorViewModel.kt$JobEditorViewModel$fun getJobDescription(defaultName: String = "Unnamed Job"): JobDescription?</ID>
+    <ID>ReturnCount:JobEditorViewModel.kt$JobEditorViewModel$fun getJobDescription(defaultName: String = "Unnamed Job", check: Boolean = true): JobDescription?</ID>
     <ID>ReturnCount:PlotLogParser.kt$PlotLogParser$fun parseResult(line: String): JobResult?</ID>
     <ID>SpreadOperator:JobDescription.kt$JobDescription$( ioDelay = ioDelay, outputCallback = onOutput, completedCallback = onCompleted, *args.toTypedArray() )</ID>
     <ID>TooGenericExceptionCaught:PlotLogParser.kt$PlotLogParser$e: Exception</ID>
+    <ID>UnnecessaryAbstractClass:Window.kt$Window&lt;T&gt;</ID>
   </CurrentIssues>
 </SmellBaseline>
