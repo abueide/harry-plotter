@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
-    kotlin("jvm") version "1.5.0"
-    kotlin("plugin.serialization") version "1.5.0"
+    kotlin("jvm") version "1.5.10"
+    kotlin("plugin.serialization") version "1.5.10"
     id("org.openjfx.javafxplugin") version "0.0.10"
     id("org.beryx.runtime") version "1.12.5"
     id("io.gitlab.arturbosch.detekt") version "1.17.0-RC2"
@@ -46,7 +46,7 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.0-RC2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
     implementation("io.ktor:ktor-server-core:1.5.4")
     implementation("io.ktor:ktor-server-netty:1.5.4")
     implementation("ch.qos.logback:logback-classic:1.2.3")
