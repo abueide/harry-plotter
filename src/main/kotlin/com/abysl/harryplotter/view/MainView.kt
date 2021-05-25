@@ -29,6 +29,7 @@ import com.abysl.harryplotter.windows.StaggerSettingsWindow
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
 import javafx.fxml.FXML
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.geometry.VPos
 import javafx.scene.control.Alert
@@ -117,17 +118,20 @@ class MainView {
 
     private val sun = FontIcon(FontAwesomeRegular.SUN).also {
         it.iconColor = Color.BLACK
-        it.iconSize = 18
+        it.iconSize = 17
     }
     private val moon = FontIcon(FontAwesomeRegular.MOON).also {
         it.iconColor = Color.WHITE
-        it.iconSize = 18
+        it.iconSize = 13
     }
+
     fun setButtonTheme(){
         if(Prefs.darkMode){
             themeToggle.graphic = sun
+            themeToggle.padding = Insets(0.0, 0.0, 0.0, 4.0)
         }else {
             themeToggle.graphic = moon
+            themeToggle.padding = Insets(0.0, 0.0, 0.0, 3.0)
         }
     }
 
