@@ -35,7 +35,7 @@ val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
 group = "com.abysl"
-version = "1.1.5"
+version = "1.1.6"
 // version = File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
 
 repositories {
@@ -70,7 +70,7 @@ application {
 }
 
 javafx {
-    version = "16"
+    version = "17-ea+11"
     modules = listOf("javafx.base", "javafx.controls", "javafx.fxml", "javafx.web")
 }
 
