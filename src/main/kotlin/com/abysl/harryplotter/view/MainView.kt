@@ -29,6 +29,7 @@ import com.abysl.harryplotter.windows.ReleaseWindow
 import com.abysl.harryplotter.windows.StaggerSettingsWindow
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
+import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -41,6 +42,10 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.text.TextAlignment
 import javafx.stage.Stage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular
 import org.kordamp.ikonli.javafx.FontIcon
 
@@ -73,8 +78,14 @@ class MainView {
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)
         setButtonTheme()
-        ReleaseWindow(hostServices).show()
-        Prefs.printNodePath()
+        CoroutineScope(Dispatchers.IO).launch {
+            while(true) {
+                Platform.runLater {
+                    ReleaseWindow(hostServices).show()
+                }
+                delay(MS_PER_DAY)
+            }
+        }
     }
 
     // Calls after the JavaFX vars are populated so they aren't null
@@ -143,5 +154,10 @@ class MainView {
         val chiaLocator = ChiaLocator(mainBox)
         Prefs.exePath = chiaLocator.getExePath().path
         Prefs.configPath = chiaLocator.getConfigFile().path
+    }
+
+    companion object {
+        //86400000
+        private const val MS_PER_DAY =  86400000L
     }
 }
