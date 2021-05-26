@@ -36,22 +36,24 @@ class JobsListViewModel {
     val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
     var staggerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    var runStagger: Boolean = false
 
     lateinit var refreshCallback: () -> Unit
 
     fun onStartAll(delay: Long = 1000) {
         cancelStagger()
+        runStagger = true
         var first = true
         plotJobs.value.forEach { it.tempDone = 0 }
         staggerScope.launch {
-            while (true) {
+            while (runStagger) {
                 var staticTimer = if (first) Prefs.staticStagger * MILLIS_PER_MINUTE else 0L
-                while (checkPhaseBlocked() || staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE) {
+                while (staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE || checkPhaseBlocked()) {
                     delay(delay)
                     staticTimer += delay
                 }
                 plotJobs.value.firstOrNull {
-                    it.isReady() && !it.manageSelf && it.tempDone < it.description.plotsToFinish
+                    it.isReady() && !it.manageSelf && (it.tempDone < it.description.plotsToFinish || it.description.plotsToFinish == 0)
                 }?.start()
                 first = false
             }
@@ -60,7 +62,7 @@ class JobsListViewModel {
 
     fun onStopAll() {
         cancelStagger()
-        plotJobs.value.filter { it.state.running }.forEach { it.stop() }
+        plotJobs.value.forEach(PlotJob::stop)
     }
 
     fun onClear() {
@@ -68,14 +70,12 @@ class JobsListViewModel {
         val dirs = plotJobs.value.map { it.description.tempDir }
         dirs.forEach { dir ->
             val files = dir.listFiles() ?: return@forEach
-            files.forEach { file ->
-                if (file.extension == ".tmp" &&
-                    file.extension != ".plot.2.tmp" &&
-                    plotIds.none { file.name.contains(it) }
-                ) {
-                    CoroutineScope(Dispatchers.IO).launch { IOUtil.deleteFile(file) }
-                }
-            }
+            files.filter { file ->
+                file.extension == "tmp" &&
+                        plotIds.none {
+                            file.name.contains(it)
+                        }
+            }.forEach(IOUtil::deleteFile)
         }
     }
 
@@ -95,6 +95,7 @@ class JobsListViewModel {
     fun cancelStagger() {
         staggerScope.cancel()
         staggerScope = CoroutineScope(Dispatchers.IO)
+        runStagger = false
     }
 
     fun checkPhaseBlocked(): Boolean {

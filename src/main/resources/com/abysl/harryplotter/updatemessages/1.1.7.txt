@@ -23,4 +23,3 @@ Release 1.1.7 is a bigger release with some new features and bugfixes
 * Fix issue where edit/add key window wasn't working
 * Fix issue where start all button was broken on some machines
 * Add clear preferences button
-* Fix bug where wrong number of threads were being used
