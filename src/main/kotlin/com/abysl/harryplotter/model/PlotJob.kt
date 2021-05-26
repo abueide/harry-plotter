@@ -51,6 +51,12 @@ class PlotJob(
     @Transient
     var timerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
+    @Transient
+    var tempDone = 0
+
+    @Transient
+    var manageSelf = false
+
     var stats
         get() = statsFlow.value
         set(value) {
@@ -61,9 +67,6 @@ class PlotJob(
         set(value) {
             stateFlow.value = value
         }
-
-    var tempDone = 0
-    var manageSelf = false
 
     fun start(manageSelf: Boolean = false) {
         this.manageSelf = manageSelf

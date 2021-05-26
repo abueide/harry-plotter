@@ -1,68 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<HBox prefHeight="280.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.view.JobEditorView">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<HBox prefHeight="280.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.abysl.harryplotter.view.JobEditorView">
   <children>
     <VBox maxWidth="150.0" minWidth="140.0" spacing="19.0" HBox.hgrow="ALWAYS">
       <children>
-        <Label text="Name" />
-        <Label text="* Temp Directory" />
-        <Label text="* Destination Directory" />
-        <Label text="Number of Threads" />
-        <Label text="Chia Key to Use" />
-        <CheckBox fx:id="stopAfterCheck" mnemonicParsing="false" text="Stop after" />
+        <Label text="Name"/>
+        <Label text="* Temp Directory"/>
+        <Label text="* Destination Directory"/>
+        <Label text="Number of Threads"/>
+        <Label text="Chia Key to Use"/>
+        <CheckBox fx:id="stopAfterCheck" mnemonicParsing="false" selected="true" text="Stop after"/>
       </children>
     </VBox>
     <VBox prefHeight="306.0" prefWidth="228.0" spacing="10.0" HBox.hgrow="ALWAYS">
       <children>
-        <TextField fx:id="jobName" promptText="My Plot 1" />
+        <TextField fx:id="jobName" promptText="My Plot 1"/>
         <HBox spacing="10.0">
           <children>
-            <TextField fx:id="tempDir" promptText="C:\Path\To\SSD\" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" onAction="#onTempBrowse" text="Browse" />
+            <TextField fx:id="tempDir" promptText="C:\Path\To\SSD\" HBox.hgrow="ALWAYS"/>
+            <Button mnemonicParsing="false" onAction="#onTempBrowse" text="Browse"/>
           </children>
         </HBox>
         <HBox spacing="10.0">
           <children>
-            <TextField fx:id="destDir" promptText="C:\Path\To\HDD\" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" onAction="#onDestBrowse" text="Browse" />
+            <TextField fx:id="destDir" promptText="C:\Path\To\HDD\" HBox.hgrow="ALWAYS"/>
+            <Button mnemonicParsing="false" onAction="#onDestBrowse" text="Browse"/>
           </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
           <children>
-            <TextField fx:id="threads" prefHeight="25.0" prefWidth="35.0" promptText="2" />
-                  <Label minWidth="35.0" text="K Size" />
-                  <TextField fx:id="kSize" prefHeight="25.0" prefWidth="35.0" promptText="32" />
-            <Label minWidth="85.0" text="Max Ram (MiB)" />
-            <TextField fx:id="ram" prefHeight="25.0" prefWidth="45.0" promptText="3400" />
-                  <Label minWidth="55.0" text="Extra Args" />
-                  <TextField fx:id="additionalParams" promptText="-e -2 C:\path\to\secondary\dir ..." HBox.hgrow="ALWAYS" />
+            <TextField fx:id="threads" prefHeight="25.0" prefWidth="35.0" promptText="2"/>
+            <Label minWidth="35.0" text="K Size"/>
+            <TextField fx:id="kSize" prefHeight="25.0" prefWidth="35.0" promptText="32"/>
+            <Label minWidth="85.0" text="Max Ram (MiB)"/>
+            <TextField fx:id="ram" prefHeight="25.0" prefWidth="45.0" promptText="3400"/>
+            <Label minWidth="55.0" text="Extra Args"/>
+            <TextField fx:id="additionalParams" promptText="-e -2 C:\path\to\secondary\dir ..." HBox.hgrow="ALWAYS"/>
           </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
           <children>
-            <Button minWidth="65.0" mnemonicParsing="false" onAction="#onEdit" prefWidth="65.0" text="Edit" />
-            <Button minWidth="65.0" mnemonicParsing="false" onAction="#onAdd" text="Add" />
-            <ComboBox fx:id="keysCombo" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button minWidth="65.0" mnemonicParsing="false" onAction="#onEdit" prefWidth="65.0" text="Edit"/>
+            <Button minWidth="65.0" mnemonicParsing="false" onAction="#onAdd" text="Add"/>
+            <ComboBox fx:id="keysCombo" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"/>
           </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
           <children>
-            <TextField fx:id="plotsToFinish" disable="true" prefHeight="25.0" prefWidth="37.0" promptText="10" />
-            <Label text="Plots" />
+            <TextField fx:id="plotsToFinish" prefHeight="25.0" prefWidth="37.0" promptText="10"/>
+            <Label text="Plots"/>
             <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
               <children>
-                        <Button minWidth="55.0" mnemonicParsing="false" onAction="#onNew" text="New" />
-                <Button minWidth="55.0" mnemonicParsing="false" onAction="#onCancel" text="Cancel" />
-                <Button fx:id="save" minWidth="55.0" mnemonicParsing="false" onAction="#onSave" text="Save" />
+                <Button minWidth="55.0" mnemonicParsing="false" onAction="#onNew" text="New"/>
+                <Button minWidth="55.0" mnemonicParsing="false" onAction="#onCancel" text="Cancel"/>
+                <Button fx:id="save" minWidth="55.0" mnemonicParsing="false" onAction="#onSave" text="Save"/>
               </children>
             </HBox>
           </children>
@@ -70,7 +65,7 @@
       </children>
     </VBox>
   </children>
-   <padding>
-      <Insets bottom="10.0" />
-   </padding>
+  <padding>
+    <Insets bottom="10.0"/>
+  </padding>
 </HBox>

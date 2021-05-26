@@ -41,6 +41,7 @@ class JobEditorViewModel {
 
     val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
     val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
+    val stopAfterCheck: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     private lateinit var savedCallback: (JobDescription) -> Unit
     private lateinit var cancelCallback: () -> Unit
@@ -62,6 +63,7 @@ class JobEditorViewModel {
         threads.value = if (desc.threads == 0) "" else desc.threads.toString()
         ram.value = if (desc.ram == 0) "" else desc.ram.toString()
         plotsToFinish.value = desc.plotsToFinish.toString()
+        stopAfterCheck.value = desc.plotsToFinish != 0
     }
 
     fun clearJob() {
@@ -69,6 +71,8 @@ class JobEditorViewModel {
         tempDir.value = ""
         destDir.value = ""
         threads.value = ""
+        kSize.value = ""
+        additionalParams.value = ""
         ram.value = ""
         plotsToFinish.value = ""
     }
@@ -95,11 +99,7 @@ class JobEditorViewModel {
     }
 
     fun onCancel() {
-        jobName.value = ""
-        tempDir.value = ""
-        destDir.value = ""
-        threads.value = ""
-        ram.value = ""
+        clearJob()
         selectedKey.value = chiaKeys.value.firstOrNull()
         cancelCallback()
     }
@@ -145,12 +145,13 @@ class JobEditorViewModel {
             return null
         }
         val name = jobName.value.ifBlank { defaultName }
+        val numPlots = if (stopAfterCheck.value) plotsToFinish.value.ifBlank { "0" }.toInt() else 0
         val newDescription = JobDescription(
             name, File(tempDirPath), File(destDirPath),
             threads.value.ifBlank { "0" }.toInt(),
             ram.value.ifBlank { "0" }.toInt(),
             key,
-            plotsToFinish.value.ifBlank { "0" }.toInt(),
+            numPlots,
             kSize.value.ifBlank { "32" }.toInt(),
             additionalParams.value.split(" ")
         )

@@ -19,10 +19,10 @@
 
 package com.abysl.harryplotter.windows
 
-import com.abysl.harryplotter.view.ChiaSettingsView
+import com.abysl.harryplotter.view.settings.ChiaSettingsView
 
 class ChiaSettingsWindow : Window<ChiaSettingsView>() {
     fun show() {
-        create("Chia Settings", "fxml/ChiaSettings.fxml")
+        create("Chia Settings", "fxml/settings/ChiaSettings.fxml")
     }
 }

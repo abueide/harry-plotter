@@ -21,6 +21,7 @@ package com.abysl.harryplotter.config
 
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.windows.SimpleDialogs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.lang.Exception
 
 object Config {
     private val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
@@ -57,7 +59,25 @@ object Config {
         if (!jobsFile.exists()) {
             return emptyList()
         }
-        return Json.decodeFromString(jobsFile.readText())
+        var result: List<PlotJob>? = null
+        try {
+            result = Json.decodeFromString(jobsFile.readText())
+        } catch (e: Exception) {
+            result = null
+            SimpleDialogs.showAlert(
+                "Failed to decode jobs",
+                "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json"
+            )
+            val backupFile = File(jobsFile.parent + "/jobs.bak")
+            backupFile.delete()
+            jobsFile.renameTo(backupFile)
+            savePlotJobs(listOf())
+        }
+        return result ?: listOf()
+    }
+
+    fun resetConfig() {
+        jobsFile.delete()
     }
 
 //    fun saveTime(desc: JobDescription, result: JobResult) {

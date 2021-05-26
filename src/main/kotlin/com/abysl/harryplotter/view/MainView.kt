@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.view
 
+import HarryPlotterSettingsWindow
 import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
@@ -92,6 +93,10 @@ class MainView {
 
     fun onBugReport() {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/issues/new")
+    }
+
+    fun onHarrySettings() {
+        HarryPlotterSettingsWindow().show()
     }
 
     fun onChiaSettings() {

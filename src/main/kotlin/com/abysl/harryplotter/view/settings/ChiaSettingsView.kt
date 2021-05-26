@@ -17,10 +17,10 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.view
+package com.abysl.harryplotter.view.settings
 
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.util.limitToInt
+import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.TextField
@@ -28,35 +28,40 @@ import javafx.stage.Stage
 import java.net.URL
 import java.util.ResourceBundle
 
-class StaggerSettingsView : Initializable {
+class ChiaSettingsView : Initializable {
     @FXML
-    private lateinit var firstPhaseStagger: TextField
+    private lateinit var exePath: TextField
+    @FXML
+    private lateinit var configPath: TextField
 
-    @FXML
-    private lateinit var otherPhaseStagger: TextField
-
-    @FXML
-    private lateinit var staticStagger: TextField
+    private lateinit var fileChooser: SimpleFileChooser
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        firstPhaseStagger.limitToInt()
-        otherPhaseStagger.limitToInt()
-        staticStagger.limitToInt()
-        firstPhaseStagger.text = Prefs.firstStagger.toString()
-        otherPhaseStagger.text = Prefs.otherStagger.toString()
-        staticStagger.text = Prefs.staticStagger.toString()
+        fileChooser = SimpleFileChooser(exePath)
+        exePath.text = Prefs.exePath
+        configPath.text = Prefs.configPath
+    }
+
+    fun onExeBrowse() {
+        fileChooser.chooseFileMaybe("Select chia executable")?.let {
+            exePath.text = it.path
+        }
+    }
+
+    fun onConfigBrowse() {
+        fileChooser.chooseFileMaybe("Select chia config.yaml")?.let {
+            exePath.text = it.path
+        }
     }
 
     fun onCancel() {
-        val stage = firstPhaseStagger.scene.window as Stage
+        val stage = exePath.scene.window as Stage
         stage.close()
     }
 
     fun onSave() {
-        Prefs.firstStagger = firstPhaseStagger.text.ifBlank { "0" }.toInt()
-        Prefs.otherStagger = otherPhaseStagger.text.ifBlank { "0" }.toInt()
-        Prefs.staticStagger = staticStagger.text.ifBlank { "0" }.toInt()
-        val stage = firstPhaseStagger.scene.window as Stage
+        Prefs.exePath = exePath.text
+        val stage = exePath.scene.window as Stage
         stage.close()
     }
 }

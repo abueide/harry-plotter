@@ -39,7 +39,7 @@ abstract class Window<T>(val width: Int = 800, val height: Int = 600) {
             val root = loader.load<Parent>()
             // Get controller from scene
             val controller: T = loader.getController()
-            stage.isAlwaysOnTop = true
+//            stage.isAlwaysOnTop = true
             stage.initModality(Modality.APPLICATION_MODAL)
             stage.scene = Scene(root)
             stage.title = title
