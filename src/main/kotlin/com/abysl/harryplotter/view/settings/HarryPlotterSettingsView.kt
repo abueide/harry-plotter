@@ -33,7 +33,7 @@ class HarryPlotterSettingsView {
 
     fun onReset() {
         if (confirm()) {
-            Prefs.resetPrefs()
+            Prefs.resetPrefs(close)
             Config.resetConfig()
         }
     }

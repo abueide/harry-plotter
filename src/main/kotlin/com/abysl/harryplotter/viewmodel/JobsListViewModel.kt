@@ -37,6 +37,9 @@ class JobsListViewModel {
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
     var staggerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     var runStagger: Boolean = false
+    var firstStagger = Prefs.firstStagger
+    var otherStagger = Prefs.otherStagger
+    var staticStaggerMS = Prefs.staticStagger * MILLIS_PER_MINUTE
 
     lateinit var refreshCallback: () -> Unit
 
@@ -47,8 +50,8 @@ class JobsListViewModel {
         plotJobs.value.forEach { it.tempDone = 0 }
         staggerScope.launch {
             while (runStagger) {
-                var staticTimer = if (first) Prefs.staticStagger * MILLIS_PER_MINUTE else 0L
-                while (staticTimer < Prefs.staticStagger * MILLIS_PER_MINUTE || checkPhaseBlocked()) {
+                var staticTimer = if (first) staticStaggerMS else 0L
+                while (staticTimer < staticStaggerMS || checkPhaseBlocked()) {
                     delay(delay)
                     staticTimer += delay
                 }
@@ -104,19 +107,23 @@ class JobsListViewModel {
     }
 
     fun checkPhaseOneBlocked(): Boolean {
-        val phaseOneStagger = Prefs.firstStagger
-        if (phaseOneStagger == 0) return false
-        return plotJobs.value.filter { it.state.phase == 1 && it.state.running }.size >= phaseOneStagger
+        if (firstStagger == 0) return false
+        return plotJobs.value.filter { it.state.phase == 1 && it.state.running }.size >= firstStagger
     }
 
     fun checkOtherBlocked(): Boolean {
-        val otherStagger = Prefs.otherStagger
         if (otherStagger == 0) return false
         return plotJobs.value.filter { it.state.phase != 1 && it.state.running }.size >= otherStagger
     }
 
     fun clearSelected() {
         selectedPlotJob.value = null
+    }
+
+    fun onStaggerUpdated() {
+        firstStagger = Prefs.firstStagger
+        otherStagger = Prefs.otherStagger
+        staticStaggerMS = Prefs.staticStagger * MILLIS_PER_MINUTE
     }
 
     companion object {
