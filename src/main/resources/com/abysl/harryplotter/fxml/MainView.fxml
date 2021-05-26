@@ -39,8 +39,9 @@
           <menus>
                   <Menu mnemonicParsing="false" text="Settings">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#onChiaSettings" text="Chia Settings" />
-                        <MenuItem mnemonicParsing="false" onAction="#onStaggerSettings" text="Stagger Settings" />
+                        <MenuItem mnemonicParsing="false" onAction="#onHarrySettings" text="Harry Plotter" />
+                        <MenuItem mnemonicParsing="false" onAction="#onChiaSettings" text="Chia" />
+                        <MenuItem mnemonicParsing="false" onAction="#onStaggerSettings" text="Stagger" />
                      </items>
                   </Menu>
             <Menu mnemonicParsing="false" text="Help">

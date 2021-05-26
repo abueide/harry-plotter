@@ -20,3 +20,7 @@ Release 1.1.7 is a bigger release with some new features and bugfixes
 * Show last completed phase 1-4 times
 * Show correct default values
 * Fix bug where stop after wasn't working properly when using start all
+* Fix issue where edit/add key window wasn't working
+* Fix issue where start all button was broken on some machines
+* Add clear preferences button
+* Fix bug where wrong number of threads were being used

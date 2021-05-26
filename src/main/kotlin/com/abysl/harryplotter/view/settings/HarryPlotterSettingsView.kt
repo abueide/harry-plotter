@@ -17,13 +17,36 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.windows
+package com.abysl.harryplotter.view.settings
 
-import com.abysl.harryplotter.view.settings.StaggerSettingsView
+import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.windows.SimpleDialogs
+import javafx.fxml.FXML
+import javafx.scene.control.Button
+import javafx.stage.Stage
 
-class StaggerSettingsWindow : Window<StaggerSettingsView>() {
+class HarryPlotterSettingsView {
 
-    fun show() {
-        create("Stagger Settings", "fxml/settings/StaggerSettings.fxml")
+    @FXML
+    lateinit var close: Button
+
+    fun onReset() {
+        if (confirm()) {
+            Prefs.resetPrefs()
+            Config.resetConfig()
+        }
     }
+
+    fun onClose(){
+        (close.scene.window as Stage).close()
+    }
+
+    fun confirm(): Boolean {
+        return SimpleDialogs.showConfirmation(
+            "Are you sure?",
+            "This will reset all settings and delete any existing jobs and stats."
+        )
+    }
+
 }

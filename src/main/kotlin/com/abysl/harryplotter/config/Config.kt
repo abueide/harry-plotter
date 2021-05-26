@@ -60,6 +60,10 @@ object Config {
         return Json.decodeFromString(jobsFile.readText())
     }
 
+    fun resetConfig(){
+        jobsFile.delete()
+    }
+
 //    fun saveTime(desc: JobDescription, result: JobResult) {
 //    }
 

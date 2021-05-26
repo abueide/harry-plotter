@@ -26,7 +26,7 @@
   ~     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.view.ChiaSettingsView">
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.view.settings.ChiaSettingsView">
    <children>
       <VBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>

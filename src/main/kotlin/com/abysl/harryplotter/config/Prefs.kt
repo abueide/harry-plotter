@@ -35,8 +35,8 @@ object Prefs {
     private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
 
-    fun printNodePath() {
-        println(prefNode)
+    fun resetPrefs() {
+        prefNode.removeNode()
     }
 
     var versionPrompt: Boolean

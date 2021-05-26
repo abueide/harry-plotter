@@ -90,15 +90,10 @@ class JobEditorView {
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
         viewModel.kSize.bindBidirectional(kSize.textProperty())
         viewModel.additionalParams.bindBidirectional(additionalParams.textProperty())
-
-        viewModel.plotsToFinish.onEach {
-            if (it.isNotBlank()) stopAfterCheck.selectedProperty().set((it.toIntOrNull() ?: 0) > 0)
+        viewModel.stopAfterCheck.bindBidirectional(stopAfterCheck.selectedProperty())
+        viewModel.stopAfterCheck.onEach {
+            plotsToFinish.disableProperty().set(!it)
         }.launchIn(CoroutineScope(Dispatchers.IO))
-
-        stopAfterCheck.selectedProperty().addListener { observable, old, new ->
-            plotsToFinish.isDisable = !new
-            if (!new) plotsToFinish.clear()
-        }
 
         // Bind Chia Keys Combo Box Items to ViewModel
         viewModel.chiaKeys.onEach {

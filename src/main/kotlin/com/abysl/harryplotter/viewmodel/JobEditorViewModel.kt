@@ -26,7 +26,11 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.unwords
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.io.File
 
 class JobEditorViewModel {
@@ -41,6 +45,7 @@ class JobEditorViewModel {
 
     val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
     val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
+    val stopAfterCheck: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     private lateinit var savedCallback: (JobDescription) -> Unit
     private lateinit var cancelCallback: () -> Unit
@@ -62,6 +67,7 @@ class JobEditorViewModel {
         threads.value = if (desc.threads == 0) "" else desc.threads.toString()
         ram.value = if (desc.ram == 0) "" else desc.ram.toString()
         plotsToFinish.value = desc.plotsToFinish.toString()
+        stopAfterCheck.value = desc.plotsToFinish != 0
     }
 
     fun clearJob() {

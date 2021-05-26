@@ -18,7 +18,7 @@
         <Label text="* Destination Directory" />
         <Label text="Number of Threads" />
         <Label text="Chia Key to Use" />
-        <CheckBox fx:id="stopAfterCheck" mnemonicParsing="false" text="Stop after" />
+        <CheckBox fx:id="stopAfterCheck" mnemonicParsing="false" selected="true" text="Stop after" />
       </children>
     </VBox>
     <VBox prefHeight="306.0" prefWidth="228.0" spacing="10.0" HBox.hgrow="ALWAYS">
@@ -56,7 +56,7 @@
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
           <children>
-            <TextField fx:id="plotsToFinish" disable="true" prefHeight="25.0" prefWidth="37.0" promptText="10" />
+            <TextField fx:id="plotsToFinish" prefHeight="25.0" prefWidth="37.0" promptText="10" />
             <Label text="Plots" />
             <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
               <children>
