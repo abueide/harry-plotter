@@ -49,7 +49,6 @@ object VersionPromptWindow {
             stage.height = HEIGHT.toDouble()
             stage.scene = Scene(textPrompt)
             stage.title = "Version $version"
-            stage.isAlwaysOnTop = true
             stage.initModality(Modality.APPLICATION_MODAL)
             FxUtil.setTheme(stage)
             stage.show()
