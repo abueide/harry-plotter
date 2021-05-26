@@ -24,7 +24,7 @@ import com.abysl.harryplotter.view.KeyEditorView
 
 class KeyEditorWindow(val key: ChiaKey? = null) : Window<KeyEditorView>() {
     fun show(callback: (key: ChiaKey?) -> Unit) {
-        val controller = create("Add Key", "fxml/KeyEditor")
+        val controller = create("Add Key", "fxml/KeyEditor.fxml")
         if (key != null) {
             controller.writeKey(key)
         }

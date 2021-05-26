@@ -35,7 +35,7 @@ val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
 group = "com.abysl"
-version = "1.1.7"
+version = "1.1.8"
 // version = File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
 
 repositories {
