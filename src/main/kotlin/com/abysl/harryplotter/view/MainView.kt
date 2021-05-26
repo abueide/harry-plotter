@@ -95,7 +95,7 @@ class MainView {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/issues/new")
     }
 
-    fun onHarrySettings(){
+    fun onHarrySettings() {
         HarryPlotterSettingsWindow().show()
     }
 

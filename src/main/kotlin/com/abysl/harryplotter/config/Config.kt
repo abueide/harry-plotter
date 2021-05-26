@@ -60,13 +60,14 @@ object Config {
             return emptyList()
         }
         var result: List<PlotJob>? = null
-        try{
+        try {
             result = Json.decodeFromString(jobsFile.readText())
-        }catch (e: Exception){
+        } catch (e: Exception) {
             result = null
             SimpleDialogs.showAlert(
                 "Failed to decode jobs",
-                "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json")
+                "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json"
+            )
             val backupFile = File(jobsFile.parent + "/jobs.bak")
             backupFile.delete()
             jobsFile.renameTo(backupFile)
@@ -75,7 +76,7 @@ object Config {
         return result ?: listOf()
     }
 
-    fun resetConfig(){
+    fun resetConfig() {
         jobsFile.delete()
     }
 

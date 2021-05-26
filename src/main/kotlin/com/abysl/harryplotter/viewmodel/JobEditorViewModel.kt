@@ -26,11 +26,7 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.unwords
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import java.io.File
 
 class JobEditorViewModel {
@@ -149,7 +145,7 @@ class JobEditorViewModel {
             return null
         }
         val name = jobName.value.ifBlank { defaultName }
-        val numPlots = if(stopAfterCheck.value) plotsToFinish.value.ifBlank { "0" }.toInt() else 0
+        val numPlots = if (stopAfterCheck.value) plotsToFinish.value.ifBlank { "0" }.toInt() else 0
         val newDescription = JobDescription(
             name, File(tempDirPath), File(destDirPath),
             threads.value.ifBlank { "0" }.toInt(),

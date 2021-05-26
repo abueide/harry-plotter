@@ -21,6 +21,8 @@
     <ID>ReturnCount:JobEditorViewModel.kt$JobEditorViewModel$fun getJobDescription(defaultName: String = "Unnamed Job", check: Boolean = true): JobDescription?</ID>
     <ID>ReturnCount:PlotLogParser.kt$PlotLogParser$fun parseResult(line: String): JobResult?</ID>
     <ID>SpreadOperator:JobDescription.kt$JobDescription$( ioDelay = ioDelay, outputCallback = onOutput, completedCallback = onCompleted, *args.toTypedArray() )</ID>
+    <ID>SwallowedException:Config.kt$Config$catch (e: Exception) { result = null SimpleDialogs.showAlert( "Failed to decode jobs", "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json" ) val backupFile = File(jobsFile.parent + "/jobs.bak") backupFile.delete() jobsFile.renameTo(backupFile) savePlotJobs(listOf()) }</ID>
+    <ID>TooGenericExceptionCaught:Config.kt$Config$e: Exception</ID>
     <ID>TooGenericExceptionCaught:PlotLogParser.kt$PlotLogParser$e: Exception</ID>
     <ID>UnnecessaryAbstractClass:Window.kt$Window&lt;T&gt;</ID>
   </CurrentIssues>

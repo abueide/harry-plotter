@@ -38,7 +38,7 @@ class HarryPlotterSettingsView {
         }
     }
 
-    fun onClose(){
+    fun onClose() {
         (close.scene.window as Stage).close()
     }
 
@@ -48,5 +48,4 @@ class HarryPlotterSettingsView {
             "This will reset all settings and delete any existing jobs and stats."
         )
     }
-
 }

@@ -53,7 +53,8 @@ class JobsListViewModel {
                     staticTimer += delay
                 }
                 plotJobs.value.firstOrNull {
-                    it.isReady() && !it.manageSelf && (it.tempDone < it.description.plotsToFinish || it.description.plotsToFinish == 0)
+                    it.isReady() && !it.manageSelf &&
+                        (it.tempDone < it.description.plotsToFinish || it.description.plotsToFinish == 0)
                 }?.start()
                 first = false
             }
@@ -72,9 +73,9 @@ class JobsListViewModel {
             val files = dir.listFiles() ?: return@forEach
             files.filter { file ->
                 file.extension == "tmp" &&
-                        plotIds.none {
-                            file.name.contains(it)
-                        }
+                    plotIds.none {
+                        file.name.contains(it)
+                    }
             }.forEach(IOUtil::deleteFile)
         }
     }
