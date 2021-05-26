@@ -37,9 +37,15 @@ class ReleaseWindow(val hostServices: HostServices) : Window<ReleaseView>() {
 
     fun show() {
         val release = getRelease()
-        if (release != null && !release.version.contains(Prefs.lastReleaseShown)) {
+        if (release != null &&
+            !release.version.contains(Prefs.lastReleaseShown) &&
+            !release.version.contains("-RC")
+        ) {
             Prefs.lastReleaseShown = release.version
-            val controller = create("New Release is available, would you like to download it?", "fxml/Release.fxml")
+            val controller = create(
+                "New Release is available, would you like to download it?",
+                "fxml/Release.fxml"
+            )
             controller.initialized(release, hostServices)
         }
     }
