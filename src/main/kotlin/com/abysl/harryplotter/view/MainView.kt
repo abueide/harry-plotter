@@ -27,15 +27,14 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.ChiaSettingsWindow
 import com.abysl.harryplotter.windows.ReleaseWindow
+import com.abysl.harryplotter.windows.SimpleDialogs
 import com.abysl.harryplotter.windows.StaggerSettingsWindow
 import com.abysl.harryplotter.windows.VersionPromptWindow
 import javafx.application.HostServices
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.geometry.Insets
-import javafx.scene.control.Alert
 import javafx.scene.control.Button
-import javafx.scene.control.ButtonType
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
@@ -46,6 +45,8 @@ import kotlinx.coroutines.launch
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular
 import org.kordamp.ikonli.javafx.FontIcon
 
+private const val GRACEFUL_STOP = "Graceful Stop"
+private const val FORCE_STOP = "Force Stop"
 class MainView {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
@@ -113,19 +114,12 @@ class MainView {
     }
 
     fun onExit() {
-        val jobs = viewModel.jobsListViewModel.plotJobs()
+        val jobs = jobsListViewController.viewModel.plotJobs.value
         if (jobs.any { it.state.running }) {
-            val alert = Alert(Alert.AlertType.CONFIRMATION)
-            alert.title = "Let plot jobs finish?"
-            alert.headerText = "Let plot jobs finish?"
-            alert.contentText = "Would you like to let plot jobs finish or close them?"
-            (alert.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Let them finish"
-            (alert.dialogPane.lookupButton(ButtonType.CANCEL) as Button).text = "Close them"
-            val answer = alert.showAndWait()
-            if (answer.get() != ButtonType.OK) {
-                jobs.forEach {
-                    it.stop(true)
-                }
+            val answer = SimpleDialogs.showOptionsBlocking("Are you sure?", GRACEFUL_STOP, FORCE_STOP)
+            when (answer) {
+                FORCE_STOP -> jobsListViewController.viewModel.forceStopAll(block = true)
+                GRACEFUL_STOP -> jobsListViewController.viewModel.gracefulStopAll()
             }
         }
         Config.savePlotJobs(jobs)
