@@ -45,7 +45,6 @@ class PlotJob(
     var description: JobDescription,
     val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats())
 ) {
-
     @Transient
     val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
 
