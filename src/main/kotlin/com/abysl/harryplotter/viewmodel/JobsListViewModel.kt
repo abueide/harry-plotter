@@ -64,9 +64,14 @@ class JobsListViewModel {
         }
     }
 
-    fun onStopAll() {
+    fun forceStopAll() {
         cancelStagger()
         plotJobs.value.forEach(PlotJob::stop)
+    }
+
+    fun gracefulStopAll() {
+        cancelStagger()
+        plotJobs.value.forEach { it.manageSelf = false }
     }
 
     fun onClear() {
