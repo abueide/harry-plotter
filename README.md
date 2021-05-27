@@ -4,6 +4,8 @@ You're a farmer, Harry!
 
 Harry Plotter is an easy to use magical Chia plot manager for muggles! It works on Windows, MacOS, and Linux. It should work on ARM devices as well, but you'll have to compile from source (see below) which is also very easy.
 
+Have a question, bug or suggestion? Join the discord or open an issue! https://discord.gg/Uxh5ZqJVsS
+
 ![demo.png](wiki/demo.png)
 
 ## Support
