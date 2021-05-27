@@ -5,6 +5,7 @@ import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.JobsListViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
+import com.abysl.harryplotter.windows.SimpleDialogs.showOptions
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.ContextMenu
@@ -15,6 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+
+private const val GRACEFUL_STOP = "Graceful Stop"
+private const val FORCE_STOP = "Force Stop"
 
 class JobsListView {
 
@@ -58,8 +62,12 @@ class JobsListView {
     }
 
     fun onStopAll() {
-        if (showConfirmation("Stop Processes", "Are you sure you want to stop all plots?")) {
-            viewModel.onStopAll()
+        if (viewModel.plotJobs.value.none { it.state.running }) return
+        showOptions("Are you sure?", GRACEFUL_STOP, FORCE_STOP) {
+            when (it) {
+                FORCE_STOP -> viewModel.forceStopAll()
+                GRACEFUL_STOP -> viewModel.gracefulStopAll()
+            }
         }
     }
 

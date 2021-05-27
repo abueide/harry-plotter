@@ -25,6 +25,7 @@ Release 1.1.7 is a bigger release with some new features and bugfixes
 * Fix issue where edit/add key window wasn't working
 * Fix issue where start all button was broken on some machines
 * Add clear preferences button
+* Graceful stop option in popup after clicking "Stop All"
 
 RC2 introduces some new bugfixes
 * Fix crash when opening a settings window after resetting preferences

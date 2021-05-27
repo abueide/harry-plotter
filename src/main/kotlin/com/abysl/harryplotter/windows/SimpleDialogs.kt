@@ -22,8 +22,25 @@ package com.abysl.harryplotter.windows
 import com.abysl.harryplotter.util.FxUtil
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
+import javafx.scene.control.ChoiceDialog
 
 object SimpleDialogs {
+
+    fun showOptions(title: String, vararg options: String, callback: (String) -> Unit) {
+        val choice = ChoiceDialog(options.first(), options.drop(1))
+        choice.title = title
+        choice.show()
+        choice.resultProperty().addListener { observable, oldValue, newValue ->
+            callback(newValue)
+        }
+    }
+
+    fun showOptionsBlocking(title: String, vararg options: String): String? {
+        val choice = ChoiceDialog(options.first(), options.drop(1))
+        choice.title = title
+        val result = choice.showAndWait()
+        return if (result.isPresent) result.get() else null
+    }
 
     fun showConfirmation(title: String, content: String): Boolean {
         val alert = Alert(Alert.AlertType.CONFIRMATION)

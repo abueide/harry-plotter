@@ -23,6 +23,7 @@ package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
+import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.IOUtil.deleteFile
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +45,6 @@ class PlotJob(
     var description: JobDescription,
     val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats())
 ) {
-
     @Transient
     val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
 
@@ -114,7 +114,7 @@ class PlotJob(
         if (plotId.isNotBlank()) {
             val files = description.tempDir.listFiles()
                 ?.filter { it.toString().contains(plotId) && it.extension == "tmp" }
-                ?.map { deleteFile(it) }
+                ?.map(IOUtil::deleteFile)
             if (block) {
                 runBlocking {
                     files?.forEach { it.await() }

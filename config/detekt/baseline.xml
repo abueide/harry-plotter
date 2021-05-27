@@ -24,6 +24,7 @@
     <ID>SwallowedException:Config.kt$Config$catch (e: Exception) { result = null SimpleDialogs.showAlert( "Failed to decode jobs", "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json" ) val backupFile = File(jobsFile.parent + "/jobs.bak") backupFile.delete() jobsFile.renameTo(backupFile) savePlotJobs(listOf()) }</ID>
     <ID>TooGenericExceptionCaught:Config.kt$Config$e: Exception</ID>
     <ID>TooGenericExceptionCaught:PlotLogParser.kt$PlotLogParser$e: Exception</ID>
+    <ID>TooManyFunctions:JobsListViewModel.kt$JobsListViewModel</ID>
     <ID>UnnecessaryAbstractClass:Window.kt$Window&lt;T&gt;</ID>
   </CurrentIssues>
 </SmellBaseline>
