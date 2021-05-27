@@ -60,7 +60,7 @@ class JobEditorViewModel {
         destDir.value = desc.destDir.path
         kSize.value = if (desc.kSize == 32) "" else desc.kSize.toString()
         additionalParams.value = desc.additionalParams.unwords()
-        threads.value = if (desc.threads == 0) "" else desc.threads.toString()
+        threads.value = if (desc.threads == 0) "2" else desc.threads.toString()
         ram.value = if (desc.ram == 0) "" else desc.ram.toString()
         plotsToFinish.value = desc.plotsToFinish.toString()
         stopAfterCheck.value = desc.plotsToFinish != 0

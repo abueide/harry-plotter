@@ -19,7 +19,9 @@
 
 package com.abysl.harryplotter.config
 
+import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.util.getResource
+import javafx.scene.Node
 import java.util.prefs.Preferences
 
 object Prefs {
@@ -35,8 +37,11 @@ object Prefs {
     private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
 
-    fun resetPrefs() {
-        prefNode.removeNode()
+    fun resetPrefs(node: Node) {
+        prefNode.clear()
+        val locator = ChiaLocator(node)
+        exePath = locator.getExePath().path
+        configPath = locator.getConfigFile().path
     }
 
     var versionPrompt: Boolean

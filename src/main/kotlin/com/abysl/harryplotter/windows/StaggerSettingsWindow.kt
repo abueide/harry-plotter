@@ -23,7 +23,7 @@ import com.abysl.harryplotter.view.settings.StaggerSettingsView
 
 class StaggerSettingsWindow : Window<StaggerSettingsView>() {
 
-    fun show() {
-        create("Stagger Settings", "fxml/settings/StaggerSettings.fxml")
+    fun show(updatedCallback: () -> Unit) {
+        create("Stagger Settings", "fxml/settings/StaggerSettings.fxml").initialized(updatedCallback)
     }
 }

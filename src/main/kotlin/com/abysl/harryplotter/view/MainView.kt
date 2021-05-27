@@ -104,7 +104,7 @@ class MainView {
     }
 
     fun onStaggerSettings() {
-        StaggerSettingsWindow().show()
+        StaggerSettingsWindow().show(viewModel.jobsListViewModel::onStaggerUpdated)
     }
 
     fun onToggleTheme() {

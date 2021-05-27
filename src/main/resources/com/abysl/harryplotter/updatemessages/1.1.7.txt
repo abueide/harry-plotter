@@ -12,6 +12,8 @@ https://github.com/abueide/harry-plotter/releases
 
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
+This is a release candidate, it may have bugs!
+
 Release 1.1.7 is a bigger release with some new features and bugfixes
 * Update notifications when there is a new release (checks on startup & every 24 hours)
 * Add Icons
@@ -23,3 +25,8 @@ Release 1.1.7 is a bigger release with some new features and bugfixes
 * Fix issue where edit/add key window wasn't working
 * Fix issue where start all button was broken on some machines
 * Add clear preferences button
+
+RC2 introduces some new bugfixes
+* Fix crash when opening a settings window after resetting preferences
+* Fix issue where threads wasn't saving properly
+

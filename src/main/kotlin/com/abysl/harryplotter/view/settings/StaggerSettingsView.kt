@@ -38,6 +38,8 @@ class StaggerSettingsView : Initializable {
     @FXML
     private lateinit var staticStagger: TextField
 
+    private lateinit var updatedCallback: () -> Unit
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         firstPhaseStagger.limitToInt()
         otherPhaseStagger.limitToInt()
@@ -45,6 +47,10 @@ class StaggerSettingsView : Initializable {
         firstPhaseStagger.text = Prefs.firstStagger.toString()
         otherPhaseStagger.text = Prefs.otherStagger.toString()
         staticStagger.text = Prefs.staticStagger.toString()
+    }
+
+    fun initialized(updatedCallback: () -> Unit) {
+        this.updatedCallback = updatedCallback
     }
 
     fun onCancel() {
@@ -56,6 +62,7 @@ class StaggerSettingsView : Initializable {
         Prefs.firstStagger = firstPhaseStagger.text.ifBlank { "0" }.toInt()
         Prefs.otherStagger = otherPhaseStagger.text.ifBlank { "0" }.toInt()
         Prefs.staticStagger = staticStagger.text.ifBlank { "0" }.toInt()
+        updatedCallback()
         val stage = firstPhaseStagger.scene.window as Stage
         stage.close()
     }
