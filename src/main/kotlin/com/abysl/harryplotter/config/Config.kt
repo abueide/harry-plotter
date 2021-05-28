@@ -35,6 +35,7 @@ object Config {
     val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
     val plotLogsRunning = plotterHome.resolve("plotlogs/running")
     val plotLogsFinished = plotterHome.resolve("plotlogs/finished")
+    val plotLogsFailed = plotterHome.resolve("plotlogs/failed")
 
     private val jobsFile = File(plotterHome.path + "/jobs.json")
 
@@ -50,6 +51,7 @@ object Config {
         plotterHome.mkdirs()
         plotLogsRunning.mkdirs()
         plotLogsFinished.mkdirs()
+        plotLogsFailed.mkdirs()
     }
 
     fun savePlotJobs(jobs: List<PlotJob>) {

@@ -21,16 +21,16 @@
 
 package com.abysl.harryplotter.model
 
-import com.abysl.harryplotter.util.serializers.FileSerializer
 import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.IOUtil
+import com.abysl.harryplotter.util.serializers.FileSerializer
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
@@ -56,11 +56,11 @@ class PlotJob(
         }
 
     fun start(manageSelf: Boolean = false) {
-        if(plotProcess == null){
+        if (plotProcess == null) {
             this.manageSelf = manageSelf
             val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
-            plotProcess = chia.createPlot(description)
-        }else {
+            plotProcess = chia.createPlot(description, ::whenDone)
+        } else {
             println("Trying to start job while job is running, ignoring request.")
         }
     }
@@ -68,14 +68,13 @@ class PlotJob(
     // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
-        plotProcess?.let {
-            it.kill()
+        plotProcess?.let { proc ->
+            val state = proc.state()
+            proc.dispose()
             val temp = CoroutineScope(Dispatchers.IO).async {
-                it.currentState.collect { state ->
-                    deleteTempFiles(state.plotId, block)
-                }
+                deleteTempFiles(state.plotId, block)
             }
-            if(block){
+            if (block) {
                 runBlocking {
                     temp.await()
                 }
@@ -96,41 +95,40 @@ class PlotJob(
         }
     }
 
-    private fun whenDone(time: Double) {
-        if (state.currentResult.totalTime > 0.0) {
+    private fun whenDone() {
+        val proc = plotProcess ?: return
+        val state = proc.state()
+        if (state.completed) {
+            proc.logFile.copyTo(Config.plotLogsFinished.resolve(proc.logFile.name))
+            proc.logFile.delete()
             stats = stats.plotDone(state.currentResult)
             tempDone++
+            if (manageSelf && state.running && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
+                stop()
+                start(manageSelf = manageSelf)
+            } else {
+                stop()
+            }
         }
-        if (manageSelf && state.running && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
-            stop()
-            start(manageSelf = true)
-        } else {
-            stop()
-        }
-    }
-
-    fun parseLine(line: String) {
-        state = state.parse(line)
     }
 
     fun isReady(): Boolean {
-        return !state.running && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
+        val proc = plotProcess ?: return true
+        return !proc.isRunning() && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 
-//    val percentageFlow: Flow<Double> = flow {
-//        proces
-//        timeFlow.collectLatest { emit(it / stats.averagePlotTime * 100) }
-//    }
+    fun percentDone(): Double{
+        val proc = plotProcess ?: return 0.0
+        return proc.timeRunning() / stats.averagePlotTime * 100
+    }
 
     override fun toString(): String {
+        val proc = plotProcess ?: return description.toString()
+        val percentage = percentDone()
         val roundedPercentage =
-            if (state.percentage.isNaN() || state.percentage.isInfinite()) "?"
-            else String.format(Locale.US, "%.2f", state.percentage * 100)
-        return if (state.running) "$description - $roundedPercentage%" else description.toString()
-    }
-
-    fun getPercentage(): Double{
-        return state.time
+            if (percentage.isNaN() || percentage.isInfinite()) "?"
+            else String.format(Locale.US, "%.2f", percentage)
+        return "$description - $roundedPercentage%"
     }
 
     companion object {

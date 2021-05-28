@@ -2,6 +2,7 @@
 
 package com.abysl.harryplotter.model
 
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -17,7 +18,8 @@ data class PlotProcess(
     val pid: Long,
     val startTime: Instant,
     val logFile: File,
-    val errFile: File
+    val errFile: File,
+    val onComplete: () -> Unit
 ) {
 
     @Transient
@@ -33,7 +35,6 @@ data class PlotProcess(
     private var _cache = false
 
     val process get() = ProcessHandle.of(pid).orElseGet { null }
-
 
     @Transient
     var cache: Boolean
@@ -56,6 +57,7 @@ data class PlotProcess(
             }
             if (lineNum >= stateCounter) {
                 _state = _state.parse(it)
+                if(_state.completed) onComplete()
             }
             lineNum++
         }
@@ -74,5 +76,19 @@ data class PlotProcess(
     fun timeRunning(): Double {
         val timeRunning = Clock.System.now() - startTime
         return timeRunning.toDouble(TimeUnit.SECONDS)
+    }
+
+    fun dispose(){
+        val updatedState = state()
+        if(updatedState.completed){
+
+        }else {
+            logFile.copyTo(Config.plotLogsFailed.resolve(logFile.name))
+            errFile.copyTo(Config.plotLogsFailed.resolve(errFile.name))
+            logFile.delete()
+            errFile.delete()
+        }
+        _logs.clear()
+        kill()
     }
 }

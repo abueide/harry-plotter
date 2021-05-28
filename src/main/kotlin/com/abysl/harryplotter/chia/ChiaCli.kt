@@ -21,6 +21,7 @@ package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.PlotProcess
 import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.model.records.JobDescription
@@ -69,7 +70,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         return input.reader().readLines()
     }
 
-    fun createPlot(desc: JobDescription): PlotProcess {
+    fun createPlot(desc: JobDescription, onComplete: () -> Unit): PlotProcess {
         var counter = 0
         var outputFile = Config.plotLogsRunning.resolve("${desc.name}.log")
         var errFile = Config.plotLogsRunning.resolve("${desc.name}.err")
@@ -88,8 +89,8 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
         args.addAll(listOf("-t", desc.tempDir.toString(), "-d", desc.destDir.toString()))
         desc.additionalParams.forEach { if (it.isNotBlank()) args.add(it) }
-        runCommandAsync(outputFile, errFile, *args.toTypedArray())
-        return PlotProcess(Clock.System.now(), outputFile)
+        val proc = runCommandAsync(outputFile, errFile, *args.toTypedArray())
+        return PlotProcess(proc.pid(), Clock.System.now(), outputFile, errFile, onComplete)
     }
 
     fun runCommandAsync(
