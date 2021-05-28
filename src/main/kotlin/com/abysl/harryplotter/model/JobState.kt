@@ -29,11 +29,10 @@ data class JobState(
     val phase: Int = 1,
     val subphase: String = "",
     val plotId: String = "",
-    val percentage: Double = 0.0,
-    val secondsRunning: Long = 0,
     val currentResult: JobResult = JobResult(),
-    val logs: String = ""
 ) {
+
+
     val status by lazy {
         if (running) {
             "$RUNNING: Phase $phase/4"
@@ -44,10 +43,6 @@ data class JobState(
 
     fun parse(line: String): JobState {
         return PlotLogParser.parseLine(this, line)
-    }
-
-    fun reset(clearLogs: Boolean = false): JobState {
-        return JobState(logs = if (clearLogs) "" else logs)
     }
 
     companion object {

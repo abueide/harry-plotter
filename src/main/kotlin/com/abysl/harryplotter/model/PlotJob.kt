@@ -41,7 +41,7 @@ import java.util.Locale
 class PlotJob(
     var description: JobDescription,
     val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats()),
-    var reader: PlotProcess? = null
+    var plotProcess: PlotProcess? = null
 ) {
     @Transient
     var tempDone = 0
@@ -55,12 +55,11 @@ class PlotJob(
             statsFlow.value = value
         }
 
-
     fun start(manageSelf: Boolean = false) {
-        if(reader == null){
+        if(plotProcess == null){
             this.manageSelf = manageSelf
             val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
-            reader = chia.createPlot(description)
+            plotProcess = chia.createPlot(description)
         }else {
             println("Trying to start job while job is running, ignoring request.")
         }
@@ -69,7 +68,8 @@ class PlotJob(
     // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
-        reader?.let {
+        plotProcess?.let {
+            it.kill()
             val temp = CoroutineScope(Dispatchers.IO).async {
                 it.currentState.collect { state ->
                     deleteTempFiles(state.plotId, block)
@@ -97,9 +97,6 @@ class PlotJob(
     }
 
     private fun whenDone(time: Double) {
-        if (state.phase == 4 && state.currentResult.totalTime == 0.0) {
-            state = state.copy(currentResult = JobResult(totalTime = time))
-        }
         if (state.currentResult.totalTime > 0.0) {
             stats = stats.plotDone(state.currentResult)
             tempDone++
@@ -120,10 +117,6 @@ class PlotJob(
         return !state.running && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 
-
-
-
-
 //    val percentageFlow: Flow<Double> = flow {
 //        proces
 //        timeFlow.collectLatest { emit(it / stats.averagePlotTime * 100) }
@@ -134,6 +127,10 @@ class PlotJob(
             if (state.percentage.isNaN() || state.percentage.isInfinite()) "?"
             else String.format(Locale.US, "%.2f", state.percentage * 100)
         return if (state.running) "$description - $roundedPercentage%" else description.toString()
+    }
+
+    fun getPercentage(): Double{
+        return state.time
     }
 
     companion object {

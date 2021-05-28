@@ -1,20 +1,14 @@
 @file:UseSerializers(FileSerializer::class)
+
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.util.serializers.FileSerializer
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.periodUntil
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import java.io.File
-import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.time.ExperimentalTime
 
@@ -24,38 +18,61 @@ data class PlotProcess(
     val startTime: Instant,
     val logFile: File,
     val errFile: File
-    ){
+) {
 
     @Transient
-    val process: ProcessHandle? = ProcessHandle.of(pid).orElseGet { null }
+    private var stateCounter = 0
 
-    @OptIn(ExperimentalTime::class)
-    val timeFlow: Flow<Double> = flow {
-        val timeRunning = Clock.System.now() - startTime
-        emit(timeRunning.toDouble(TimeUnit.SECONDS))
-    }
+    @Transient
+    private var _state: JobState = JobState()
 
-    val currentState: Flow<JobState> = flow {
-        var jobState = JobState()
-        if(!logFile.exists() || errFile.readLines().isNotEmpty()){
-            emit(JobState(running = false))
-        }else {
-            logs.collect { line ->
-                jobState = jobState.parse(line)
-            }
-            emit(jobState)
+    @Transient
+    private var _logs: MutableList<String> = mutableListOf()
+
+    @Transient
+    private var _cache = false
+
+    val process get() = ProcessHandle.of(pid).orElseGet { null }
+
+
+    @Transient
+    var cache: Boolean
+        get() = _cache
+        set(value) {
+            _cache = value
+            if (_cache) _logs.clear()
         }
+
+    fun state(): JobState {
+        logs()
+        return _state.copy()
     }
 
-    private val logs: Flow<String> = flow {
-        emitAll(logFile.readLines().asFlow())
+    fun logs(): List<String> {
+        var lineNum = 0
+        logFile.forEachLine {
+            if (cache && lineNum >= _logs.size) {
+                _logs.add(it)
+            }
+            if (lineNum >= stateCounter) {
+                _state = _state.parse(it)
+            }
+            lineNum++
+        }
+        return _logs
     }
 
     fun isRunning(): Boolean {
         return process != null && process.isAlive && logFile.exists()
     }
 
-    fun kill(){
+    fun kill() {
         process?.destroyForcibly()
+    }
+
+    @OptIn(ExperimentalTime::class)
+    fun timeRunning(): Double {
+        val timeRunning = Clock.System.now() - startTime
+        return timeRunning.toDouble(TimeUnit.SECONDS)
     }
 }
