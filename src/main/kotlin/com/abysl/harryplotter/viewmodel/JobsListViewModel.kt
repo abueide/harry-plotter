@@ -75,7 +75,9 @@ class JobsListViewModel {
     }
 
     fun onClear() {
-        val plotIds = plotJobs.value.filter { it.state.plotId.isNotBlank() }.map { it.state.plotId }
+        val plotIds = plotJobs.value.filter {
+            it.state.plotId.isNotBlank()
+        }.map { it.state.plotId }
         val dirs = plotJobs.value.map { it.description.tempDir }
         dirs.forEach { dir ->
             val files = dir.listFiles() ?: return@forEach
@@ -113,12 +115,12 @@ class JobsListViewModel {
 
     fun checkPhaseOneBlocked(): Boolean {
         if (firstStagger == 0) return false
-        return plotJobs.value.filter { it.state.phase == 1 && it.state.running }.size >= firstStagger
+        return plotJobs.value.filter { it.state.phase == 1 && it.isRunning() }.size >= firstStagger
     }
 
     fun checkOtherBlocked(): Boolean {
         if (otherStagger == 0) return false
-        return plotJobs.value.filter { it.state.phase != 1 && it.state.running }.size >= otherStagger
+        return plotJobs.value.filter { it.state.phase != 1 && it.isRunning() }.size >= otherStagger
     }
 
     fun clearSelected() {

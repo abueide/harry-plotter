@@ -36,7 +36,7 @@ class JobsListView {
             stateRefreshScope.cancel()
             stateRefreshScope = CoroutineScope(Dispatchers.IO)
             jobList.onEach {
-                it.stateFlow.onEach { jobsView.refresh() }.launchIn(stateRefreshScope)
+                it.process?.state?.onEach { jobsView.refresh() }?.launchIn(stateRefreshScope)
                 it.statsFlow.onEach { jobsView.refresh() }.launchIn(stateRefreshScope)
             }
             Platform.runLater {
@@ -62,7 +62,7 @@ class JobsListView {
     }
 
     fun onStopAll() {
-        if (viewModel.plotJobs.value.none { it.state.running }) return
+        if (viewModel.plotJobs.value.none { it.isRunning() }) return
         showOptions("Are you sure?", GRACEFUL_STOP, FORCE_STOP) {
             when (it) {
                 FORCE_STOP -> viewModel.forceStopAll()

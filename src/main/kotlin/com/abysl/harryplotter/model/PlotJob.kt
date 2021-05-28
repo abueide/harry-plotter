@@ -27,10 +27,16 @@ import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.IOUtil
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
@@ -41,13 +47,17 @@ import java.util.Locale
 class PlotJob(
     var description: JobDescription,
     val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats()),
-    var plotProcess: PlotProcess? = null
+    var process: PlotProcess? = null
 ) {
+
     @Transient
     var tempDone = 0
 
     @Transient
     var manageSelf = false
+
+    @Transient
+    var updateScope = CoroutineScope(Dispatchers.IO)
 
     var stats
         get() = statsFlow.value
@@ -55,11 +65,18 @@ class PlotJob(
             statsFlow.value = value
         }
 
-    fun start(manageSelf: Boolean = false) {
-        if (plotProcess == null) {
+    val state get() = process?.state?.value ?: JobState()
+
+
+    fun start(manageSelf: Boolean = false, delay: Long = 1000) {
+        if (process == null) {
             this.manageSelf = manageSelf
             val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
-            plotProcess = chia.createPlot(description, ::whenDone)
+            val proc = chia.createPlot(description, ::whenDone)
+            process = proc
+            updateScope.launch {
+                proc.update(delay)
+            }
         } else {
             println("Trying to start job while job is running, ignoring request.")
         }
@@ -68,7 +85,7 @@ class PlotJob(
     // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
-        plotProcess?.let { proc ->
+        process?.let { proc ->
             val state = proc.state()
             proc.dispose()
             val temp = CoroutineScope(Dispatchers.IO).async {
@@ -80,6 +97,9 @@ class PlotJob(
                 }
             }
         }
+        process = null
+        updateScope.cancel()
+        updateScope = CoroutineScope(Dispatchers.IO)
     }
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
@@ -96,7 +116,7 @@ class PlotJob(
     }
 
     private fun whenDone() {
-        val proc = plotProcess ?: return
+        val proc = process ?: return
         val state = proc.state()
         if (state.completed) {
             proc.logFile.copyTo(Config.plotLogsFinished.resolve(proc.logFile.name))
@@ -113,17 +133,22 @@ class PlotJob(
     }
 
     fun isReady(): Boolean {
-        val proc = plotProcess ?: return true
+        val proc = process ?: return true
         return !proc.isRunning() && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 
-    fun percentDone(): Double{
-        val proc = plotProcess ?: return 0.0
-        return proc.timeRunning() / stats.averagePlotTime * 100
+    fun percentDone(): Double {
+        val proc = process ?: return 0.0
+        return (proc.timeRunning() / stats.averagePlotTime) * 100
+    }
+
+    fun isRunning(): Boolean {
+        val proc = process ?: return false
+        return proc.isRunning()
     }
 
     override fun toString(): String {
-        val proc = plotProcess ?: return description.toString()
+        if (process == null) return description.toString()
         val percentage = percentDone()
         val roundedPercentage =
             if (percentage.isNaN() || percentage.isInfinite()) "?"

@@ -89,12 +89,12 @@ class JobStatusView {
                 }
             }
         }.launchIn(jobBinding)
-        plotJob.stateFlow.onEach {
+        plotJob.process?.state?.onEach {
             Platform.runLater {
                 currentStatus.text = it.status
                 plotId.text = it.plotId
             }
-        }.launchIn(jobBinding)
+        }?.launchIn(jobBinding)
     }
 
     fun unbind() {
@@ -130,7 +130,7 @@ class JobStatusView {
 
     fun onStop() {
         val job: PlotJob = viewModel.shownJob() ?: return
-        if (job.state.running && showConfirmation("Stop Process", "Are you sure you want to stop $job?")) {
+        if (job.isRunning() && showConfirmation("Stop Process", "Are you sure you want to stop $job?")) {
             job.stop()
         }
     }
