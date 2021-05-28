@@ -31,7 +31,7 @@ data class JobState(
     val secondsRunning: Long = 0,
     val currentResult: JobResult = JobResult(),
     val results: List<JobResult> = listOf(),
-    val logs: List<String> = listOf(),
+    val logs: String = ""
 ) {
     val status by lazy {
         if (running) {
@@ -46,7 +46,7 @@ data class JobState(
     }
 
     fun reset(clearLogs: Boolean = false): JobState {
-        return JobState(logs = if (clearLogs) listOf() else logs)
+        return JobState(logs = if (clearLogs) "" else logs)
     }
 
     companion object {

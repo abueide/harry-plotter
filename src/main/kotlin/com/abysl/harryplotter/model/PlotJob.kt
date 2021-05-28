@@ -17,25 +17,26 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-@file:UseSerializers(MutableStateFlowSerializer::class)
+@file:UseSerializers(MutableStateFlowSerializer::class, FileSerializer::class)
 
 package com.abysl.harryplotter.model
 
+import com.abysl.harryplotter.util.serializers.FileSerializer
+import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.IOUtil
-import com.abysl.harryplotter.util.IOUtil.deleteFile
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
+import java.io.File
 import java.time.Duration
 import java.time.Instant
 import java.util.Locale
@@ -43,7 +44,8 @@ import java.util.Locale
 @Serializable
 class PlotJob(
     var description: JobDescription,
-    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats())
+    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats()),
+    var logFile: File? = null,
 ) {
     @Transient
     val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
@@ -68,35 +70,17 @@ class PlotJob(
             stateFlow.value = value
         }
 
-    fun start(manageSelf: Boolean = false) {
+    fun start(manageSelf: Boolean = false, logDelay: Long = 10000) {
         this.manageSelf = manageSelf
-
         if (state.running || state.proc?.isAlive == true) {
             println("Trying to start new process while old one is still running, ignoring start job.")
         } else {
-            val proc = description.launch(
-                ioDelay = 10,
-                onOutput = ::parseLine,
-                onCompleted = ::whenDone,
-            )
-            state = state.copy(running = true, proc = proc)
+            val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
+            val plotProcess = chia.createPlot(description)
+            logFile = plotProcess.logFile
+            state = state.copy(running = true, proc = plotProcess.process)
         }
 
-        timerScope.launch {
-            while (true) {
-                val proc = state.proc
-                if (proc != null) {
-                    val time = proc.info()
-                        ?.startInstant()
-                        ?.map { Duration.between(it, Instant.now()) }
-                        ?.orElse(null)
-                        ?.seconds?.toDouble() ?: 0.0
-                    val percentage: Double = time / stats.averagePlotTime
-                    state = state.copy(percentage = percentage)
-                }
-                delay(REFRESH_DELAY)
-            }
-        }
     }
 
     // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
@@ -108,6 +92,27 @@ class PlotJob(
         state.proc?.destroyForcibly()
         deleteTempFiles(state.plotId, block)
         state = state.reset()
+    }
+
+    val logsFlow: Flow<String> = flow {
+        while(true) {
+            logFile?.let {
+                emit(it.readText())
+            }
+        }
+    }
+
+    val timeFlow: Flow<Double> = flow {
+                    val time = state.proc?.info()
+                        ?.startInstant()
+                        ?.map { Duration.between(it, Instant.now()) }
+                        ?.orElse(null)
+                        ?.seconds?.toDouble() ?: 0.0
+                    emit(time)
+            }
+
+    val percentageFlow: Flow<Double> = flow {
+        timeFlow.collectLatest { emit(it / stats.averagePlotTime * 100) }
     }
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {

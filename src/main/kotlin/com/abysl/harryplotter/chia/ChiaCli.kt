@@ -19,19 +19,16 @@
 
 package com.abysl.harryplotter.chia
 
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.model.PlotJobProcess
 import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.model.records.JobDescription
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.launch
-import java.io.BufferedReader
 import java.io.File
 import java.io.InputStream
-import java.io.InputStreamReader
-import java.time.Duration
-import java.time.Instant
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
@@ -71,37 +68,35 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         return input.reader().readLines()
     }
 
+    fun createPlot(desc: JobDescription): PlotJobProcess {
+        var counter = 1
+        var outputFile = Config.plotLogsRunning.resolve(desc.name)
+        while(outputFile.exists()) {
+            outputFile = Config.plotLogsRunning.resolve("${desc.name}$counter.log")
+            counter++
+        }
+        val args = mutableListOf<String>()
+        args.addAll(listOf("plots", "create", "-k", desc.kSize.toString()))
+        if (desc.key.fingerprint.isNotBlank()) args.addAll(listOf("-a", desc.key.fingerprint))
+        else if (desc.key.farmerKey.isNotBlank() && desc.key.poolKey.isNotBlank()) {
+            args.addAll(listOf("-f", desc.key.farmerKey, "-p", desc.key.poolKey))
+        }
+        if (desc.ram > JobDescription.MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
+        if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
+        args.addAll(listOf("-t", desc.tempDir.toString(), "-d", desc.destDir.toString()))
+        desc.additionalParams.forEach { if (it.isNotBlank()) args.add(it) }
+        return PlotJobProcess(runCommandAsync(outputFile, *args.toTypedArray()), outputFile)
+    }
+
     fun runCommandAsync(
-        ioDelay: Long = 10,
-        outputCallback: (String) -> Unit,
-        completedCallback: (Double) -> Unit,
+        outputFile: File,
         vararg commandArgs: String,
     ): Process {
         val command: List<String> = listOf(exe.path) + commandArgs.toList()
         val proc: Process = ProcessBuilder(command)
+            .redirectOutput(outputFile)
+            .redirectError(outputFile)
             .start()
-        val input = BufferedReader(InputStreamReader(proc.inputStream))
-        val err = BufferedReader(InputStreamReader(proc.errorStream))
-        CoroutineScope(Dispatchers.IO).launch {
-            while (proc.isAlive) {
-                input.lines().forEach {
-                    outputCallback(it)
-                }
-                err.lines().forEach {
-                    outputCallback(it)
-                }
-                delay(ioDelay)
-            }
-            input.close()
-            err.close()
-            val time = proc.info()
-                ?.startInstant()
-                ?.map { Duration.between(it, Instant.now()) }
-                ?.orElse(null)
-                ?.seconds?.toDouble() ?: 0.0
-
-            completedCallback(time)
-        }
         return proc
     }
 }
