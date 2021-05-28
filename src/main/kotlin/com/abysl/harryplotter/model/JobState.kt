@@ -20,17 +20,18 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.logparser.PlotLogParser
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class JobState(
-    val proc: Process? = null,
     val running: Boolean = false,
+    val completed: Boolean = false,
     val phase: Int = 1,
     val subphase: String = "",
     val plotId: String = "",
     val percentage: Double = 0.0,
     val secondsRunning: Long = 0,
     val currentResult: JobResult = JobResult(),
-    val results: List<JobResult> = listOf(),
     val logs: String = ""
 ) {
     val status by lazy {

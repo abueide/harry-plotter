@@ -29,30 +29,20 @@ import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import java.io.File
-import java.time.Duration
-import java.time.Instant
 import java.util.Locale
 
 @Serializable
 class PlotJob(
     var description: JobDescription,
     val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats()),
-    var logFile: File? = null,
+    var reader: PlotProcess? = null
 ) {
-    @Transient
-    val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
-
-    @Transient
-    var timerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-
     @Transient
     var tempDone = 0
 
@@ -64,55 +54,33 @@ class PlotJob(
         set(value) {
             statsFlow.value = value
         }
-    var state
-        get() = stateFlow.value
-        set(value) {
-            stateFlow.value = value
-        }
 
-    fun start(manageSelf: Boolean = false, logDelay: Long = 10000) {
-        this.manageSelf = manageSelf
-        if (state.running || state.proc?.isAlive == true) {
-            println("Trying to start new process while old one is still running, ignoring start job.")
-        } else {
+
+    fun start(manageSelf: Boolean = false) {
+        if(reader == null){
+            this.manageSelf = manageSelf
             val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
-            val plotProcess = chia.createPlot(description)
-            logFile = plotProcess.logFile
-            state = state.copy(running = true, proc = plotProcess.process)
+            reader = chia.createPlot(description)
+        }else {
+            println("Trying to start job while job is running, ignoring request.")
         }
-
     }
 
     // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
-        timerScope.cancel()
-        timerScope = CoroutineScope(Dispatchers.IO)
-        // Store in immutable variable so it doesn't try to delete files after state is wiped out
-        state.proc?.destroyForcibly()
-        deleteTempFiles(state.plotId, block)
-        state = state.reset()
-    }
-
-    val logsFlow: Flow<String> = flow {
-        while(true) {
-            logFile?.let {
-                emit(it.readText())
+        reader?.let {
+            val temp = CoroutineScope(Dispatchers.IO).async {
+                it.currentState.collect { state ->
+                    deleteTempFiles(state.plotId, block)
+                }
+            }
+            if(block){
+                runBlocking {
+                    temp.await()
+                }
             }
         }
-    }
-
-    val timeFlow: Flow<Double> = flow {
-                    val time = state.proc?.info()
-                        ?.startInstant()
-                        ?.map { Duration.between(it, Instant.now()) }
-                        ?.orElse(null)
-                        ?.seconds?.toDouble() ?: 0.0
-                    emit(time)
-            }
-
-    val percentageFlow: Flow<Double> = flow {
-        timeFlow.collectLatest { emit(it / stats.averagePlotTime * 100) }
     }
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
@@ -151,6 +119,15 @@ class PlotJob(
     fun isReady(): Boolean {
         return !state.running && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
+
+
+
+
+
+//    val percentageFlow: Flow<Double> = flow {
+//        proces
+//        timeFlow.collectLatest { emit(it / stats.averagePlotTime * 100) }
+//    }
 
     override fun toString(): String {
         val roundedPercentage =
