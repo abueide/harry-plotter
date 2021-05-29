@@ -7,9 +7,12 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -18,6 +21,8 @@ import kotlinx.serialization.UseSerializers
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.time.ExperimentalTime
+
+private const val LOG_REFRESH_RATE = 100L
 
 @Serializable
 class PlotProcess(
@@ -30,46 +35,66 @@ class PlotProcess(
 ) {
 
     @Transient
-    private var stateCounter = 0
-
-    @Transient
-    private val _state: MutableStateFlow<JobState> = MutableStateFlow(JobState())
-
-    @Transient
-    private var _logs: MutableList<String> = mutableListOf()
-
-    @Transient
     private var _cache = false
+
+    @Transient
+    private var _logCache: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+
+    @Transient
+    private var newLogCounter = 0
+
+    @Transient
+    private var logCacheCounter = 0
+
+    @Transient
+    private val _state: MutableStateFlow<JobState> = MutableStateFlow(JobState(running = isRunning()))
+
+    @Transient
+    private val _newLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 
     @Transient
     val state: StateFlow<JobState> = _state.asStateFlow()
 
     @Transient
-    private val process get() = ProcessHandle.of(pid).orElseGet { null }
+    val newLogs = _newLogs.asStateFlow()
+
 
     @Transient
-    val logs: List<String> get() = _logs
+    private val process
+        get() = ProcessHandle.of(pid).orElseGet { null }
 
     @Transient
     var cache: Boolean
         get() = _cache
         set(value) {
+            if (!value) {
+                _logCache.value = listOf()
+                logCacheCounter = 0
+            }
             _cache = value
-            if (_cache) _logs.clear()
         }
+
+    @Transient
+    private val logFlow: Flow<List<String>> = flow {
+        var lineNum = 0
+        logFile.forEachLine {
+            if (lineNum >= newLogCounter) {
+                _newLogs.value = _newLogs.value + it
+                newLogCounter++
+            }
+            if (lineNum >= logCacheCounter) {
+                _logCache.value += it
+                logCacheCounter++
+            }
+            lineNum++
+        }
+        emit(newLogs())
+    }
 
     suspend fun update(delay: Long) = coroutineScope {
         while (true) {
-            var lineNum = 0
-            logFile.forEachLine {
-                if (cache && lineNum >= _logs.size) {
-                    _logs.add(it)
-                }
-                if (lineNum >= stateCounter) {
-                    _state.value = _state().parse(it)
-                    if (_state().completed) onComplete()
-                }
-                lineNum++
+            logFlow.collect {
+                _state.value = _state.value.parseAll(it)
             }
             delay(delay)
         }
@@ -89,18 +114,22 @@ class PlotProcess(
         return timeRunning.toDouble(TimeUnit.SECONDS)
     }
 
-    fun dispose(){
+    fun dispose() {
         val updatedState = state.value
-        if(updatedState.completed){
-            logFile.copyTo(Config.plotLogsFailed.resolve(logFile.name))
-            logFile.delete()
-        }else {
-            logFile.copyTo(Config.plotLogsFailed.resolve(logFile.name))
-            errFile.copyTo(Config.plotLogsFailed.resolve(errFile.name))
-            logFile.delete()
-            errFile.delete()
+        if (updatedState.completed) {
+            moveTo(logFile, Config.plotLogsFinished.resolve(logFile.name))
+            moveTo(errFile, Config.plotLogsFinished.resolve(errFile.name))
+        } else {
+            moveTo(logFile, Config.plotLogsFailed.resolve("log${state.value.plotId}.log"))
+            moveTo(errFile, Config.plotLogsFailed.resolve("err${state.value.plotId}.log"))
         }
-        _logs.clear()
         kill()
+    }
+
+    fun moveTo(file: File, destination: File): Boolean {
+        if(!file.exists()) return false
+        destination.delete()
+        file.copyTo(destination)
+        return file.delete()
     }
 }

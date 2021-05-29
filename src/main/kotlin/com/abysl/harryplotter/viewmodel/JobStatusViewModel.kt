@@ -26,38 +26,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-private const val LOG_REFRESH_DELAY = 1000L
 class JobStatusViewModel {
-    var logsScope = CoroutineScope(Dispatchers.IO)
     val shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-    val shownLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 
     fun loadJob(job: PlotJob) {
         clearJob()
         shownJob.value = job
         shownJob()?.process?.let {
             it.cache = true
-            logsScope.launch {
-                while (true){
-                    if(it.logs.size > shownLogs().size){
-                        shownLogs.value = it.logs
-                    }
-                    delay(LOG_REFRESH_DELAY)
-                }
-            }
         }
-        shownJob()?.process?.cache = true
     }
 
     fun clearJob() {
-        logsScope.cancel()
-        logsScope = CoroutineScope(Dispatchers.IO)
+//        shownJob()?.process?.cache = false
         shownJob.value = null
-        shownLogs.value = listOf()
     }
 
 }

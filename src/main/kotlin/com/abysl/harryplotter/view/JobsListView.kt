@@ -14,12 +14,14 @@ import javafx.scene.control.MenuItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 private const val GRACEFUL_STOP = "Graceful Stop"
 private const val FORCE_STOP = "Force Stop"
-
+private const val PERCENTAGE_REFRESH_DELAY = 100L
 class JobsListView {
 
     @FXML
@@ -27,18 +29,17 @@ class JobsListView {
 
     lateinit var viewModel: JobsListViewModel
 
-    var stateRefreshScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    val stateRefreshScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     fun initialized(jobsListViewModel: JobsListViewModel) {
         this.viewModel = jobsListViewModel.also { it.refreshCallback = jobsView::refresh }
-
-        jobsListViewModel.plotJobs.onEach { jobList ->
-            stateRefreshScope.cancel()
-            stateRefreshScope = CoroutineScope(Dispatchers.IO)
-            jobList.onEach {
-                it.process?.state?.onEach { jobsView.refresh() }?.launchIn(stateRefreshScope)
-                it.statsFlow.onEach { jobsView.refresh() }.launchIn(stateRefreshScope)
+        stateRefreshScope.launch {
+            while (true){
+                Platform.runLater { jobsView.refresh() }
+                delay(PERCENTAGE_REFRESH_DELAY)
             }
+        }
+        jobsListViewModel.plotJobs.onEach { jobList ->
             Platform.runLater {
                 jobsView.items.setAll(jobList)
                 jobsView.selectionModel.select(viewModel.selectedPlotJob())

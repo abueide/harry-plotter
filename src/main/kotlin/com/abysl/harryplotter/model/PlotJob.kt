@@ -67,6 +67,14 @@ class PlotJob(
 
     val state get() = process?.state?.value ?: JobState()
 
+    fun initialized(){
+        process?.let {
+            if(!it.isRunning()){
+                it.dispose()
+                process = null
+            }
+        }
+    }
 
     fun start(manageSelf: Boolean = false, delay: Long = 1000) {
         if (process == null) {

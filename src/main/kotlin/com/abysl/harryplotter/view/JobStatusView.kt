@@ -13,13 +13,13 @@ import javafx.scene.control.Label
 import javafx.scene.control.TextArea
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import java.time.Duration
+
 
 class JobStatusView {
 
@@ -46,35 +46,34 @@ class JobStatusView {
 
     @FXML
     private lateinit var p1Time: Label
+
     @FXML
     private lateinit var p2Time: Label
+
     @FXML
     private lateinit var p3Time: Label
+
     @FXML
     private lateinit var p4Time: Label
+
     @FXML
     private lateinit var copyTime: Label
 
     lateinit var viewModel: JobStatusViewModel
 
     var jobBinding: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    var fxBinding: CoroutineScope = CoroutineScope(Dispatchers.JavaFx)
 
     fun initialized(jobStatusViewModel: JobStatusViewModel) {
         this.viewModel = jobStatusViewModel
         viewModel.shownJob.onEach(::bind).launchIn(CoroutineScope(Dispatchers.IO))
-        viewModel.shownLogs.onEach {
-            Platform.runLater {
-                logsWindow.text = viewModel.shownLogs().unlines()
-                logsWindow.appendText("")
-            }
-        }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     fun bind(plotJob: PlotJob?) {
         unbind()
         plotJob ?: return
         plotJob.statsFlow.onEach {
-            Platform.runLater {
+            fxBinding.launch {
                 totalPlotsCreated.text = it.plotsDone.toString()
                 lastPlotTime.text = Duration.ofSeconds(it.lastPlotTime.toLong()).formatted()
                 averagePlotTime.text = Duration.ofSeconds(it.averagePlotTime.toLong()).formatted()
@@ -90,30 +89,37 @@ class JobStatusView {
             }
         }.launchIn(jobBinding)
         plotJob.process?.state?.onEach {
-            Platform.runLater {
+            fxBinding.launch {
                 currentStatus.text = it.status
                 plotId.text = it.plotId
             }
         }?.launchIn(jobBinding)
+        plotJob.process?.newLogs?.onEach {
+            fxBinding.launch {
+                logsWindow.appendText(it.unlines())
+            }
+        }?.launchIn(jobBinding)
+        logsWindow.appendText(plotJob.process?.logFile?.readText() ?: "")
     }
 
     fun unbind() {
-        runBlocking {
-            CoroutineScope(Dispatchers.JavaFx).async {
-                jobBinding.cancel()
-                jobBinding = CoroutineScope(Dispatchers.IO)
-                currentStatus.text = ""
-                plotId.text = ""
-                lastPlotTime.text = ""
-                totalPlotsCreated.text = ""
-                averagePlotTime.text = ""
-                estimatedPlotsDay.text = ""
-                p1Time.text = ""
-                p2Time.text = ""
-                p3Time.text = ""
-                p4Time.text = ""
-                copyTime.text = ""
-            }.await()
+        jobBinding.cancel()
+        fxBinding.cancel()
+        jobBinding = CoroutineScope(Dispatchers.IO)
+        fxBinding = CoroutineScope(Dispatchers.JavaFx)
+        fxBinding.launch {
+            currentStatus.text = ""
+            plotId.text = ""
+            lastPlotTime.text = ""
+            totalPlotsCreated.text = ""
+            averagePlotTime.text = ""
+            estimatedPlotsDay.text = ""
+            p1Time.text = ""
+            p2Time.text = ""
+            p3Time.text = ""
+            p4Time.text = ""
+            copyTime.text = ""
+            logsWindow.clear()
         }
     }
 

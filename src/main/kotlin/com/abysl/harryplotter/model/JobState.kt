@@ -45,6 +45,14 @@ data class JobState(
         return PlotLogParser.parseLine(this, line)
     }
 
+    fun parseAll(lines: List<String>): JobState {
+        var state = this
+        lines.forEach {
+            state = state.parse(it)
+        }
+        return state
+    }
+
     companion object {
         private const val RUNNING = "Running"
         private const val STOPPED = "Stopped"
