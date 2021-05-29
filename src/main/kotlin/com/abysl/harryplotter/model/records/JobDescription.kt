@@ -19,8 +19,6 @@
 
 package com.abysl.harryplotter.model.records
 
-import com.abysl.harryplotter.chia.ChiaCli
-import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.serialization.Serializable
 import java.io.File

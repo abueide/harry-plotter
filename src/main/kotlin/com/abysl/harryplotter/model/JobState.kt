@@ -32,7 +32,6 @@ data class JobState(
     val currentResult: JobResult = JobResult(),
 ) {
 
-
     val status by lazy {
         if (running) {
             "$RUNNING: Phase $phase/4"

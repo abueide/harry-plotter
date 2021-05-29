@@ -67,10 +67,10 @@ class PlotJob(
 
     val state get() = process()?.state?.value ?: JobState()
 
-    fun initialized(){
+    fun initialized() {
         process()?.let {
             it.initialized(::whenDone)
-            if(!it.isRunning()) {
+            if (!it.isRunning()) {
                 process.value = null
             }
         }

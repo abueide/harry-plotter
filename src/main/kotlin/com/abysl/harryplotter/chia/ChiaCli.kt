@@ -21,7 +21,6 @@ package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.PlotProcess
 import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.model.records.JobDescription
@@ -72,7 +71,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
     fun createPlot(desc: JobDescription, onComplete: () -> Unit): PlotProcess {
         var counter = 0
         var outputFile = Config.plotLogsRunning.resolve("${desc.name}.log")
-        while(outputFile.exists()) {
+        while (outputFile.exists()) {
             counter++
             outputFile = Config.plotLogsRunning.resolve("${desc.name}$counter.log")
         }

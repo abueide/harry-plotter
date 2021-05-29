@@ -21,12 +21,7 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 class JobStatusViewModel {
     val shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
@@ -40,5 +35,4 @@ class JobStatusViewModel {
 //        shownJob()?.process?.cache = false
         shownJob.value = null
     }
-
 }

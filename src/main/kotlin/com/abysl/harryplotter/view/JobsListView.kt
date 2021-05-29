@@ -13,7 +13,6 @@ import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -34,7 +33,7 @@ class JobsListView {
     fun initialized(jobsListViewModel: JobsListViewModel) {
         this.viewModel = jobsListViewModel.also { it.refreshCallback = jobsView::refresh }
         stateRefreshScope.launch {
-            while (true){
+            while (true) {
                 Platform.runLater { jobsView.refresh() }
                 delay(PERCENTAGE_REFRESH_DELAY)
             }

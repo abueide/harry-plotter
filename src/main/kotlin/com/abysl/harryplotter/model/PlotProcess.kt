@@ -45,12 +45,12 @@ class PlotProcess(
     @Transient
     lateinit var onComplete: () -> Unit
 
-    fun initialized(onComplete: () -> Unit){
+    fun initialized(onComplete: () -> Unit) {
         this.onComplete = onComplete
-        if(logFile.exists()) {
+        if (logFile.exists()) {
             _state.value = state.value.parseAll(logFile.readLines())
         }
-        if(!isRunning()) onComplete()
+        if (!isRunning()) onComplete()
     }
 
     suspend fun update(delay: Long) = coroutineScope {
@@ -58,7 +58,7 @@ class PlotProcess(
         while (true) {
             var lineNum = 0
             var tempCache = listOf<String>()
-            if(logFile.exists()) {
+            if (logFile.exists()) {
                 logFile.forEachLine {
                     if (lineNum >= oldLogCounter) {
                         tempCache += it
@@ -69,7 +69,7 @@ class PlotProcess(
             }
             _state.value = _state.value.parseAll(tempCache).copy(running = isRunning())
             _newLogs.value = tempCache
-            if(!state().running){
+            if (!state().running) {
                 onComplete()
             }
             delay(delay)
@@ -101,7 +101,7 @@ class PlotProcess(
     }
 
     fun moveTo(file: File, destination: File): Boolean {
-        if(!file.exists()) return false
+        if (!file.exists()) return false
         destination.delete()
         file.copyTo(destination)
         return file.delete()
