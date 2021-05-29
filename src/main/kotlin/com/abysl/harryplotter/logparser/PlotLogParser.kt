@@ -23,7 +23,7 @@ import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.JobState
 
 object PlotLogParser {
-    private const val DONE_FLAG = "Copy time ="
+    private const val DONE_FLAG = "Total time"
 
     fun parseLine(jobState: JobState = JobState(), line: String): JobState {
         val result = parseResult(line) ?: jobState.currentResult
@@ -35,7 +35,7 @@ object PlotLogParser {
                 currentResult = result + jobState.currentResult,
             )
             if (line.contains(DONE_FLAG))
-                state.copy(running = false, completed = true)
+                state.copy(completed = true)
             else
                 state
         } catch (e: Exception) {

@@ -66,18 +66,15 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
             .start()
         proc.waitFor(timeout, TimeUnit.SECONDS)
         val input: InputStream = proc.inputStream
-        val err: InputStream = proc.errorStream
         return input.reader().readLines()
     }
 
     fun createPlot(desc: JobDescription, onComplete: () -> Unit): PlotProcess {
         var counter = 0
         var outputFile = Config.plotLogsRunning.resolve("${desc.name}.log")
-        var errFile = Config.plotLogsRunning.resolve("${desc.name}.err")
         while(outputFile.exists()) {
             counter++
             outputFile = Config.plotLogsRunning.resolve("${desc.name}$counter.log")
-            errFile = Config.plotLogsRunning.resolve("${desc.name}$counter.err")
         }
         val args = mutableListOf<String>()
         args.addAll(listOf("plots", "create", "-k", desc.kSize.toString()))
@@ -89,19 +86,18 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
         args.addAll(listOf("-t", desc.tempDir.toString(), "-d", desc.destDir.toString()))
         desc.additionalParams.forEach { if (it.isNotBlank()) args.add(it) }
-        val proc = runCommandAsync(outputFile, errFile, *args.toTypedArray())
-        return PlotProcess(proc.pid(), Clock.System.now(), outputFile, errFile, onComplete)
+        val proc = runCommandAsync(outputFile, *args.toTypedArray())
+        return PlotProcess(proc.pid(), Clock.System.now(), outputFile).also { it.initialized(onComplete) }
     }
 
     fun runCommandAsync(
         outputFile: File,
-        errFile: File,
         vararg commandArgs: String,
     ): Process {
         val command: List<String> = listOf(exe.path) + commandArgs.toList()
         val proc: Process = ProcessBuilder(command)
             .redirectOutput(outputFile)
-            .redirectError(errFile)
+            .redirectError(outputFile)
             .start()
         return proc
     }

@@ -7,17 +7,20 @@ import com.abysl.harryplotter.util.unlines
 import com.abysl.harryplotter.viewmodel.JobStatusViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
 import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
-import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.Label
 import javafx.scene.control.TextArea
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.Duration
 
 
@@ -66,7 +69,7 @@ class JobStatusView {
 
     fun initialized(jobStatusViewModel: JobStatusViewModel) {
         this.viewModel = jobStatusViewModel
-        viewModel.shownJob.onEach(::bind).launchIn(CoroutineScope(Dispatchers.IO))
+        viewModel.shownJob.mapLatest(::bind).launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     fun bind(plotJob: PlotJob?) {
@@ -88,18 +91,22 @@ class JobStatusView {
                 }
             }
         }.launchIn(jobBinding)
-        plotJob.process?.state?.onEach {
+        plotJob.process.onEach { process ->
+            process?.state?.onEach {
+                fxBinding.launch {
+                    currentStatus.text = it.status
+                    plotId.text = it.plotId
+                }
+            }?.launchIn(jobBinding)
+            process?.newLogs?.onEach {
+                fxBinding.launch { logsWindow.appendText(it.unlines()) }
+            }?.launchIn(jobBinding)
             fxBinding.launch {
-                currentStatus.text = it.status
-                plotId.text = it.plotId
+                val logs = process?.logFile?.readText() ?: ""
+                logsWindow.appendText(logs)
             }
-        }?.launchIn(jobBinding)
-        plotJob.process?.newLogs?.onEach {
-            fxBinding.launch {
-                logsWindow.appendText(it.unlines())
-            }
-        }?.launchIn(jobBinding)
-        logsWindow.appendText(plotJob.process?.logFile?.readText() ?: "")
+        }.launchIn(jobBinding)
+
     }
 
     fun unbind() {

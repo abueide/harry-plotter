@@ -7,12 +7,9 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -22,79 +19,58 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.time.ExperimentalTime
 
-private const val LOG_REFRESH_RATE = 100L
-
 @Serializable
 class PlotProcess(
     val pid: Long,
     val startTime: Instant = Clock.System.now(),
     val logFile: File,
-    val errFile: File,
-    @Transient
-    val onComplete: () -> Unit = {}
 ) {
-
-    @Transient
-    private var _cache = false
-
-    @Transient
-    private var _logCache: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
-
-    @Transient
-    private var newLogCounter = 0
-
-    @Transient
-    private var logCacheCounter = 0
 
     @Transient
     private val _state: MutableStateFlow<JobState> = MutableStateFlow(JobState(running = isRunning()))
 
     @Transient
-    private val _newLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
-
-    @Transient
     val state: StateFlow<JobState> = _state.asStateFlow()
 
     @Transient
-    val newLogs = _newLogs.asStateFlow()
+    private val _newLogs = MutableStateFlow<List<String>>(listOf())
 
+    @Transient
+    val newLogs = _newLogs.asStateFlow()
 
     @Transient
     private val process
         get() = ProcessHandle.of(pid).orElseGet { null }
 
     @Transient
-    var cache: Boolean
-        get() = _cache
-        set(value) {
-            if (!value) {
-                _logCache.value = listOf()
-                logCacheCounter = 0
-            }
-            _cache = value
-        }
+    lateinit var onComplete: () -> Unit
 
-    @Transient
-    private val logFlow: Flow<List<String>> = flow {
-        var lineNum = 0
-        logFile.forEachLine {
-            if (lineNum >= newLogCounter) {
-                _newLogs.value = _newLogs.value + it
-                newLogCounter++
-            }
-            if (lineNum >= logCacheCounter) {
-                _logCache.value += it
-                logCacheCounter++
-            }
-            lineNum++
+    fun initialized(onComplete: () -> Unit){
+        this.onComplete = onComplete
+        if(logFile.exists()) {
+            _state.value = state.value.parseAll(logFile.readLines())
         }
-        emit(newLogs())
+        if(!isRunning()) onComplete()
     }
 
     suspend fun update(delay: Long) = coroutineScope {
+        var oldLogCounter = 0
         while (true) {
-            logFlow.collect {
-                _state.value = _state.value.parseAll(it)
+            var lineNum = 0
+            var tempCache = listOf<String>()
+            if(logFile.exists()) {
+                logFile.forEachLine {
+                    if (lineNum >= oldLogCounter) {
+                        tempCache += it
+                        oldLogCounter++
+                    }
+                    lineNum++
+                }
+            }
+            _state.value = _state.value.parseAll(tempCache).copy(running = isRunning())
+            _newLogs.value = tempCache
+            if(!state().running){
+                onComplete()
             }
             delay(delay)
         }
@@ -118,10 +94,8 @@ class PlotProcess(
         val updatedState = state.value
         if (updatedState.completed) {
             moveTo(logFile, Config.plotLogsFinished.resolve(logFile.name))
-            moveTo(errFile, Config.plotLogsFinished.resolve(errFile.name))
         } else {
             moveTo(logFile, Config.plotLogsFailed.resolve("log${state.value.plotId}.log"))
-            moveTo(errFile, Config.plotLogsFailed.resolve("err${state.value.plotId}.log"))
         }
         kill()
     }

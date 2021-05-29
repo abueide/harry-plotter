@@ -47,7 +47,7 @@ import java.util.Locale
 class PlotJob(
     var description: JobDescription,
     val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats()),
-    var process: PlotProcess? = null
+    var process: MutableStateFlow<PlotProcess?> = MutableStateFlow(null)
 ) {
 
     @Transient
@@ -65,25 +65,28 @@ class PlotJob(
             statsFlow.value = value
         }
 
-    val state get() = process?.state?.value ?: JobState()
+    val state get() = process()?.state?.value ?: JobState()
 
     fun initialized(){
-        process?.let {
-            if(!it.isRunning()){
-                it.dispose()
-                process = null
+        process()?.let {
+            it.initialized(::whenDone)
+            if(!it.isRunning()) {
+                process.value = null
             }
+        }
+        updateScope.launch {
+            process()?.update(REFRESH_DELAY)
         }
     }
 
-    fun start(manageSelf: Boolean = false, delay: Long = 1000) {
-        if (process == null) {
+    fun start(manageSelf: Boolean = false) {
+        if (process() == null) {
             this.manageSelf = manageSelf
             val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
             val proc = chia.createPlot(description, ::whenDone)
-            process = proc
+            process.value = proc
             updateScope.launch {
-                proc.update(delay)
+                proc.update(REFRESH_DELAY)
             }
         } else {
             println("Trying to start job while job is running, ignoring request.")
@@ -93,7 +96,7 @@ class PlotJob(
     // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
-        process?.let { proc ->
+        process()?.let { proc ->
             val state = proc.state()
             proc.dispose()
             val temp = CoroutineScope(Dispatchers.IO).async {
@@ -105,7 +108,7 @@ class PlotJob(
                 }
             }
         }
-        process = null
+        process.value = null
         updateScope.cancel()
         updateScope = CoroutineScope(Dispatchers.IO)
     }
@@ -124,7 +127,7 @@ class PlotJob(
     }
 
     private fun whenDone() {
-        val proc = process ?: return
+        val proc = process() ?: return
         val state = proc.state()
         if (state.completed) {
             proc.logFile.copyTo(Config.plotLogsFinished.resolve(proc.logFile.name))
@@ -141,22 +144,22 @@ class PlotJob(
     }
 
     fun isReady(): Boolean {
-        val proc = process ?: return true
+        val proc = process() ?: return true
         return !proc.isRunning() && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 
     fun percentDone(): Double {
-        val proc = process ?: return 0.0
+        val proc = process() ?: return 0.0
         return (proc.timeRunning() / stats.averagePlotTime) * 100
     }
 
     fun isRunning(): Boolean {
-        val proc = process ?: return false
+        val proc = process() ?: return false
         return proc.isRunning()
     }
 
     override fun toString(): String {
-        if (process == null) return description.toString()
+        if (process() == null) return description.toString()
         val percentage = percentDone()
         val roundedPercentage =
             if (percentage.isNaN() || percentage.isInfinite()) "?"
@@ -165,6 +168,6 @@ class PlotJob(
     }
 
     companion object {
-        private const val REFRESH_DELAY = 1000L
+        private const val REFRESH_DELAY = 100L
     }
 }

@@ -34,9 +34,6 @@ class JobStatusViewModel {
     fun loadJob(job: PlotJob) {
         clearJob()
         shownJob.value = job
-        shownJob()?.process?.let {
-            it.cache = true
-        }
     }
 
     fun clearJob() {
