@@ -115,7 +115,7 @@ class MainView {
 
     fun onExit() {
         val jobs = jobsListViewController.viewModel.plotJobs.value
-        if (jobs.any { it.state.running }) {
+        if (jobs.any { it.isRunning() }) {
             val answer = SimpleDialogs.showOptionsBlocking("Are you sure?", GRACEFUL_STOP, FORCE_STOP)
             when (answer) {
                 FORCE_STOP -> jobsListViewController.viewModel.forceStopAll(block = true)

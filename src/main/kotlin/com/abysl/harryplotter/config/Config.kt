@@ -32,7 +32,11 @@ import java.io.File
 import java.lang.Exception
 
 object Config {
-    private val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
+    val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
+    val plotLogsRunning = plotterHome.resolve("plotlogs/running")
+    val plotLogsFinished = plotterHome.resolve("plotlogs/finished")
+    val plotLogsFailed = plotterHome.resolve("plotlogs/failed")
+
     private val jobsFile = File(plotterHome.path + "/jobs.json")
 
     val devkey = ChiaKey(
@@ -44,9 +48,10 @@ object Config {
     )
 
     init {
-        if (!plotterHome.exists()) {
-            plotterHome.mkdirs()
-        }
+        plotterHome.mkdirs()
+        plotLogsRunning.mkdirs()
+        plotLogsFinished.mkdirs()
+        plotLogsFailed.mkdirs()
     }
 
     fun savePlotJobs(jobs: List<PlotJob>) {

@@ -17,39 +17,38 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-@file:UseSerializers(MutableStateFlowSerializer::class)
+@file:UseSerializers(MutableStateFlowSerializer::class, FileSerializer::class)
 
 package com.abysl.harryplotter.model
 
+import com.abysl.harryplotter.chia.ChiaCli
+import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.IOUtil
-import com.abysl.harryplotter.util.IOUtil.deleteFile
+import com.abysl.harryplotter.util.invoke
+import com.abysl.harryplotter.util.serializers.FileSerializer
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
-import java.time.Duration
-import java.time.Instant
+import java.io.File
 import java.util.Locale
 
 @Serializable
 class PlotJob(
     var description: JobDescription,
-    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats())
+    val statsFlow: MutableStateFlow<JobStats> = MutableStateFlow(JobStats()),
+    var process: MutableStateFlow<PlotProcess?> = MutableStateFlow(null)
 ) {
-    @Transient
-    val stateFlow: MutableStateFlow<JobState> = MutableStateFlow(JobState())
-
-    @Transient
-    var timerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     @Transient
     var tempDone = 0
@@ -57,57 +56,61 @@ class PlotJob(
     @Transient
     var manageSelf = false
 
+    @Transient
+    var updateScope = CoroutineScope(Dispatchers.IO)
+
     var stats
         get() = statsFlow.value
         set(value) {
             statsFlow.value = value
         }
-    var state
-        get() = stateFlow.value
-        set(value) {
-            stateFlow.value = value
+
+    val state get() = process()?.state?.value ?: JobState()
+
+    fun initialized() {
+        process()?.let {
+            it.initialized(::whenDone)
+            if (!it.isRunning()) {
+                process.value = null
+            }
         }
+        updateScope.launch {
+            process()?.update(REFRESH_DELAY)
+        }
+    }
 
     fun start(manageSelf: Boolean = false) {
-        this.manageSelf = manageSelf
-
-        if (state.running || state.proc?.isAlive == true) {
-            println("Trying to start new process while old one is still running, ignoring start job.")
-        } else {
-            val proc = description.launch(
-                ioDelay = 10,
-                onOutput = ::parseLine,
-                onCompleted = ::whenDone,
-            )
-            state = state.copy(running = true, proc = proc)
-        }
-
-        timerScope.launch {
-            while (true) {
-                val proc = state.proc
-                if (proc != null) {
-                    val time = proc.info()
-                        ?.startInstant()
-                        ?.map { Duration.between(it, Instant.now()) }
-                        ?.orElse(null)
-                        ?.seconds?.toDouble() ?: 0.0
-                    val percentage: Double = time / stats.averagePlotTime
-                    state = state.copy(percentage = percentage)
-                }
-                delay(REFRESH_DELAY)
+        if (process() == null) {
+            this.manageSelf = manageSelf
+            val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
+            val proc = chia.createPlot(description, ::whenDone)
+            process.value = proc
+            updateScope.launch {
+                proc.update(REFRESH_DELAY)
             }
+        } else {
+            println("Trying to start job while job is running, ignoring request.")
         }
     }
 
     // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
-        timerScope.cancel()
-        timerScope = CoroutineScope(Dispatchers.IO)
-        // Store in immutable variable so it doesn't try to delete files after state is wiped out
-        state.proc?.destroyForcibly()
-        deleteTempFiles(state.plotId, block)
-        state = state.reset()
+        process()?.let { proc ->
+            val state = proc.state()
+            proc.dispose()
+            val temp = CoroutineScope(Dispatchers.IO).async {
+                deleteTempFiles(state.plotId, block)
+            }
+            if (block) {
+                runBlocking {
+                    temp.await()
+                }
+            }
+        }
+        process.value = null
+        updateScope.cancel()
+        updateScope = CoroutineScope(Dispatchers.IO)
     }
 
     private fun deleteTempFiles(plotId: String, block: Boolean) {
@@ -123,38 +126,48 @@ class PlotJob(
         }
     }
 
-    private fun whenDone(time: Double) {
-        if (state.phase == 4 && state.currentResult.totalTime == 0.0) {
-            state = state.copy(currentResult = JobResult(totalTime = time))
-        }
-        if (state.currentResult.totalTime > 0.0) {
+    private fun whenDone() {
+        val proc = process() ?: return
+        val state = proc.state()
+        if (state.completed) {
+            proc.logFile.copyTo(Config.plotLogsFinished.resolve(proc.logFile.name))
+            proc.logFile.delete()
             stats = stats.plotDone(state.currentResult)
             tempDone++
+            if (manageSelf && state.running && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
+                stop()
+                start(manageSelf = manageSelf)
+            } else {
+                stop()
+            }
         }
-        if (manageSelf && state.running && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
-            stop()
-            start(manageSelf = true)
-        } else {
-            stop()
-        }
-    }
-
-    fun parseLine(line: String) {
-        state = state.parse(line)
     }
 
     fun isReady(): Boolean {
-        return !state.running && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
+        val proc = process() ?: return true
+        return !proc.isRunning() && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
+    }
+
+    fun percentDone(): Double {
+        val proc = process() ?: return 0.0
+        return (proc.timeRunning() / stats.averagePlotTime) * 100
+    }
+
+    fun isRunning(): Boolean {
+        val proc = process() ?: return false
+        return proc.isRunning()
     }
 
     override fun toString(): String {
+        if (process() == null) return description.toString()
+        val percentage = percentDone()
         val roundedPercentage =
-            if (state.percentage.isNaN() || state.percentage.isInfinite()) "?"
-            else String.format(Locale.US, "%.2f", state.percentage * 100)
-        return if (state.running) "$description - $roundedPercentage%" else description.toString()
+            if (percentage.isNaN() || percentage.isInfinite()) "?"
+            else String.format(Locale.US, "%.2f", percentage)
+        return "$description - $roundedPercentage%"
     }
 
     companion object {
-        private const val REFRESH_DELAY = 1000L
+        private const val REFRESH_DELAY = 100L
     }
 }

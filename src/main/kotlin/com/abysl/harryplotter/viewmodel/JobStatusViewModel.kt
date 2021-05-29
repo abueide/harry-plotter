@@ -20,28 +20,19 @@
 package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.model.PlotJob
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 class JobStatusViewModel {
-    var logsScope = CoroutineScope(Dispatchers.IO)
     val shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-    val shownLogs: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 
     fun loadJob(job: PlotJob) {
         clearJob()
         shownJob.value = job
-        job.stateFlow.onEach { shownLogs.value = it.logs }.launchIn(logsScope)
     }
 
     fun clearJob() {
-        logsScope.cancel()
-        logsScope = CoroutineScope(Dispatchers.IO)
+//        shownJob()?.process?.cache = false
         shownJob.value = null
-        shownLogs.value = listOf()
     }
 }

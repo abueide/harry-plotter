@@ -20,19 +20,18 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.logparser.PlotLogParser
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class JobState(
-    val proc: Process? = null,
     val running: Boolean = false,
+    val completed: Boolean = false,
     val phase: Int = 1,
     val subphase: String = "",
     val plotId: String = "",
-    val percentage: Double = 0.0,
-    val secondsRunning: Long = 0,
     val currentResult: JobResult = JobResult(),
-    val results: List<JobResult> = listOf(),
-    val logs: List<String> = listOf(),
 ) {
+
     val status by lazy {
         if (running) {
             "$RUNNING: Phase $phase/4"
@@ -45,8 +44,12 @@ data class JobState(
         return PlotLogParser.parseLine(this, line)
     }
 
-    fun reset(clearLogs: Boolean = false): JobState {
-        return JobState(logs = if (clearLogs) listOf() else logs)
+    fun parseAll(lines: List<String>): JobState {
+        var state = this
+        lines.forEach {
+            state = state.parse(it)
+        }
+        return state
     }
 
     companion object {

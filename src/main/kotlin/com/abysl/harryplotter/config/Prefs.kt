@@ -51,7 +51,7 @@ object Prefs {
         }
 
     var darkMode: Boolean
-        get() = prefNode.getBoolean(DARK_MODE, false)
+        get() = prefNode.getBoolean(DARK_MODE, true)
         set(value) {
             prefNode.putBoolean(DARK_MODE, value)
         }

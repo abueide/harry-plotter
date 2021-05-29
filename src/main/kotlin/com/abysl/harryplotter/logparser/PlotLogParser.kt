@@ -23,16 +23,21 @@ import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.JobState
 
 object PlotLogParser {
-    fun parseLine(jobState: JobState = JobState(), line: String, appendLog: Boolean = true): JobState {
+    private const val DONE_FLAG = "Total time"
+
+    fun parseLine(jobState: JobState = JobState(), line: String): JobState {
         val result = parseResult(line) ?: jobState.currentResult
         return try {
-            jobState.copy(
+            val state = jobState.copy(
                 plotId = parsePlotId(line) ?: jobState.plotId,
                 phase = parsePhase(line) ?: jobState.phase,
                 subphase = parseTable(line) ?: jobState.subphase,
                 currentResult = result + jobState.currentResult,
-                logs = if (appendLog) jobState.logs + line else jobState.logs
             )
+            if (line.contains(DONE_FLAG))
+                state.copy(completed = true)
+            else
+                state
         } catch (e: Exception) {
             println("Parser failed! $e")
             jobState

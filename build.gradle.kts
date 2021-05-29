@@ -35,7 +35,7 @@ val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
 group = "com.abysl"
-version = "1.1.7"
+version = "1.1.8"
 // version = File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
 
 repositories {
@@ -47,6 +47,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
     implementation("io.ktor:ktor-client-core:1.5.4")
     implementation("io.ktor:ktor-client-java:1.5.4")
     implementation("ch.qos.logback:logback-classic:1.2.3")

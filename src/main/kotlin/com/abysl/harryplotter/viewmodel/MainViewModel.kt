@@ -21,6 +21,7 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +39,9 @@ class MainViewModel {
             savedCallback = jobsListViewModel::saveJob,
             selectCallback = jobsListViewModel::clearSelected
         )
-        jobsListViewModel.plotJobs.value += Config.getPlotJobs()
+        val jobs = Config.getPlotJobs()
+        jobs.forEach(PlotJob::initialized)
+        jobsListViewModel.plotJobs.value += jobs
 
         jobEditorViewModel.chiaKeys.value += ChiaCli().readKeys()
         jobEditorViewModel.selectedKey.value = jobEditorViewModel.chiaKeys().firstOrNull()
