@@ -10,7 +10,7 @@ Have a question or suggestion? Join the discord https://discord.gg/Uxh5ZqJVsS
 
 ## Support
 
-I have spent a ton of time learning for & working on Harry Plotter, and covid has hit me pretty hard, so if you appreciate my work please consider sending a tip! In addition you can post your transaction ID on a github issue (feature, bug or setup question) and I'll work through them by order of tip amount. You can also feel free to shoot me an email. However: it is still a tip and I cannot guarantee I will be able to solve your problem satisfactorily in a reasonable amount of time.
+I have spent a ton of time learning for & working on Harry Plotter, so if you appreciate my work please consider sending a tip! In addition you can post your transaction ID on a github issue (feature, bug or setup question) and I'll work through them by order of tip amount. You can also feel free to shoot me an email. However: it is still a tip and I cannot guarantee I will be able to solve your problem satisfactorily in a reasonable amount of time.
 
 Chia Address: xch1ktqlc03wpetne9e0e6frz497xhhx4yx08gzn63tvjwlrlg2cg2ksf7ls24
 
