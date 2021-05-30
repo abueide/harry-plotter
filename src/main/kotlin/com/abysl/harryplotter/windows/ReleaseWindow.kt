@@ -39,7 +39,7 @@ class ReleaseWindow(val hostServices: HostServices) : Window<ReleaseView>() {
     fun show() {
         val release = getRelease()
         if (release != null &&
-//            !release.version.contains(Prefs.lastReleaseShown) &&
+            !release.version.contains(Prefs.lastReleaseShown) &&
             !release.version.contains("-RC")
         ) {
             Prefs.lastReleaseShown = release.version
