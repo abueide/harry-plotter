@@ -2,18 +2,15 @@
 
 package com.abysl.harryplotter.model
 
-import ch.qos.logback.core.util.FileUtil
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.serializers.FileSerializer
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -100,7 +97,7 @@ class PlotProcess(
         if (updatedState.completed) {
             moveTo(logFile, Config.plotLogsFinished.resolve(logFile.name))
         } else {
-           moveTo(logFile, Config.plotLogsFailed.resolve("log${state.value.plotId}.log"))
+            moveTo(logFile, Config.plotLogsFailed.resolve("log${state.value.plotId}.log"))
         }
     }
 
@@ -108,10 +105,9 @@ class PlotProcess(
         return if (logFile.exists()) logFile.readText() else ""
     }
 
-    private fun moveTo(file: File, destination: File){
+    private fun moveTo(file: File, destination: File) {
         if (!file.exists()) return
         file.copyTo(destination, true)
         IOUtil.deleteFile(file)
     }
-
 }

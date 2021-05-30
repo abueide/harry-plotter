@@ -22,7 +22,6 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.chia.ChiaCli
-import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats

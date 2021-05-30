@@ -4,6 +4,7 @@
   <CurrentIssues>
     <ID>ComplexCondition:PlotJob.kt$PlotJob$manageSelf &amp;&amp; state.running &amp;&amp; (tempDone &lt; description.plotsToFinish || description.plotsToFinish == 0)</ID>
     <ID>ComplexMethod:PlotLogParser.kt$PlotLogParser$fun parseResult(line: String): JobResult?</ID>
+    <ID>MagicNumber:JobEditorViewModel.kt$JobEditorViewModel$100</ID>
     <ID>MagicNumber:JobEditorViewModel.kt$JobEditorViewModel$32</ID>
     <ID>MagicNumber:MainView.kt$MainView$13</ID>
     <ID>MagicNumber:MainView.kt$MainView$17</ID>
@@ -13,7 +14,7 @@
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$3</ID>
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$4</ID>
     <ID>MaxLineLength:PlotJob.kt$PlotJob$if</ID>
-    <ID>MaximumLineLength:com.abysl.harryplotter.model.PlotJob.kt:137</ID>
+    <ID>MaximumLineLength:com.abysl.harryplotter.model.PlotJob.kt:136</ID>
     <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:102</ID>
     <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:38</ID>
     <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:40</ID>

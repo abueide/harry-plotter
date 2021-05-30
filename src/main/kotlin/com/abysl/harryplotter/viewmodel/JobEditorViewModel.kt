@@ -98,7 +98,7 @@ class JobEditorViewModel {
 
     fun onNew() {
         onCancel()
-        runBlocking { delay(100)  }
+        runBlocking { delay(100) }
         onSave(false)
     }
 
