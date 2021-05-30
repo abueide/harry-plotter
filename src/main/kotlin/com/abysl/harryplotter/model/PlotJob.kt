@@ -69,10 +69,6 @@ class PlotJob(
     fun initialized() {
         process()?.let {
             it.initialized(::whenDone)
-            if (!it.isRunning()) {
-                it.dispose()
-                process.value = null
-            }
         }
         updateScope.launch {
             process()?.update(REFRESH_DELAY)
