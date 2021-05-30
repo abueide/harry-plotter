@@ -70,6 +70,7 @@ class PlotJob(
         process()?.let {
             it.initialized(::whenDone)
             if (!it.isRunning()) {
+                it.dispose()
                 process.value = null
             }
         }
@@ -83,7 +84,7 @@ class PlotJob(
             process()?.dispose()
             this.manageSelf = manageSelf
             val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
-            val proc = chia.createPlot(description, ::whenDone)
+            val proc = chia.createPlot(description, this::whenDone)
             process.value = proc
             updateScope.launch {
                 proc.update(REFRESH_DELAY)
@@ -96,6 +97,7 @@ class PlotJob(
     // block boolean used so that we can finish deleting temp files before the program exits. Otherwise, we don't want
     // to block the main thread while deleting files.
     fun stop(block: Boolean = false) {
+        manageSelf = false
         process()?.let { proc ->
             val state = proc.state()
             proc.dispose()
@@ -128,8 +130,8 @@ class PlotJob(
 
     private fun whenDone() {
         val proc = process() ?: return
-        val state = proc.state()
-        proc.dispose()
+        val state = proc.state().copy(completed = checkCompleted())
+        proc.state.value = state
         if (state.completed) {
             stats = stats.plotDone(state.currentResult)
             tempDone++
@@ -157,6 +159,15 @@ class PlotJob(
     fun isRunning(): Boolean {
         val proc = process() ?: return false
         return proc.isRunning()
+    }
+
+    fun checkCompleted(): Boolean {
+        if(state.plotId.isBlank()) return false
+        val files = description.destDir.listFiles()
+        println(files == null)
+        return files?.any {
+            it.name.contains(state.plotId)
+        } == true
     }
 
     override fun toString(): String {
