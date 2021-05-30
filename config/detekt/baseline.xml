@@ -14,10 +14,9 @@
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$3</ID>
     <ID>MagicNumber:PlotLogParser.kt$PlotLogParser$4</ID>
     <ID>MaxLineLength:PlotJob.kt$PlotJob$if</ID>
-    <ID>MaximumLineLength:com.abysl.harryplotter.model.PlotJob.kt:136</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:102</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:38</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:40</ID>
+    <ID>MaximumLineLength:com.abysl.harryplotter.model.PlotJob.kt:138</ID>
+    <ID>MultiLineIfElse:com.abysl.harryplotter.logparser.PlotLogParser.kt:97</ID>
+    <ID>PrintStackTrace:PlotProcess.kt$PlotProcess$e</ID>
     <ID>PrintStackTrace:Window.kt$Window$ex</ID>
     <ID>ReturnCount:ChiaKey.kt$ChiaKey$fun parseLine(line: String): ChiaKey</ID>
     <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getConfigFile(): File</ID>
@@ -28,6 +27,7 @@
     <ID>SwallowedException:Config.kt$Config$catch (e: Exception) { result = null SimpleDialogs.showAlert( "Failed to decode jobs", "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json" ) val backupFile = File(jobsFile.parent + "/jobs.bak") backupFile.delete() jobsFile.renameTo(backupFile) savePlotJobs(listOf()) }</ID>
     <ID>TooGenericExceptionCaught:Config.kt$Config$e: Exception</ID>
     <ID>TooGenericExceptionCaught:PlotLogParser.kt$PlotLogParser$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PlotProcess.kt$PlotProcess$e: Exception</ID>
     <ID>TooManyFunctions:JobsListViewModel.kt$JobsListViewModel</ID>
     <ID>UnnecessaryAbstractClass:Window.kt$Window&lt;T&gt;</ID>
   </CurrentIssues>

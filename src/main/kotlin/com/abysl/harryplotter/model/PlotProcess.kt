@@ -9,7 +9,6 @@ import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -28,10 +27,7 @@ class PlotProcess(
 ) {
 
     @Transient
-    private val _state: MutableStateFlow<JobState> = MutableStateFlow(JobState(running = isRunning()))
-
-    @Transient
-    val state: StateFlow<JobState> = _state.asStateFlow()
+    val state: MutableStateFlow<JobState> = MutableStateFlow(JobState(running = isRunning()))
 
     @Transient
     private val _newLogs = MutableStateFlow<List<String>>(listOf())
@@ -40,45 +36,50 @@ class PlotProcess(
     val newLogs = _newLogs.asStateFlow()
 
     @Transient
-    private val process
-        get() = ProcessHandle.of(pid).orElseGet { null }
+    lateinit var onComplete: () -> Unit
 
     @Transient
-    lateinit var onComplete: () -> Unit
+    var oldLogCounter = 0
+
+    private val process: ProcessHandle?
+        get() = ProcessHandle.of(pid).orElseGet { null }
 
     fun initialized(onComplete: () -> Unit) {
         this.onComplete = onComplete
         if (logFile.exists()) {
-            _state.value = state.value.parseAll(logFile.readLines())
+            state.value = state.value.parseAll(logFile.readLines())
         }
         if (!isRunning()) onComplete()
     }
 
     suspend fun update(delay: Long) = coroutineScope {
-        var oldLogCounter = 0
-        while (true) {
-            var lineNum = 0
-            var tempCache = listOf<String>()
-            if (logFile.exists()) {
-                logFile.forEachLine {
-                    if (lineNum >= oldLogCounter) {
-                        tempCache += it
-                        oldLogCounter++
-                    }
-                    lineNum++
-                }
-            }
-            _state.value = _state.value.parseAll(tempCache).copy(running = isRunning())
-            _newLogs.value = tempCache
-            if (!state().running) {
-                onComplete()
-            }
+        while (isRunning()) {
+            updateLogs()
             delay(delay)
         }
+        updateLogs()
+        onComplete()
+    }
+
+    private fun updateLogs() {
+        var lineNum = 0
+        var tempCache = listOf<String>()
+        if (logFile.exists()) {
+            logFile.forEachLine {
+                if (lineNum >= oldLogCounter) {
+                    tempCache += it
+                    oldLogCounter++
+                }
+                lineNum++
+            }
+        }
+        state.value = state.value.parseAll(tempCache).copy(running = isRunning())
+        _newLogs.value = tempCache
     }
 
     fun isRunning(): Boolean {
-        return process != null && process.isAlive && logFile.exists()
+        val proc = process
+        return proc != null && proc.isAlive && logFile.exists()
     }
 
     fun kill() {
@@ -95,9 +96,9 @@ class PlotProcess(
         val updatedState = state.value
         kill()
         if (updatedState.completed) {
-            moveTo(logFile, Config.plotLogsFinished.resolve(logFile.name))
+            moveTo(logFile, Config.plotLogsFinished.resolve("log-${state.value.plotId}.log"))
         } else {
-            moveTo(logFile, Config.plotLogsFailed.resolve("log${state.value.plotId}.log"))
+            moveTo(logFile, Config.plotLogsFailed.resolve("log-${state.value.plotId}.log"))
         }
     }
 
@@ -106,8 +107,13 @@ class PlotProcess(
     }
 
     private fun moveTo(file: File, destination: File) {
-        if (!file.exists()) return
-        file.copyTo(destination, true)
-        IOUtil.deleteFile(file)
+        try {
+            if (!file.exists()) return
+            file.copyTo(destination, true)
+            IOUtil.deleteFile(file)
+        } catch (e: Exception) {
+            println("Log Copying error")
+            e.printStackTrace()
+        }
     }
 }
