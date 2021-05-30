@@ -131,7 +131,10 @@ class PlotJob(
         if (state.completed) {
             stats = stats.plotDone(state.currentResult)
             tempDone++
-            if (manageSelf && state.running && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
+            if (
+                manageSelf && state.running &&
+                (tempDone < description.plotsToFinish || description.plotsToFinish == 0)
+            ) {
                 stop()
                 start(manageSelf = manageSelf)
             } else {
