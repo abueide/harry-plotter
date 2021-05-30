@@ -162,7 +162,7 @@ class PlotJob(
     }
 
     fun checkCompleted(): Boolean {
-        if(state.plotId.isBlank()) return false
+        if (state.plotId.isBlank()) return false
         val files = description.destDir.listFiles()
         println(files == null)
         return files?.any {

@@ -9,7 +9,6 @@ import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -62,7 +61,7 @@ class PlotProcess(
         onComplete()
     }
 
-    private fun updateLogs(){
+    private fun updateLogs() {
         var lineNum = 0
         var tempCache = listOf<String>()
         if (logFile.exists()) {
