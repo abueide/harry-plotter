@@ -12,8 +12,6 @@ https://github.com/abueide/harry-plotter/releases
 
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
-WARNING: This release is breaking and will reset your plot job configurations.
-
 Release 1.1.9 contains some critical bugfixes
 * Fix some failed to launch jvm errors
 * Fix issues where jobs would get stuck in the running state if they didn't complete (errored out)
