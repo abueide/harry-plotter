@@ -81,7 +81,7 @@ class MainView {
                 Platform.runLater {
                     ReleaseWindow(hostServices).show()
                 }
-                delay(MS_PER_DAY)
+                delay(MS_PER_HOUR)
             }
         }
     }
@@ -153,6 +153,6 @@ class MainView {
 
     companion object {
         // 86400000
-        private const val MS_PER_DAY = 86400000L
+        private const val MS_PER_HOUR = 3600000L
     }
 }

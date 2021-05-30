@@ -139,6 +139,8 @@ class PlotJob(
             } else {
                 stop()
             }
+        } else {
+            stop()
         }
     }
 

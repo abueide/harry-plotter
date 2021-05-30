@@ -32,7 +32,7 @@ plugins {
 
 val jvmOptions = listOf<String>()
 val currentOs: OperatingSystem = OperatingSystem.current()
-val console = false
+val console = true
 
 group = "com.abysl"
 version = "1.1.9"
@@ -48,8 +48,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
-    implementation("io.ktor:ktor-client-core:1.5.4")
-    implementation("io.ktor:ktor-client-java:1.5.4")
+    implementation("io.ktor:ktor-client-core:1.6.0")
+    implementation("io.ktor:ktor-client-java:1.6.0")
+//    implementation("io.ktor:ktor-client-okhttp:1.6.0")
+//    implementation("io.ktor:ktor-client-apache:$1.6.0")
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("org.kordamp.ikonli:ikonli-core:12.2.0")
     implementation("org.kordamp.ikonli:ikonli-javafx:12.2.0")
@@ -82,7 +84,12 @@ javafx {
 val resourcesPath = "build/resources/"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
-//    modules.set(listOf("java.desktop"))
+    modules.addAll(
+        listOf(
+            "jdk.crypto.cryptoki", "java.scripting", "java.xml", "java.logging", "java.prefs", "java.net.http",
+            "jdk.unsupported"
+        )
+    )
     launcher {
         noConsole = !console
         // jvmArgs.addAll(jvmOptions)

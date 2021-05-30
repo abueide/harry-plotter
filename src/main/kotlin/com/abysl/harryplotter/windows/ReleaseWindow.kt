@@ -23,6 +23,7 @@ import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.GithubRelease
 import com.abysl.harryplotter.view.ReleaseView
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.java.Java
 import io.ktor.client.request.get
 import javafx.application.HostServices
 import kotlinx.coroutines.runBlocking
@@ -33,12 +34,12 @@ import kotlinx.serialization.json.jsonPrimitive
 
 class ReleaseWindow(val hostServices: HostServices) : Window<ReleaseView>() {
 
-    val client = HttpClient()
+    val client = HttpClient(Java)
 
     fun show() {
         val release = getRelease()
         if (release != null &&
-            !release.version.contains(Prefs.lastReleaseShown) &&
+//            !release.version.contains(Prefs.lastReleaseShown) &&
             !release.version.contains("-RC")
         ) {
             Prefs.lastReleaseShown = release.version
@@ -53,7 +54,7 @@ class ReleaseWindow(val hostServices: HostServices) : Window<ReleaseView>() {
     fun getRelease(): GithubRelease? {
         var release: GithubRelease? = null
         runBlocking {
-            val response: String = client.get("https://api.github.com/repos/abueide/harry-plotter/releases")
+            val response: String = client.get("http://api.github.com/repos/abueide/harry-plotter/releases")
             val releases = Json.parseToJsonElement(response) as JsonArray
             val firstRelease = releases.firstOrNull()
             firstRelease?.let {
