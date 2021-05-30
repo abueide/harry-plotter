@@ -17,4 +17,5 @@ Release 1.1.9 contains some critical bugfixes
 * Fix issues where jobs would get stuck in the running state if they didn't complete (errored out)
 * Fix issue where the new job button was causing flickering & very unstable behaviour
 * Fixed an issue where log files in the running folder weren't being cleaned up properly
+* Fixes update notifications
 
