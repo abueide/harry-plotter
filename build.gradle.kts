@@ -32,10 +32,10 @@ plugins {
 
 val jvmOptions = listOf<String>()
 val currentOs: OperatingSystem = OperatingSystem.current()
-val console = true
+val console = false
 
 group = "com.abysl"
-version = "1.1.9"
+version = "1.1.10"
 // version = File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
 
 repositories {
