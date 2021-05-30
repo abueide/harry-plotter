@@ -26,18 +26,21 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.unwords
 import com.abysl.harryplotter.windows.KeyEditorWindow
 import com.abysl.harryplotter.windows.SimpleDialogs
+import javafx.beans.property.SimpleStringProperty
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class JobEditorViewModel {
-    val jobName = MutableStateFlow("")
-    val tempDir = MutableStateFlow("")
-    val destDir = MutableStateFlow("")
-    val threads = MutableStateFlow("")
-    val kSize = MutableStateFlow("")
-    val additionalParams = MutableStateFlow("")
-    val ram = MutableStateFlow("")
-    val plotsToFinish = MutableStateFlow("")
+    val jobName = SimpleStringProperty("")
+    val tempDir = SimpleStringProperty("")
+    val destDir = SimpleStringProperty("")
+    val threads = SimpleStringProperty("")
+    val kSize = SimpleStringProperty("")
+    val additionalParams = SimpleStringProperty("")
+    val ram = SimpleStringProperty("")
+    val plotsToFinish = SimpleStringProperty("")
 
     val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
     val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
@@ -70,9 +73,9 @@ class JobEditorViewModel {
         jobName.value = ""
         tempDir.value = ""
         destDir.value = ""
-        threads.value = ""
         kSize.value = ""
         additionalParams.value = ""
+        threads.value = ""
         ram.value = ""
         plotsToFinish.value = ""
     }
@@ -95,6 +98,7 @@ class JobEditorViewModel {
 
     fun onNew() {
         onCancel()
+        runBlocking { delay(100)  }
         onSave(false)
     }
 

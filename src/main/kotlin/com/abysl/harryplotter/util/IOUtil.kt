@@ -31,15 +31,10 @@ object IOUtil {
             var timeout = 0
             while (file.exists() && !file.delete() && timeout++ < maxTries) {
                 if (timeout > 1) {
-                    println("Couldn't delete file, trying again in $delayTime ms. ${file.name}")
+//                    println("Couldn't delete file, trying again in $delayTime ms. ${file.name}")
                 }
                 delay(delayTime)
             }
-            if (timeout < maxTries) {
-                println("Deleted: " + file.name)
-                return@async true
-            } else {
-                return@async false
-            }
+            return@async timeout < maxTries
         }
 }

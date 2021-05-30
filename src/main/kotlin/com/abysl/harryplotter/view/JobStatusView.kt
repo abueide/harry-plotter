@@ -98,7 +98,7 @@ class JobStatusView {
                 fxBinding.launch { logsWindow.appendText(it.unlines()) }
             }?.launchIn(jobBinding)
             fxBinding.launch {
-                val logs = process?.logFile?.readText() ?: ""
+                val logs = process?.readLogs() ?: ""
                 logsWindow.appendText(logs)
             }
         }.launchIn(jobBinding)

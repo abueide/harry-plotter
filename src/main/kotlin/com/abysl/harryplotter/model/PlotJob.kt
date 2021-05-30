@@ -80,7 +80,8 @@ class PlotJob(
     }
 
     fun start(manageSelf: Boolean = false) {
-        if (process() == null) {
+        if (process()?.isRunning() != true) {
+            process()?.dispose()
             this.manageSelf = manageSelf
             val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
             val proc = chia.createPlot(description, ::whenDone)
@@ -129,9 +130,8 @@ class PlotJob(
     private fun whenDone() {
         val proc = process() ?: return
         val state = proc.state()
+        proc.dispose()
         if (state.completed) {
-            proc.logFile.copyTo(Config.plotLogsFinished.resolve(proc.logFile.name))
-            proc.logFile.delete()
             stats = stats.plotDone(state.currentResult)
             tempDone++
             if (manageSelf && state.running && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
