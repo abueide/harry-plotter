@@ -14,5 +14,6 @@ is the only OFFICIAL source of updates. As Harry Plotter is open source under th
 
 1.1.11 is a small bugfix release
 * Fixed an issue where completed job logs were being sent to the failed folder instead causing stats to not be saved
+* Fixed an issue where you couldn't see total plots created if it was above 10.
 
 

@@ -36,7 +36,7 @@
                 </VBox>
                 <VBox maxWidth="150.0" prefWidth="150.0" spacing="10.0" HBox.hgrow="ALWAYS">
                   <children>
-                    <Label fx:id="totalPlotsCreated" prefWidth="10.0" text="3" />
+                    <Label fx:id="totalPlotsCreated" text="10" />
                     <Label fx:id="estimatedPlotsDay" text="1.7" />
                     <Label fx:id="averagePlotTime" text="6 hr 30 s (21630)" />
                     <Label fx:id="currentStatus" layoutX="10.0" layoutY="199.0" text="Not Running" />
