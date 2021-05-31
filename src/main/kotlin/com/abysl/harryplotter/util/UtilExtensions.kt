@@ -62,5 +62,8 @@ operator fun <T> StateFlow<T>.invoke(): T {
 }
 
 fun Duration.formatted(): String {
-    return "${this.toHours()} h ${this.toMinutes()} m (${this.toSeconds()}s)"
+    val hours = this.toHours()
+    val minutes = this.toMinutes() - (hours * 60)
+    return "${hours}h ${minutes}m (${this.toSeconds()}s)"
 }
+
