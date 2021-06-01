@@ -90,10 +90,8 @@ class StatsView : Initializable {
 
     suspend fun updateChart() = coroutineScope {
         val series = XYChart.Series<String, Int>()
-        viewModel.pointsFlow.collectLatest { dataPoints ->
-            dataPoints.forEach { (xLabel, yValue) ->
-                series.data.add(XYChart.Data(xLabel, yValue))
-            }
+        viewModel.getPoints().forEach { (xLabel, yValue) ->
+            series.data.add(XYChart.Data(xLabel, yValue))
         }
         Platform.runLater {
             plotsPerXChart.data.clear()
@@ -104,4 +102,5 @@ class StatsView : Initializable {
     fun onLoadLogs(){
         viewModel.loadLogs()
     }
+
 }

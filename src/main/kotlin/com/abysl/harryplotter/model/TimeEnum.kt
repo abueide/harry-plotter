@@ -50,7 +50,8 @@ enum class TimeEnum(val readableName: String, val unit: Duration, val zoom: Dura
     WEEKLY("Weekly", Duration.days(7), Duration.days(90)) {
         override fun getLabel(time: Instant): String {
             val howLongAgo = Clock.System.now() - time
-            return (howLongAgo / Duration.days(7)).toInt().toString()
+            val result = (howLongAgo / Duration.days(7)).toInt().toString()
+            return result
         }
     },
     MONTHLY("Monthly", Duration.days(30), Duration.days(365)) {

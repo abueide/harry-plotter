@@ -22,14 +22,14 @@ package com.abysl.harryplotter.logparser
 import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.JobState
 import kotlinx.datetime.Instant
+import java.lang.NumberFormatException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 
 object PlotLogParser {
     private const val START_TIME_KEY = "Starting phase 1/4: Forward Propagation into tmp files... "
-    private val sdf = SimpleDateFormat("EE MMM dd HH:mm:ss yyyy", Locale.ENGLISH)
-        .also { it.timeZone = TimeZone.getDefault() }
+
 
     fun parseLine(jobState: JobState = JobState(), line: String): JobState {
         val result = parseResult(line) ?: jobState.currentResult
@@ -108,16 +108,38 @@ object PlotLogParser {
     }
 
     fun parseStart(line: String): Instant? {
-        val time = line.split(START_TIME_KEY).lastOrNull()?.ifBlank { null } ?: return null
-        return Instant.fromEpochSeconds(sdf.parse(time).toInstant().epochSecond)
+        val sdf = SimpleDateFormat("EE MMM dd HH:mm:ss yyyy", Locale.ENGLISH)
+            .also { it.timeZone = TimeZone.getDefault() }
+        val time = line
+            .replace("\"", "")
+            .split(START_TIME_KEY)
+            .lastOrNull()
+            ?.ifBlank { null } ?: return null
+        return try {
+            val result = Instant.fromEpochSeconds(sdf.parse(time).toInstant().epochSecond)
+            result
+        }catch (exception: NumberFormatException){
+            exception.printStackTrace()
+            null
+        }
     }
 
+    private val END_TIME_KEY = "Total time ="
     fun parseEnd(line: String): Instant? {
+        val sdf = SimpleDateFormat("EE MMM dd HH:mm:ss yyyy", Locale.ENGLISH)
+            .also { it.timeZone = TimeZone.getDefault() }
         val time = line
-            .split("Total time =").lastOrNull()
+            .replace("\"", "")
+            .split(END_TIME_KEY).lastOrNull()
             ?.split(") ")?.lastOrNull()
             ?.ifBlank { null } ?: return null
-        return Instant.fromEpochSeconds(sdf.parse(time).toInstant().epochSecond)
+        return try {
+            val result = Instant.fromEpochSeconds(sdf.parse(time).toInstant().epochSecond)
+            result
+        }catch (exception: NumberFormatException){
+            exception.printStackTrace()
+            null
+        }
     }
 
 }

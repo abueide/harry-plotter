@@ -35,9 +35,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlin.random.Random
+import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+private const val fakeData = true
+private const val numFakePoints = 100
+
+@OptIn(ExperimentalTime::class)
 class StatsViewModel(initialResults: List<JobResult> = listOf()) {
+    var counter = 1
+    private fun incRange(): Duration = Duration.hours(counter++)
+    private fun randRange():Duration = Duration.days(1)
+
     val shownResults = FXCollections.observableArrayList(initialResults)
 
     val totalPlots = SimpleIntegerProperty(0)
@@ -52,28 +63,29 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
         }
     }
 
-    @OptIn(ExperimentalTime::class)
-    val pointsFlow = flow {
-        val time = Clock.System.now()
-        val selectedUnit = selectedTime.get()
-        val points = shownResults
-            // only get points which are within the scope of the zoom range
+    fun getPoints(): Map<String, Int> {
+        val points: List<Instant> = shownResults
             .mapNotNull { it.timeCompleted }
-            .filter { timeCompleted ->  (time - timeCompleted) <= selectedUnit.zoom }
-            .fold(mapOf<String, Int>()) { acc, timeCompleted ->
-                val unit = selectedUnit.getLabel(timeCompleted)
-                acc + Pair(unit, 1 + (acc[unit] ?: 0))
-            }
-        emit(points)
+        return if (!fakeData) {
+            genPointsMap(points)
+        } else {
+            genPointsMap(fakePoints.take(numFakePoints).toList())
+        }
+    }
+
+    val fakePoints = generateSequence(Clock.System.now()) {
+        val randTime = Duration.seconds(Random.nextLong(0, incRange().inWholeSeconds))
+        it - randTime
     }
 
     val totalPlotsFlow = flow {
         emit(shownResults.size)
     }
 
-    fun loadLogs(){
+
+    fun loadLogs() {
         CoroutineScope(Dispatchers.Default).launch {
-            val results = Config.plotLogsFinished.listFiles()?.asList()?.pmap{
+            val results = Config.plotLogsFinished.listFiles()?.asList()?.pmap {
                 JobState.parseFile(it).currentResult
             } ?: listOf()
             Platform.runLater {
@@ -81,5 +93,21 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
                 shownResults.addAll(results)
             }
         }
+    }
+
+    private fun genPointsMap(completeTimes: List<Instant>): Map<String, Int> {
+        val time = Clock.System.now()
+        val selectedUnit = selectedTime.get()
+        return completeTimes
+            // only get points which are within the scope of the zoom range
+            .filter {
+                    timeCompleted ->
+                val howLongAgo: Duration = time - timeCompleted
+                howLongAgo < selectedUnit.zoom
+            }
+            .foldRight(mapOf<String, Int>()) { timeCompleted, acc ->
+                val unit = selectedUnit.getLabel(timeCompleted)
+                acc + Pair(unit, 1 + (acc[unit] ?: 0))
+            }
     }
 }
