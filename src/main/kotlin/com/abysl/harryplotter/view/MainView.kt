@@ -64,6 +64,9 @@ class MainView {
     @FXML
     private lateinit var jobStatusViewController: JobStatusView
 
+    @FXML
+    private lateinit var statsViewController: StatsView
+
     lateinit var hostServices: HostServices
     lateinit var toggleTheme: () -> Unit
     lateinit var viewModel: MainViewModel
@@ -75,6 +78,7 @@ class MainView {
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)
+        statsViewController.initialized(viewModel.statsViewModel)
         setButtonTheme()
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {

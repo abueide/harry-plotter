@@ -126,8 +126,8 @@ class PlotJob(
 
     private fun whenDone() {
         val proc = process() ?: return
-        val state = proc.state().copy(completed = checkCompleted())
-        proc.state.value = state
+        val state = if(checkCompleted()) proc.state.value.setComplete() else proc.state.value
+        proc.state.value = state.copy()
         if (state.completed) {
             stats = stats.plotDone(state.currentResult)
             tempDone++

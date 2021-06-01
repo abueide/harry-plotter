@@ -20,6 +20,9 @@
 package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.HarryPlotter
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.io.InputStream
@@ -65,5 +68,9 @@ fun Duration.formatted(): String {
     val hours = this.toHours()
     val minutes = this.toMinutes() - (hours * 60)
     return "${hours}h ${minutes}m (${this.toSeconds()}s)"
+}
+
+suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): List<B> = coroutineScope {
+    map { async { f(it) } }.awaitAll()
 }
 

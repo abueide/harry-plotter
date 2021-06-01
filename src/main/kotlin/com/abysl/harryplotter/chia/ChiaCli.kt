@@ -86,7 +86,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         args.addAll(listOf("-t", desc.tempDir.toString(), "-d", desc.destDir.toString()))
         desc.additionalParams.forEach { if (it.isNotBlank()) args.add(it) }
         val proc = runCommandAsync(outputFile, *args.toTypedArray())
-        return PlotProcess(proc.pid(), Clock.System.now(), outputFile).also { it.initialized(onComplete) }
+        return PlotProcess(proc.pid(), outputFile).also { it.initialized(onComplete) }
     }
 
     fun runCommandAsync(

@@ -21,15 +21,22 @@ package com.abysl.harryplotter.logparser
 
 import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.JobState
+import kotlinx.datetime.Instant
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 object PlotLogParser {
+    private const val START_TIME_KEY = "Starting phase 1/4: Forward Propagation into tmp files... "
+    private val sdf = SimpleDateFormat("EE MMM dd HH:mm:ss yyyy", Locale.ENGLISH)
+        .also { it.timeZone = TimeZone.getDefault() }
 
     fun parseLine(jobState: JobState = JobState(), line: String): JobState {
         val result = parseResult(line) ?: jobState.currentResult
         return try {
             jobState.copy(
                 plotId = parsePlotId(line) ?: jobState.plotId,
-                phase = parsePhase(line) ?: jobState.phase,
+                phase = parsePhaseStart(line) ?: jobState.phase,
                 subphase = parseTable(line) ?: jobState.subphase,
                 currentResult = result + jobState.currentResult,
             )
@@ -44,7 +51,7 @@ object PlotLogParser {
         return line.split("ID: ").lastOrNull()
     }
 
-    fun parsePhase(line: String): Int? {
+    fun parsePhaseStart(line: String): Int? {
         if (!line.contains("Starting phase")) return null
         return line
             .split("Starting phase ").lastOrNull()
@@ -65,35 +72,52 @@ object PlotLogParser {
     }
 
     fun parseResult(line: String): JobResult? {
-        if (line.contains("Time for phase") || line.contains("Total time") || line.contains("Copy time")) {
-            val seconds: Double = line
-                .split("= ").lastOrNull()
-                ?.split(" seconds")?.firstOrNull()
-                ?.toDouble() ?: return null
-
             when {
                 line.contains("Time for phase") -> {
-                    val phase: Int = line
-                        .split("phase ").lastOrNull()
-                        ?.split(" =")?.firstOrNull()
-                        ?.toInt() ?: return null
-                    return when (phase) {
-                        1 -> JobResult(phaseOneTime = seconds)
-                        2 -> JobResult(phaseTwoTime = seconds)
-                        3 -> JobResult(phaseThreeTime = seconds)
-                        4 -> JobResult(phaseFourTime = seconds)
+                    return when (parsePhaseTime(line)) {
+                        1 -> JobResult(phaseOneTime = parseSeconds(line))
+                        2 -> JobResult(phaseTwoTime = parseSeconds(line))
+                        3 -> JobResult(phaseThreeTime = parseSeconds(line))
+                        4 -> JobResult(phaseFourTime = parseSeconds(line))
                         else -> null
                     }
                 }
-                line.contains("Total time") -> {
-                    return JobResult(totalTime = seconds)
-                }
                 line.contains("Copy time") -> {
-                    return JobResult(copyTime = seconds)
+                    return JobResult(copyTime = parseSeconds(line))
                 }
+                line.contains("Total time") -> {
+                    return JobResult(totalTime = parseSeconds(line), timeCompleted = parseEnd(line))
+                }
+                line.contains(START_TIME_KEY) -> return JobResult(timeStarted = parseStart(line))
                 else -> return null
             }
-        } else
-            return null
+        }
+
+    fun parseSeconds(line: String): Double {
+        return line
+            .split("= ").lastOrNull()
+            ?.split(" seconds")?.firstOrNull()
+            ?.toDouble() ?: 0.0
     }
+
+    fun parsePhaseTime(line: String): Int {
+        return line
+            .split("phase ").lastOrNull()
+            ?.split(" =")?.firstOrNull()
+            ?.toInt() ?: 0
+    }
+
+    fun parseStart(line: String): Instant? {
+        val time = line.split(START_TIME_KEY).lastOrNull()?.ifBlank { null } ?: return null
+        return Instant.fromEpochSeconds(sdf.parse(time).toInstant().epochSecond)
+    }
+
+    fun parseEnd(line: String): Instant? {
+        val time = line
+            .split("Total time =").lastOrNull()
+            ?.split(") ")?.lastOrNull()
+            ?.ifBlank { null } ?: return null
+        return Instant.fromEpochSeconds(sdf.parse(time).toInstant().epochSecond)
+    }
+
 }

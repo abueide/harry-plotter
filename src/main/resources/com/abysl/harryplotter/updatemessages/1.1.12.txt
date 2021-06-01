@@ -16,6 +16,4 @@ is the only OFFICIAL source of updates. As Harry Plotter is open source under th
 * Add content to stats tab
 * Fixed bug where stats was showing total minutes instead of leftover minutes
 * Fixed an issue where plots weren't autoqueueing after clicking the "start" button
-
-
-
+* Fixed bug where if you select "force stop", the graceful stop option would disappear

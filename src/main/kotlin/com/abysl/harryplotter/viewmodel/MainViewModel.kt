@@ -21,6 +21,7 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
@@ -30,9 +31,10 @@ import kotlinx.coroutines.flow.onEach
 
 class MainViewModel {
 
-    val jobsListViewModel: JobsListViewModel = JobsListViewModel()
-    val jobEditorViewModel: JobEditorViewModel = JobEditorViewModel()
-    val jobStatusViewModel: JobStatusViewModel = JobStatusViewModel()
+    val jobsListViewModel = JobsListViewModel()
+    val jobEditorViewModel = JobEditorViewModel()
+    val jobStatusViewModel  = JobStatusViewModel()
+    val statsViewModel: StatsViewModel
 
     init {
         jobEditorViewModel.initialized(
@@ -41,6 +43,8 @@ class MainViewModel {
         )
         val jobs = Config.getPlotJobs()
         jobs.forEach(PlotJob::initialized)
+        val results = jobs.flatMap { it.stats.results }
+        statsViewModel = StatsViewModel(results)
         jobsListViewModel.plotJobs.value += jobs
 
         jobEditorViewModel.chiaKeys.value += ChiaCli().readKeys()

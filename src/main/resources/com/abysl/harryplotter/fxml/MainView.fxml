@@ -88,11 +88,7 @@
         </Tab>
         <Tab text="Stats">
                <content>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <Label text="Coming Soon" />
-                     </children>
-                  </VBox>
+                 <fx:include fx:id="statsView" source="StatsView.fxml" />
                </content>
         </Tab>
       </tabs>

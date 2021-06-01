@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.model
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -30,6 +31,8 @@ data class JobResult(
     val phaseFourTime: Double = 0.0,
     val totalTime: Double = 0.0,
     val copyTime: Double = 0.0,
+    val timeStarted: Instant? = null,
+    val timeCompleted: Instant? = null,
 ) {
     operator fun plus(other: JobResult): JobResult {
         return JobResult(
@@ -38,7 +41,9 @@ data class JobResult(
             testTime(phaseThreeTime, other.phaseThreeTime),
             testTime(phaseFourTime, other.phaseFourTime),
             testTime(totalTime, other.totalTime),
-            testTime(copyTime, other.copyTime)
+            testTime(copyTime, other.copyTime),
+            timeStarted ?: other.timeStarted,
+            timeCompleted ?: other.timeCompleted
         )
     }
 
