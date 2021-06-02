@@ -19,7 +19,7 @@
          <children>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                <children>
-                  <LineChart fx:id="plotsPerXChart" axisSortingPolicy="NONE" minHeight="300.0" minWidth="600.0" title="Plots Per Week" VBox.vgrow="ALWAYS">
+                  <LineChart fx:id="plotsPerXChart" animated="false" axisSortingPolicy="NONE" minHeight="300.0" minWidth="600.0" title="Plots Per Week" VBox.vgrow="ALWAYS">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>

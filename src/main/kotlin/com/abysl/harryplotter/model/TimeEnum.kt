@@ -34,16 +34,16 @@ enum class TimeEnum(val readableName: String, val unit: Duration, val zoom: Dura
     // Graphs a single day at a time
     HOURLY("Hourly", Duration.hours(1), Duration.days(1)) {
         override fun getLabel(time: Instant): String {
-            return time.toLocalDateTime(TimeZone.currentSystemDefault()).dayOfWeek.getDisplayName(
-                TextStyle.SHORT,
-                Locale.getDefault()
-            )
+            return time.toLocalDateTime(TimeZone.currentSystemDefault()).hour.toString()
         }
     },
     // Use weekly view for half days
     DAILY("Daily", Duration.days(1), Duration.days(7)) {
         override fun getLabel(time: Instant): String {
-            return time.toLocalDateTime(TimeZone.currentSystemDefault()).dayOfMonth.toString()
+            return time.toLocalDateTime(TimeZone.currentSystemDefault()).dayOfWeek.getDisplayName(
+                TextStyle.SHORT,
+                Locale.getDefault()
+            )
         }
     },
     // Use a quarterly view

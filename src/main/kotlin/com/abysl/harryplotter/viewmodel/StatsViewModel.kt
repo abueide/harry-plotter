@@ -41,7 +41,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 private const val fakeData = true
-private const val numFakePoints = 100
+private const val numFakePoints = 10000
 
 @OptIn(ExperimentalTime::class)
 class StatsViewModel(initialResults: List<JobResult> = listOf()) {
@@ -74,7 +74,7 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
     }
 
     val fakePoints = generateSequence(Clock.System.now()) {
-        val randTime = Duration.seconds(Random.nextLong(0, incRange().inWholeSeconds))
+        val randTime = Duration.seconds(Random.nextLong(0, randRange().inWholeSeconds))
         it - randTime
     }
 
@@ -100,12 +100,13 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
         val selectedUnit = selectedTime.get()
         return completeTimes
             // only get points which are within the scope of the zoom range
+            .sortedDescending()
             .filter {
                     timeCompleted ->
                 val howLongAgo: Duration = time - timeCompleted
                 howLongAgo < selectedUnit.zoom
             }
-            .foldRight(mapOf<String, Int>()) { timeCompleted, acc ->
+            .foldRight(mapOf<String, Int>()) { timeCompleted, acc  ->
                 val unit = selectedUnit.getLabel(timeCompleted)
                 acc + Pair(unit, 1 + (acc[unit] ?: 0))
             }

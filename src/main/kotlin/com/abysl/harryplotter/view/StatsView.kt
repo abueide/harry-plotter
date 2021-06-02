@@ -94,8 +94,7 @@ class StatsView : Initializable {
             series.data.add(XYChart.Data(xLabel, yValue))
         }
         Platform.runLater {
-            plotsPerXChart.data.clear()
-            plotsPerXChart.data.addAll(series)
+            plotsPerXChart.data.setAll(series)
         }
     }
 
