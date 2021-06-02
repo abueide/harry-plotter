@@ -58,6 +58,9 @@ class PlotJob(
     @Transient
     var updateScope = CoroutineScope(Dispatchers.IO)
 
+    @Transient
+    var doneCallback: (() -> Unit)? = null
+
     var stats
         get() = statsFlow.value
         set(value) {
@@ -66,7 +69,8 @@ class PlotJob(
 
     val state get() = process()?.state?.value ?: JobState()
 
-    fun initialized() {
+    fun initialized(doneCallback: (() -> Unit)? = null) {
+        this.doneCallback = doneCallback
         process()?.let {
             it.initialized(::whenDone)
         }
@@ -140,6 +144,7 @@ class PlotJob(
         } else {
             stop()
         }
+        doneCallback?.invoke()
     }
 
     fun isReady(): Boolean {

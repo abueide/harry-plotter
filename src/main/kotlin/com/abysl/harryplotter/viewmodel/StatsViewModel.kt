@@ -36,7 +36,11 @@ import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlin.random.Random
@@ -48,6 +52,8 @@ private const val numFakePoints = 10000
 
 @OptIn(ExperimentalTime::class)
 class StatsViewModel(initialResults: List<JobResult> = listOf()) {
+    private val updateScope = CoroutineScope(Dispatchers.Default)
+    private val loadedPlots: MutableStateFlow<Set<String>> = MutableStateFlow(setOf())
     private fun randRange(): Duration = Duration.days(1)
     private val fakePoints = generateSequence(Clock.System.now()) {
         val randTime = Duration.seconds(Random.nextLong(0, randRange().inWholeSeconds))
@@ -66,34 +72,43 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
     val recentAveragePlotTime = SimpleStringProperty()
 
 
+
     init {
         selectedTime.addListener { observable, old, new ->
-            update()
+                update()
         }
         shownResults.addListener(ListChangeListener {
-            update()
+                update()
         })
-        update()
+            update()
     }
 
-    fun update(){
-        totalPlots.set(getPlotsDone())
-        averagePlotsDay.set(getAveragePlotsDay())
-        averagePlotTime.set(readableSeconds(getAveragePlotTime()))
-        val range = selectedTime.get().unit
-        recentTotal.set(getPlotsDone(range))
-        recentAveragePlots.set(getAveragePlotsDay(range))
-        recentAveragePlotTime.set(readableSeconds(getAveragePlotTime(range)))
-    }
-
-    fun loadLogs() {
-        CoroutineScope(Dispatchers.Default).launch {
-            val results = Config.plotLogsFinished.listFiles()?.asList()?.pmap {
-                JobState.parseFile(it).currentResult
-            } ?: listOf()
-            Platform.runLater {
-                shownResults.setAll(results)
+    fun update()  {
+        updateScope.launch {
+            loadLogs()
+            withContext(Dispatchers.JavaFx) {
+                totalPlots.set(getPlotsDone())
+                averagePlotsDay.set(getAveragePlotsDay())
+                averagePlotTime.set(readableSeconds(getAveragePlotTime()))
+                val range = selectedTime.get().unit
+                recentTotal.set(getPlotsDone(range))
+                recentAveragePlots.set(getAveragePlotsDay(range))
+                recentAveragePlotTime.set(readableSeconds(getAveragePlotTime(range)))
             }
+        }
+    }
+
+    suspend fun loadLogs() = coroutineScope {
+        val results = Config.plotLogsFinished.listFiles()?.asList()
+        ?.filter { it.nameWithoutExtension.replace("log-", "") !in loadedPlots.value }
+        ?.pmap {
+            val job = JobState.parseFile(it)
+            loadedPlots.value += job.plotId
+            return@pmap job.currentResult
+        } ?: listOf()
+
+        withContext(Dispatchers.JavaFx) {
+            shownResults.addAll(results)
         }
     }
 
@@ -123,7 +138,7 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
             }
     }
 
-    private fun readableSeconds(seconds: Double): String{
+    private fun readableSeconds(seconds: Double): String {
         return Duration.seconds(seconds).formatted()
     }
 
@@ -135,18 +150,18 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
     // in seconds
     private fun getAveragePlotTime(duration: Duration? = null): Double {
         val results = getPlotsInRange(duration)
-        if(results.isEmpty()) return 0.0
+        if (results.isEmpty()) return 0.0
         return results.sumOf { it.totalTime } / results.size
     }
 
     private fun getAveragePlotsDay(duration: Duration? = null): Double {
         val averageTime: Double = getAveragePlotTime(duration)
-        if(averageTime == 0.0) return 0.0
+        if (averageTime == 0.0) return 0.0
         return SECONDS_IN_DAY / getAveragePlotTime(duration)
     }
 
     private fun getPlotsInRange(duration: Duration? = null): List<JobResult> {
-        if(duration == null) return shownResults
+        if (duration == null) return shownResults
 
         val time = Clock.System.now()
         return shownResults.filter {

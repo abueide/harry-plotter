@@ -109,7 +109,9 @@ class StatsView : Initializable {
     }
 
     fun onLoadLogs(){
-        viewModel.loadLogs()
+        CoroutineScope(Dispatchers.Default).launch {
+            viewModel.loadLogs()
+        }
     }
 
     fun updateTime(){
