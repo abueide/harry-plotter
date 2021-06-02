@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.view
 
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.TimeEnum
 import com.abysl.harryplotter.viewmodel.StatsViewModel
 import javafx.application.Platform
@@ -76,11 +77,20 @@ class StatsView : Initializable {
     fun initialized(viewModel: StatsViewModel) {
         this.viewModel = viewModel
         timeCombo.valueProperty().bindBidirectional(viewModel.selectedTime)
-        viewModel.selectedTime.addListener { _, _, _ -> update() }
-        viewModel.shownResults.addListener(ListChangeListener{ update() })
-        update()
-    }
+        viewModel.selectedTime.addListener { _, old, new -> updateTime()}
+        viewModel.shownResults.addListener(ListChangeListener{
+            update()
+        })
 
+        totalPlots.textProperty().bind(viewModel.totalPlots.asString())
+        averagePlotsDay.textProperty().bind(viewModel.averagePlotsDay.asString())
+        averagePlotTime.textProperty().bind(viewModel.averagePlotTime)
+        recentPlotsCompleted.textProperty().bind(viewModel.recentTotal.asString())
+        recentAveragePlots.textProperty().bind(viewModel.recentAveragePlots.asString())
+        recentAveragePlotTime.textProperty().bind(viewModel.recentAveragePlotTime)
+
+        updateTime()
+    }
 
     fun update(){
         CoroutineScope(Dispatchers.IO).launch {
@@ -100,6 +110,14 @@ class StatsView : Initializable {
 
     fun onLoadLogs(){
         viewModel.loadLogs()
+    }
+
+    fun updateTime(){
+        val time = viewModel.selectedTime.get()
+        plotsPerXChart.title = "Plots Per ${time.titleName}"
+        recentLabel.text = "Past ${time.titleName}"
+        Prefs.selectedTime = time.name
+        update()
     }
 
 }

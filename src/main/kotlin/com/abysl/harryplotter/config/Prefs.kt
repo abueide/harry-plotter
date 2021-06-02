@@ -33,6 +33,7 @@ object Prefs {
     private const val FIRST_PHASE_STAGGER = "FIRST_PHASE_STAGGER"
     private const val OTHER_PHASE_STAGGER = "OTHER_PHASE_STAGGER"
     private const val LAST_RELEASE_SHOWN = "LAST_RELEASE_SHOWN"
+    private const val SELECTED_TIME = "SELECTED_TIME"
 
     private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
@@ -89,5 +90,10 @@ object Prefs {
         get() = prefNode.getInt(OTHER_PHASE_STAGGER, 0)
         set(value) {
             prefNode.putInt(OTHER_PHASE_STAGGER, value)
+        }
+    var selectedTime: String
+        get() = prefNode.get(SELECTED_TIME, "WEEKLY")
+        set(value) {
+            prefNode.put(SELECTED_TIME, value)
         }
 }

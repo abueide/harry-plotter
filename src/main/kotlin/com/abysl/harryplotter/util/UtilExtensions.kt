@@ -27,7 +27,8 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.io.InputStream
 import java.net.URL
-import java.time.Duration
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 fun String.getResource(): URL {
     return HarryPlotter::class.java.getResource(this)
@@ -64,10 +65,11 @@ operator fun <T> StateFlow<T>.invoke(): T {
     return this.value
 }
 
+@OptIn(ExperimentalTime::class)
 fun Duration.formatted(): String {
-    val hours = this.toHours()
-    val minutes = this.toMinutes() - (hours * 60)
-    return "${hours}h ${minutes}m (${this.toSeconds()}s)"
+    val hours = this.inWholeHours
+    val minutes = this.inWholeMinutes - (hours * 60)
+    return "${hours}h ${minutes}m (${this.inWholeSeconds}s)"
 }
 
 suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): List<B> = coroutineScope {

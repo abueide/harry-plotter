@@ -30,15 +30,15 @@ import kotlin.time.ExperimentalTime
 
 private const val WEEKS_IN_QUARTER = 12
 @OptIn(ExperimentalTime::class)
-enum class TimeEnum(val readableName: String, val unit: Duration, val zoom: Duration) {
+enum class TimeEnum(val readableName: String, val titleName: String, val unit: Duration, val zoom: Duration) {
     // Graphs a single day at a time
-    HOURLY("Hourly", Duration.hours(1), Duration.days(1)) {
+    HOURLY("Hourly", "Hour", Duration.hours(1), Duration.days(1)) {
         override fun getLabel(time: Instant): String {
-            return time.toLocalDateTime(TimeZone.currentSystemDefault()).hour.toString()
+            return time.toLocalDateTime(TimeZone.currentSystemDefault()).hour.toString() + ":00"
         }
     },
     // Use weekly view for half days
-    DAILY("Daily", Duration.days(1), Duration.days(7)) {
+    DAILY("Daily", "Day", Duration.days(1), Duration.days(7)) {
         override fun getLabel(time: Instant): String {
             return time.toLocalDateTime(TimeZone.currentSystemDefault()).dayOfWeek.getDisplayName(
                 TextStyle.SHORT,
@@ -47,14 +47,14 @@ enum class TimeEnum(val readableName: String, val unit: Duration, val zoom: Dura
         }
     },
     // Use a quarterly view
-    WEEKLY("Weekly", Duration.days(7), Duration.days(90)) {
+    WEEKLY("Weekly", "Week", Duration.days(7), Duration.days(90)) {
         override fun getLabel(time: Instant): String {
             val howLongAgo = Clock.System.now() - time
             val result = (howLongAgo / Duration.days(7)).toInt().toString()
             return result
         }
     },
-    MONTHLY("Monthly", Duration.days(30), Duration.days(365)) {
+    MONTHLY("Monthly", "Month", Duration.days(30), Duration.days(365)) {
         override fun getLabel(time: Instant): String {
             return time.toLocalDateTime(TimeZone.currentSystemDefault()).month.getDisplayName(
                 TextStyle.SHORT,
@@ -67,5 +67,9 @@ enum class TimeEnum(val readableName: String, val unit: Duration, val zoom: Dura
 
     override fun toString(): String{
         return readableName
+    }
+
+    companion object {
+        const val SECONDS_IN_DAY: Int = 86400
     }
 }
