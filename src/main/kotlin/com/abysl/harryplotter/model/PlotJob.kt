@@ -83,7 +83,7 @@ class PlotJob(
             val proc = chia.createPlot(description, this::whenDone)
             process.value = proc
             updateScope.launch {
-                proc.update(REFRESH_DELAY)
+                proc?.update(REFRESH_DELAY)
             }
         } else {
             println("Trying to start job while job is running, ignoring request.")
