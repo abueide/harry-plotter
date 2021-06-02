@@ -12,9 +12,12 @@ https://github.com/abueide/harry-plotter/releases
 
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
-1.1.12 is a small bugfix/feature release
+1.1.12 is a bugfix/feature release
 * Add content to stats tab
+* Add stagger settings per drive
+* Add max concurrent plots to stagger settings
+* Made browse button take you to the currently set directory
 * Fixed bug where stats was showing total minutes instead of leftover minutes
 * Fixed an issue where plots weren't autoqueueing after clicking the "start" button
 * Fixed bug where if you select "force stop", the graceful stop option would disappear
-* Fix issues with adding keys manually, also save them in between sessions
+* Fixed issue with using manually added keys
