@@ -71,5 +71,6 @@ enum class TimeEnum(val readableName: String, val titleName: String, val unit: D
 
     companion object {
         const val SECONDS_IN_DAY: Int = 86400
+        const val MILLIS_PER_MINUTE = 60000L
     }
 }

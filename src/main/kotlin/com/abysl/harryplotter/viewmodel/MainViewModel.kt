@@ -21,6 +21,8 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.model.StaggerManager
 import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +36,7 @@ class MainViewModel {
     val jobEditorViewModel = JobEditorViewModel()
     val jobStatusViewModel = JobStatusViewModel()
     val statsViewModel: StatsViewModel = StatsViewModel()
+    val staggerManager: StaggerManager
 
     init {
         jobEditorViewModel.initialized(
@@ -57,7 +60,11 @@ class MainViewModel {
                 jobStatusViewModel.loadJob(it)
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
-        // "Plot Job ${jobsListViewModel.plotJobs.value.size + 1}"
 
+        staggerManager = StaggerManager(jobsListViewModel.plotJobs, driveViewModel.drives)
+        jobsListViewModel.startStaggerManager = staggerManager::start
+        jobsListViewModel.stopStaggerManager = staggerManager::stop
+
+        if(Prefs.startStaggerManager) staggerManager.start()
     }
 }

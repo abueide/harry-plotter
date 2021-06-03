@@ -148,8 +148,7 @@ class PlotJob(
     }
 
     fun isReady(): Boolean {
-        val proc = process() ?: return true
-        return !proc.isRunning() && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
+        return !isRunning() && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 
     fun percentDone(): Double {

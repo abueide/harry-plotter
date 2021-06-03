@@ -113,7 +113,7 @@ class MainView {
     }
 
     fun onStaggerSettings() {
-        StaggerSettingsWindow().show(viewModel.jobsListViewModel::onStaggerUpdated)
+        StaggerSettingsWindow().show(viewModel.staggerManager::updateGlobalStagger)
     }
 
     fun onToggleTheme() {

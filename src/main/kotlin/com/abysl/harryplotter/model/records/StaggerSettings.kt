@@ -19,7 +19,12 @@
 
 package com.abysl.harryplotter.model.records
 
+import com.abysl.harryplotter.model.PlotJob
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 
 @Serializable
@@ -30,4 +35,28 @@ data class StaggerSettings (
     val maxTotal: Int = 0,
     val staticStagger: Int = 0,
     val ignoreStatic: Boolean = false
-)
+){
+    @OptIn(ExperimentalTime::class)
+    fun check(lastStart: Instant?, jobs: List<PlotJob>): Boolean {
+        val runningJobs by lazy { jobs.filter(PlotJob::isRunning) }
+        val time by lazy { Clock.System.now() }
+        val staticCheck by lazy {
+            if (lastStart != null)
+                staticStagger == 0 || (time - lastStart) >= Duration.minutes(staticStagger)
+            else
+                true
+        }
+
+        val firstPhaseCheck by lazy {
+            maxFirstStagger == 0 || runningJobs.filter {  it.state.phase == 1 }.size < maxFirstStagger
+        }
+        val otherPhaseCheck by lazy {
+            maxOtherStagger == 0 || runningJobs.filter { it.state.phase != 1 }.size < maxOtherStagger
+        }
+        val totalCheck by lazy { maxTotal == 0 || runningJobs.size < maxTotal}
+        return totalCheck
+                && staticCheck
+                && firstPhaseCheck
+                && otherPhaseCheck
+    }
+}
