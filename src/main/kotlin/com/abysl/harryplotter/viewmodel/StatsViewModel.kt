@@ -46,7 +46,7 @@ import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-private const val fakeData = true
+private const val fakeData = false
 private const val numFakePoints = 10000
 
 @OptIn(ExperimentalTime::class)
