@@ -12,13 +12,19 @@ https://github.com/abueide/harry-plotter/releases
 
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
-1.1.12 is a bugfix/feature release
+WARNING: This is a release candidate build containing significant code changes. It may be buggy, please report any that you find. Test it on your non-production machines first and let me know if its good enough to run on your production machines.
+
+1.1.12 is a big feature release
+
 * Add content to stats tab
 * Add stagger settings per drive
 * Add max concurrent plots to stagger settings
 * Auto start stagger manager on startup if crashed/taskmanager killed or if graceful stop is selected when exiting. If you force stopped, it will not autostart the next time you open. This should be useful for people looking to automatically start plotting system boot.
 * Auto clear temp dir on stagger manager start
 * Made browse button take you to the currently set directory
+
+Bug Fixes
+
 * Fixed bug where stats was showing total minutes instead of leftover minutes
 * Fixed an issue where plots weren't autoqueueing after clicking the "start" button
 * Fixed bug where if you select "force stop", the graceful stop option would disappear
