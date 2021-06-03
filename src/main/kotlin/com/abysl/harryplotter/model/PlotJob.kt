@@ -83,7 +83,7 @@ class PlotJob(
         if (process()?.isRunning() != true) {
             process()?.dispose()
             this.manageSelf = manageSelf
-            val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
+            val chia = ChiaCli()
             val proc = chia.createPlot(description, this::whenDone)
             process.value = proc
             updateScope.launch {

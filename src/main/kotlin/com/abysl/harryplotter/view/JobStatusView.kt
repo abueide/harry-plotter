@@ -143,5 +143,6 @@ class JobStatusView {
         if (job.isRunning() && showConfirmation("Stop Process", "Are you sure you want to stop $job?")) {
             job.stop()
         }
+        job.manageSelf = !job.manageSelf
     }
 }

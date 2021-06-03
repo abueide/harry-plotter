@@ -25,6 +25,7 @@ import javafx.scene.Node
 import java.util.prefs.Preferences
 
 object Prefs {
+    private const val START_STAGGER_MANAGER = "START_STAGGER_MANAGER"
     private const val VERSION_PROMPT = "VERSION_PROMPT"
     private const val DARK_MODE = "DARK_MODE"
     private const val EXE_PATH = "EXE_PATH"
@@ -44,6 +45,12 @@ object Prefs {
         exePath = locator.getExePath().path
         configPath = locator.getConfigFile().path
     }
+
+    var startStaggerManager: Boolean
+        get() = prefNode.getBoolean(START_STAGGER_MANAGER, false)
+        set(value) {
+            prefNode.putBoolean(START_STAGGER_MANAGER, value)
+        }
 
     var versionPrompt: Boolean
         get() = prefNode.getBoolean(VERSION_PROMPT + version, true)

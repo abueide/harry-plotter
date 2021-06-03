@@ -31,12 +31,24 @@ import java.io.File
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
+import kotlin.system.exitProcess
 
 class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs.configPath)) : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.JavaFx
 
     val chiaHome = config.parentFile.parentFile
+
+    init {
+        if(!exe.exists()){
+            Prefs.exePath = "NOT FOUND"
+            exitProcess(1)
+        }
+        if(!config.exists()){
+            Prefs.configPath = "NOT FOUND"
+            exitProcess(1)
+        }
+    }
 
     fun readKeys(): List<ChiaKey> {
         val keyInput = runCommand("keys", "show")

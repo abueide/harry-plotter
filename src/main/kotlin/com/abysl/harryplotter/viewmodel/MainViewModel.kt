@@ -21,9 +21,7 @@ package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
-import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
-import javafx.application.Platform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -31,6 +29,7 @@ import kotlinx.coroutines.flow.onEach
 
 class MainViewModel {
 
+    val driveViewModel: DriveViewModel = DriveViewModel()
     val jobsListViewModel = JobsListViewModel()
     val jobEditorViewModel = JobEditorViewModel()
     val jobStatusViewModel = JobStatusViewModel()
@@ -41,6 +40,7 @@ class MainViewModel {
             savedCallback = jobsListViewModel::saveJob,
             selectCallback = jobsListViewModel::clearSelected
         )
+        driveViewModel.drives.addAll(Config.getDrives())
         val jobs = Config.getPlotJobs()
         jobs.forEach{ it.initialized(statsViewModel::update) }
         jobsListViewModel.plotJobs.value += jobs

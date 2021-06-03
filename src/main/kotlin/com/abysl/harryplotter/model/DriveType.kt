@@ -23,8 +23,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class DriveType {
-    DESTINATION,
-    CACHE,
     TEMP,
-    TEMP2,
+//    DESTINATION,
+//    CACHE,
+//    TEMP2,
 }

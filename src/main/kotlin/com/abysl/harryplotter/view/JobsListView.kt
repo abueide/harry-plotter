@@ -1,6 +1,7 @@
 package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.JobsListViewModel
@@ -55,6 +56,10 @@ class JobsListView {
             viewModel.selectedPlotJob.value = new
         }
         jobsView.contextMenu = jobsMenu
+
+        if(Prefs.startStaggerManager){
+            onStartAll()
+        }
     }
 
     fun onStartAll() {

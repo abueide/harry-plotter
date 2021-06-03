@@ -27,8 +27,15 @@ import kotlinx.serialization.UseSerializers
 import java.io.File
 
 @Serializable
-@JvmRecord
-data class Drive(
-    val drivePath: File,
-    val type: DriveType
-)
+class Drive(
+    val name: String = "",
+    val drivePath: File = File(""),
+    val type: DriveType = DriveType.TEMP,
+    val staggerSettings: StaggerSettings = StaggerSettings()
+){
+    override fun toString(): String {
+        return name
+    }
+
+    fun deepCopy(): Drive = Drive(this.name, this.drivePath, this.type, this.staggerSettings)
+}

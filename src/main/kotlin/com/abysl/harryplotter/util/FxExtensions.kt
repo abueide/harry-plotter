@@ -23,7 +23,7 @@ import javafx.scene.control.TextField
 
 fun TextField.limitToInt() {
     textProperty().addListener { observable, oldValue, newValue ->
-        if (!newValue.matches(Regex("\\d*"))) {
+        if (newValue != null && !newValue.matches(Regex("\\d*"))) {
             text = newValue.replace("[^\\d]".toRegex(), "")
         }
     }

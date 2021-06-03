@@ -23,7 +23,6 @@ import HarryPlotterSettingsWindow
 import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.ChiaSettingsWindow
 import com.abysl.harryplotter.windows.ReleaseWindow
@@ -67,6 +66,9 @@ class MainView {
     @FXML
     private lateinit var statsViewController: StatsView
 
+    @FXML
+    private lateinit var driveViewController: DriveView
+
     lateinit var hostServices: HostServices
     lateinit var toggleTheme: () -> Unit
     lateinit var viewModel: MainViewModel
@@ -79,6 +81,7 @@ class MainView {
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)
         statsViewController.initialized(viewModel.statsViewModel)
+        driveViewController.initialized(viewModel.driveViewModel)
         setButtonTheme()
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
@@ -127,6 +130,7 @@ class MainView {
             }
         }
         Config.savePlotJobs(jobs)
+        Config.saveDrives(viewModel.driveViewModel.drives)
         (mainBox.scene.window as Stage).close()
     }
 

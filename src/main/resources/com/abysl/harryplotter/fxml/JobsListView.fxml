@@ -11,8 +11,8 @@
     <HBox alignment="CENTER" layoutX="10.0" layoutY="635.0" spacing="10.0">
       <children>
         <Button mnemonicParsing="false" onAction="#onClear" text="Clear Temp Dirs" />
-        <Button minWidth="60.0" mnemonicParsing="false" onAction="#onStopAll" text="Stop All" />
-        <Button minWidth="60.0" mnemonicParsing="false" onAction="#onStartAll" text="Start All" />
+        <Button minWidth="60.0" mnemonicParsing="false" onAction="#onStopAll" text="Stop Stagger" />
+        <Button minWidth="85.0" mnemonicParsing="false" onAction="#onStartAll" text="Start Stagger" />
       </children>
     </HBox>
   </children>

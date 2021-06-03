@@ -20,4 +20,8 @@ is the only OFFICIAL source of updates. As Harry Plotter is open source under th
 * Fixed bug where stats was showing total minutes instead of leftover minutes
 * Fixed an issue where plots weren't autoqueueing after clicking the "start" button
 * Fixed bug where if you select "force stop", the graceful stop option would disappear
-* Fixed issue with using manually added keys
+* Fixed issue with using manually added keys that the fingerprint field filled in
+* Clicking the "stop" button on a job now toggles whether the stagger manager will use that plot for more consistent behavior. (E.g. if you click stop on a currently running plot, the stagger manager won't immediately start it again. At least not until you click stop on it again.)
+
+TODO
+* Auto start stagger manager on startup

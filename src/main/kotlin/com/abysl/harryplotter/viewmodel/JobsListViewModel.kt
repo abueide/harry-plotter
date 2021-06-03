@@ -45,6 +45,7 @@ class JobsListViewModel {
 
     fun onStartAll(delay: Long = 1000) {
         cancelStagger()
+        Prefs.startStaggerManager = true
         runStagger = true
         var first = true
         plotJobs.value.forEach { it.tempDone = 0 }
@@ -65,6 +66,7 @@ class JobsListViewModel {
     }
 
     fun forceStopAll(block: Boolean = false) {
+        Prefs.startStaggerManager = false
         cancelStagger()
         plotJobs.value.forEach { it.stop(block = block) }
     }

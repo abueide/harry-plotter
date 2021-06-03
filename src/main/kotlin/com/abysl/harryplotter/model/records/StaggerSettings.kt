@@ -29,4 +29,5 @@ data class StaggerSettings (
     val maxOtherStagger: Int = 0,
     val maxTotal: Int = 0,
     val staticStagger: Int = 0,
+    val ignoreStatic: Boolean = false
 )
