@@ -22,6 +22,7 @@
 package com.abysl.harryplotter.model.records
 
 import com.abysl.harryplotter.model.JobResult
+import com.abysl.harryplotter.model.TimeEnum.Companion.SECONDS_IN_DAY
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -48,9 +49,5 @@ data class JobStats(
 
     fun plotDone(result: JobResult): JobStats {
         return copy(plotsDone = plotsDone + 1, results = results + result)
-    }
-
-    companion object {
-        private const val SECONDS_IN_DAY: Int = 86400
     }
 }

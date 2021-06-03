@@ -27,17 +27,28 @@ import com.abysl.harryplotter.model.records.JobDescription
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.datetime.Clock
 import java.io.File
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
+import kotlin.system.exitProcess
 
 class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs.configPath)) : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.JavaFx
 
     val chiaHome = config.parentFile.parentFile
+
+    init {
+        if (!exe.exists()) {
+            Prefs.exePath = "NOT FOUND"
+            exitProcess(1)
+        }
+        if (!config.exists()) {
+            Prefs.configPath = "NOT FOUND"
+            exitProcess(1)
+        }
+    }
 
     fun readKeys(): List<ChiaKey> {
         val keyInput = runCommand("keys", "show")
@@ -68,7 +79,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         return input.reader().readLines()
     }
 
-    fun createPlot(desc: JobDescription, onComplete: () -> Unit): PlotProcess {
+    fun createPlot(desc: JobDescription, onComplete: () -> Unit): PlotProcess? {
         var counter = 0
         var outputFile = Config.plotLogsRunning.resolve("${desc.name}.log")
         while (outputFile.exists()) {
@@ -77,16 +88,19 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         }
         val args = mutableListOf<String>()
         args.addAll(listOf("plots", "create", "-k", desc.kSize.toString()))
-        if (desc.key.fingerprint.isNotBlank()) args.addAll(listOf("-a", desc.key.fingerprint))
-        else if (desc.key.farmerKey.isNotBlank() && desc.key.poolKey.isNotBlank()) {
+        if (desc.key.farmerKey.isNotBlank() && desc.key.poolKey.isNotBlank()) {
             args.addAll(listOf("-f", desc.key.farmerKey, "-p", desc.key.poolKey))
-        }
+        } else if (desc.key.fingerprint.isNotBlank())
+            args.addAll(listOf("-a", desc.key.fingerprint))
+        else
+            return null
+
         if (desc.ram > JobDescription.MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
         if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
         args.addAll(listOf("-t", desc.tempDir.toString(), "-d", desc.destDir.toString()))
         desc.additionalParams.forEach { if (it.isNotBlank()) args.add(it) }
         val proc = runCommandAsync(outputFile, *args.toTypedArray())
-        return PlotProcess(proc.pid(), Clock.System.now(), outputFile).also { it.initialized(onComplete) }
+        return PlotProcess(proc.pid(), outputFile).also { it.initialized(onComplete) }
     }
 
     fun runCommandAsync(

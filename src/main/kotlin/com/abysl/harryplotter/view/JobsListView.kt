@@ -1,6 +1,7 @@
 package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.config.Config
+import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.JobsListViewModel
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 private const val GRACEFUL_STOP = "Graceful Stop"
 private const val FORCE_STOP = "Force Stop"
 private const val PERCENTAGE_REFRESH_DELAY = 100L
+
 class JobsListView {
 
     @FXML
@@ -55,6 +57,10 @@ class JobsListView {
             viewModel.selectedPlotJob.value = new
         }
         jobsView.contextMenu = jobsMenu
+
+        if (Prefs.startStaggerManager) {
+            onStartAll()
+        }
     }
 
     fun onStartAll() {

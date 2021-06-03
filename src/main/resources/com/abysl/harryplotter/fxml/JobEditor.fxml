@@ -3,10 +3,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<HBox prefHeight="280.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+<HBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="280.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16"
       fx:controller="com.abysl.harryplotter.view.JobEditorView">
   <children>
-    <VBox maxWidth="150.0" minWidth="140.0" spacing="19.0" HBox.hgrow="ALWAYS">
+    <VBox maxWidth="150.0" minWidth="150.0" spacing="18.0" HBox.hgrow="ALWAYS">
       <children>
         <Label text="Name"/>
         <Label text="* Temp Directory"/>
@@ -15,20 +15,23 @@
         <Label text="Chia Key to Use"/>
         <CheckBox fx:id="stopAfterCheck" mnemonicParsing="false" selected="true" text="Stop after"/>
       </children>
+      <HBox.margin>
+        <Insets top="5.0"/>
+      </HBox.margin>
     </VBox>
     <VBox prefHeight="306.0" prefWidth="228.0" spacing="10.0" HBox.hgrow="ALWAYS">
       <children>
         <TextField fx:id="jobName" promptText="My Plot 1"/>
         <HBox spacing="10.0">
           <children>
-            <TextField fx:id="tempDir" promptText="C:\Path\To\SSD\" HBox.hgrow="ALWAYS"/>
             <Button mnemonicParsing="false" onAction="#onTempBrowse" text="Browse"/>
+            <TextField fx:id="tempDir" promptText="C:\Path\To\SSD\" HBox.hgrow="ALWAYS"/>
           </children>
         </HBox>
         <HBox spacing="10.0">
           <children>
-            <TextField fx:id="destDir" promptText="C:\Path\To\HDD\" HBox.hgrow="ALWAYS"/>
             <Button mnemonicParsing="false" onAction="#onDestBrowse" text="Browse"/>
+            <TextField fx:id="destDir" promptText="C:\Path\To\HDD\" HBox.hgrow="ALWAYS"/>
           </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -55,8 +58,8 @@
             <Label text="Plots"/>
             <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
               <children>
-                <Button minWidth="55.0" mnemonicParsing="false" onAction="#onNew" text="New"/>
                 <Button minWidth="55.0" mnemonicParsing="false" onAction="#onCancel" text="Cancel"/>
+                <Button minWidth="55.0" mnemonicParsing="false" onAction="#onNew" text="New"/>
                 <Button fx:id="save" minWidth="55.0" mnemonicParsing="false" onAction="#onSave" text="Save"/>
               </children>
             </HBox>

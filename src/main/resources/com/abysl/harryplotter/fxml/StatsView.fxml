@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="720.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/16" fx:controller="com.abysl.harryplotter.view.StatsView">
+  <children>
+    <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+      <children>
+        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+          <children>
+            <LineChart fx:id="plotsPerXChart" animated="false" axisSortingPolicy="NONE" minHeight="300.0"
+                       minWidth="600.0" title="Plots Per Week" VBox.vgrow="ALWAYS">
+              <xAxis>
+                <CategoryAxis side="BOTTOM"/>
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT"/>
+              </yAxis>
+            </LineChart>
+            <HBox alignment="CENTER">
+              <children>
+                <ComboBox fx:id="timeCombo" prefWidth="150.0"/>
+              </children>
+              <padding>
+                <Insets bottom="20.0"/>
+              </padding>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+              <children>
+                <VBox alignment="BOTTOM_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                  <children>
+                    <Button mnemonicParsing="false" onAction="#onLoadLogs" text="Load Log Stats">
+                      <tooltip>
+                        <Tooltip
+                            text="This will import stats from any logs currently in the ~/.harryplotter/logs/finished folder."/>
+                      </tooltip>
+                    </Button>
+                  </children>
+                </VBox>
+                <VBox minWidth="150.0" spacing="10.0">
+                  <children>
+                    <HBox alignment="CENTER">
+                      <children>
+                        <Label text="All Time"/>
+                      </children>
+                    </HBox>
+                    <Label minWidth="150.0" text="Total Plots Completed"/>
+                    <Label text="Average Plots Per Day"/>
+                    <Label text="Average Plot Time"/>
+                  </children>
+                </VBox>
+                <VBox spacing="10.0">
+                  <children>
+                    <Label/>
+                    <Label fx:id="totalPlots" text="0"/>
+                    <Label fx:id="averagePlotsDay" text="0"/>
+                    <Label fx:id="averagePlotTime" text="0"/>
+                  </children>
+                </VBox>
+                <Separator orientation="VERTICAL" prefHeight="200.0"/>
+                <VBox prefHeight="328.0" prefWidth="117.0" spacing="10.0">
+                  <children>
+                    <HBox alignment="CENTER" minWidth="150.0">
+                      <children>
+                        <Label fx:id="recentLabel" text="Past Week"/>
+                      </children>
+                    </HBox>
+                    <Label minWidth="0.0" text="Plots Completed"/>
+                    <Label text="Average Plots"/>
+                    <Label text="Average Plot Time"/>
+                  </children>
+                </VBox>
+                <VBox prefHeight="353.0" prefWidth="154.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <children>
+                    <Label/>
+                    <Label fx:id="recentPlotsCompleted" layoutX="10.0" layoutY="10.0" text="0"/>
+                    <Label fx:id="recentAveragePlots" layoutX="10.0" layoutY="10.0" text="0"/>
+                    <Label fx:id="recentAveragePlotTime" layoutX="10.0" layoutY="64.0" text="0"/>
+                  </children>
+                </VBox>
+              </children>
+            </HBox>
+          </children>
+        </VBox>
+      </children>
+      <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+      </padding>
+    </HBox>
+  </children>
+</AnchorPane>

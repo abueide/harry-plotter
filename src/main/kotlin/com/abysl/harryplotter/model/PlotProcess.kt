@@ -11,7 +11,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
@@ -22,12 +21,16 @@ import kotlin.time.ExperimentalTime
 @Serializable
 class PlotProcess(
     val pid: Long,
-    val startTime: Instant = Clock.System.now(),
     val logFile: File,
 ) {
 
     @Transient
-    val state: MutableStateFlow<JobState> = MutableStateFlow(JobState(running = isRunning()))
+    val state: MutableStateFlow<JobState> = MutableStateFlow(
+        JobState(
+            running = isRunning(),
+            currentResult = JobResult(timeStarted = Clock.System.now())
+        )
+    )
 
     @Transient
     private val _newLogs = MutableStateFlow<List<String>>(listOf())
@@ -88,7 +91,7 @@ class PlotProcess(
 
     @OptIn(ExperimentalTime::class)
     fun timeRunning(): Double {
-        val timeRunning = Clock.System.now() - startTime
+        val timeRunning = Clock.System.now() - (state().currentResult.timeStarted ?: return 0.0)
         return timeRunning.toDouble(TimeUnit.SECONDS)
     }
 

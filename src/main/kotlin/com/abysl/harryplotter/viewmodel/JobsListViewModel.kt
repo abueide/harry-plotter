@@ -25,52 +25,28 @@ import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.invoke
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 class JobsListViewModel {
     val plotJobs: MutableStateFlow<List<PlotJob>> = MutableStateFlow(listOf())
     val selectedPlotJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-    var staggerScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-    var runStagger: Boolean = false
-    var firstStagger = Prefs.firstStagger
-    var otherStagger = Prefs.otherStagger
-    var staticStaggerMS = Prefs.staticStagger * MILLIS_PER_MINUTE
 
     lateinit var refreshCallback: () -> Unit
+    lateinit var startStaggerManager: () -> Unit
+    lateinit var stopStaggerManager: () -> Unit
 
-    fun onStartAll(delay: Long = 1000) {
-        cancelStagger()
-        runStagger = true
-        var first = true
-        plotJobs.value.forEach { it.tempDone = 0 }
-        staggerScope.launch {
-            while (runStagger) {
-                var staticTimer = if (first) staticStaggerMS else 0L
-                while (staticTimer < staticStaggerMS || checkPhaseBlocked()) {
-                    delay(delay)
-                    staticTimer += delay
-                }
-                plotJobs.value.firstOrNull {
-                    it.isReady() && !it.manageSelf &&
-                        (it.tempDone < it.description.plotsToFinish || it.description.plotsToFinish == 0)
-                }?.start()
-                first = false
-            }
-        }
+    fun onStartAll() {
+        startStaggerManager()
     }
 
     fun forceStopAll(block: Boolean = false) {
-        cancelStagger()
+        Prefs.startStaggerManager = false
+        stopStaggerManager()
         plotJobs.value.forEach { it.stop(block = block) }
     }
 
     fun gracefulStopAll() {
-        cancelStagger()
+        stopStaggerManager()
         plotJobs.value.forEach { it.manageSelf = false }
     }
 
@@ -103,37 +79,7 @@ class JobsListViewModel {
         refreshCallback()
     }
 
-    fun cancelStagger() {
-        staggerScope.cancel()
-        staggerScope = CoroutineScope(Dispatchers.IO)
-        runStagger = false
-    }
-
-    fun checkPhaseBlocked(): Boolean {
-        return checkPhaseOneBlocked() || checkOtherBlocked()
-    }
-
-    fun checkPhaseOneBlocked(): Boolean {
-        if (firstStagger == 0) return false
-        return plotJobs.value.filter { it.state.phase == 1 && it.isRunning() }.size >= firstStagger
-    }
-
-    fun checkOtherBlocked(): Boolean {
-        if (otherStagger == 0) return false
-        return plotJobs.value.filter { it.state.phase != 1 && it.isRunning() }.size >= otherStagger
-    }
-
     fun clearSelected() {
         selectedPlotJob.value = null
-    }
-
-    fun onStaggerUpdated() {
-        firstStagger = Prefs.firstStagger
-        otherStagger = Prefs.otherStagger
-        staticStaggerMS = Prefs.staticStagger * MILLIS_PER_MINUTE
-    }
-
-    companion object {
-        private const val MILLIS_PER_MINUTE = 60000L
     }
 }

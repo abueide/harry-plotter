@@ -54,9 +54,10 @@ class SimpleFileChooser(val node: Node) {
         return chooseFile(title, FileChooser.ExtensionFilter("All", "*"))
     }
 
-    fun chooseDir(title: String, required: Boolean = false): File? {
+    fun chooseDir(title: String, required: Boolean = false, startingPoint: File? = null): File? {
         val directoryChooser = DirectoryChooser()
         directoryChooser.title = title
+        startingPoint?.let { directoryChooser.initialDirectory = it }
         val directory: File? = directoryChooser.showDialog(node.scene.window)
         if (required) {
             showAlert("Directory Not Selected", "Please try again.")

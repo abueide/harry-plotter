@@ -25,6 +25,7 @@ import javafx.scene.Node
 import java.util.prefs.Preferences
 
 object Prefs {
+    private const val START_STAGGER_MANAGER = "START_STAGGER_MANAGER"
     private const val VERSION_PROMPT = "VERSION_PROMPT"
     private const val DARK_MODE = "DARK_MODE"
     private const val EXE_PATH = "EXE_PATH"
@@ -32,7 +33,11 @@ object Prefs {
     private const val STATIC_STAGGER = "STATIC_STAGGER"
     private const val FIRST_PHASE_STAGGER = "FIRST_PHASE_STAGGER"
     private const val OTHER_PHASE_STAGGER = "OTHER_PHASE_STAGGER"
+    private const val IGNORE_STATIC = "IGNORE_STATIC"
+    private const val MAX_TOTAL = "MAX_TOTAL"
+
     private const val LAST_RELEASE_SHOWN = "LAST_RELEASE_SHOWN"
+    private const val SELECTED_TIME = "SELECTED_TIME"
 
     private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
@@ -43,6 +48,18 @@ object Prefs {
         exePath = locator.getExePath().path
         configPath = locator.getConfigFile().path
     }
+
+    var startStaggerManager: Boolean
+        get() = prefNode.getBoolean(START_STAGGER_MANAGER, false)
+        set(value) {
+            prefNode.putBoolean(START_STAGGER_MANAGER, value)
+        }
+
+    var ignoreStatic: Boolean
+        get() = prefNode.getBoolean(IGNORE_STATIC, true)
+        set(value) {
+            prefNode.putBoolean(IGNORE_STATIC, value)
+        }
 
     var versionPrompt: Boolean
         get() = prefNode.getBoolean(VERSION_PROMPT + version, true)
@@ -89,5 +106,17 @@ object Prefs {
         get() = prefNode.getInt(OTHER_PHASE_STAGGER, 0)
         set(value) {
             prefNode.putInt(OTHER_PHASE_STAGGER, value)
+        }
+
+    var maxTotal: Int
+        get() = prefNode.getInt(MAX_TOTAL, 0)
+        set(value) {
+            prefNode.putInt(MAX_TOTAL, value)
+        }
+
+    var selectedTime: String
+        get() = prefNode.get(SELECTED_TIME, "WEEKLY")
+        set(value) {
+            prefNode.put(SELECTED_TIME, value)
         }
 }

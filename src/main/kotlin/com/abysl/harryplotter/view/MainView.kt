@@ -47,6 +47,7 @@ import org.kordamp.ikonli.javafx.FontIcon
 
 private const val GRACEFUL_STOP = "Graceful Stop"
 private const val FORCE_STOP = "Force Stop"
+
 class MainView {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML
@@ -64,6 +65,12 @@ class MainView {
     @FXML
     private lateinit var jobStatusViewController: JobStatusView
 
+    @FXML
+    private lateinit var statsViewController: StatsView
+
+    @FXML
+    private lateinit var driveViewController: DriveView
+
     lateinit var hostServices: HostServices
     lateinit var toggleTheme: () -> Unit
     lateinit var viewModel: MainViewModel
@@ -75,6 +82,8 @@ class MainView {
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
         jobStatusViewController.initialized(viewModel.jobStatusViewModel)
+        statsViewController.initialized(viewModel.statsViewModel)
+        driveViewController.initialized(viewModel.driveViewModel)
         setButtonTheme()
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
@@ -105,7 +114,7 @@ class MainView {
     }
 
     fun onStaggerSettings() {
-        StaggerSettingsWindow().show(viewModel.jobsListViewModel::onStaggerUpdated)
+        StaggerSettingsWindow().show(viewModel.staggerManager::updateGlobalStagger)
     }
 
     fun onToggleTheme() {
@@ -123,6 +132,7 @@ class MainView {
             }
         }
         Config.savePlotJobs(jobs)
+        Config.saveDrives(viewModel.driveViewModel.drives())
         (mainBox.scene.window as Stage).close()
     }
 

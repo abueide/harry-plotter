@@ -17,14 +17,26 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.util
+@file:UseSerializers(FileSerializer::class)
 
-import javafx.scene.control.TextField
+package com.abysl.harryplotter.model.records
 
-fun TextField.limitToInt() {
-    textProperty().addListener { observable, oldValue, newValue ->
-        if (newValue != null && !newValue.matches(Regex("\\d*"))) {
-            text = newValue.replace("[^\\d]".toRegex(), "")
-        }
+import com.abysl.harryplotter.model.DriveType
+import com.abysl.harryplotter.util.serializers.FileSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import java.io.File
+
+@Serializable
+class Drive(
+    val name: String = "",
+    val drivePath: File = File(""),
+    val type: DriveType = DriveType.TEMP,
+    val staggerSettings: StaggerSettings = StaggerSettings()
+) {
+    override fun toString(): String {
+        return name
     }
+
+    fun deepCopy(): Drive = Drive(this.name, this.drivePath, this.type, this.staggerSettings)
 }

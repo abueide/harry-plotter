@@ -35,6 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.File
 
 class JobEditorView {
     @FXML
@@ -119,13 +120,17 @@ class JobEditorView {
     }
 
     fun onTempBrowse() {
-        fileChooser.chooseDir("Select Temp Dir", false)?.let {
+        val startingPath = viewModel.tempDir.get()
+        val startingFile = if (File(startingPath).exists()) File(startingPath) else null
+        fileChooser.chooseDir("Select Temp Dir", false, startingFile)?.let {
             viewModel.tempDir.value = it.absolutePath
         }
     }
 
     fun onDestBrowse() {
-        fileChooser.chooseDir("Select Destination Dir", false)?.let {
+        val startingPath = viewModel.tempDir.get()
+        val startingFile = if (File(startingPath).exists()) File(startingPath) else null
+        fileChooser.chooseDir("Select Destination Dir", false, startingFile)?.let {
             viewModel.destDir.value = it.absolutePath
         }
     }

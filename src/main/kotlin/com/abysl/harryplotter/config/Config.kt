@@ -21,15 +21,12 @@ package com.abysl.harryplotter.config
 
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.model.records.Drive
 import com.abysl.harryplotter.windows.SimpleDialogs
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.lang.Exception
 
 object Config {
     val plotterHome = File(System.getProperty("user.home") + "/.harryplotter/")
@@ -38,6 +35,7 @@ object Config {
     val plotLogsFailed = plotterHome.resolve("plotlogs/failed")
 
     private val jobsFile = File(plotterHome.path + "/jobs.json")
+    private val drivesFile = File(plotterHome.path + "/drives.json")
 
     val devkey = ChiaKey(
         nickname = "Developer Donation",
@@ -55,16 +53,12 @@ object Config {
     }
 
     fun savePlotJobs(jobs: List<PlotJob>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            jobsFile.writeText(Json.encodeToString(jobs))
-        }
+        jobsFile.writeText(Json.encodeToString(jobs))
     }
 
     fun getPlotJobs(): List<PlotJob> {
-        if (!jobsFile.exists()) {
-            return emptyList()
-        }
-        var result: List<PlotJob>? = null
+        if (!jobsFile.exists()) return emptyList()
+        var result: List<PlotJob>?
         try {
             result = Json.decodeFromString(jobsFile.readText())
         } catch (e: Exception) {
@@ -73,12 +67,37 @@ object Config {
                 "Failed to decode jobs",
                 "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json"
             )
-            val backupFile = File(jobsFile.parent + "/jobs.bak")
-            backupFile.delete()
-            jobsFile.renameTo(backupFile)
-            savePlotJobs(listOf())
+            backupFile(jobsFile)
+            savePlotJobs(emptyList())
         }
-        return result ?: listOf()
+        return result ?: emptyList()
+    }
+
+    fun saveDrives(drives: List<Drive>) {
+        drivesFile.writeText(Json.encodeToString(drives))
+    }
+
+    fun getDrives(): List<Drive> {
+        if (!drivesFile.exists()) return emptyList()
+        var result: List<Drive>?
+        try {
+            result = Json.decodeFromString(drivesFile.readText())
+        } catch (e: Exception) {
+            result = null
+            SimpleDialogs.showAlert(
+                "Failed to decode drives",
+                "Backing them up to ~/.harryplotter/drives.bak and resetting drives.json"
+            )
+            backupFile(drivesFile)
+            saveDrives(emptyList())
+        }
+        return result ?: emptyList()
+    }
+
+    fun backupFile(file: File) {
+        val backupFile = File(file.parent + "/${file.nameWithoutExtension}.bak")
+        backupFile.delete()
+        file.renameTo(backupFile)
     }
 
     fun resetConfig() {

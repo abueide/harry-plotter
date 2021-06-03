@@ -38,14 +38,19 @@ class StaggerSettingsView : Initializable {
     @FXML
     private lateinit var staticStagger: TextField
 
+    @FXML
+    private lateinit var maxTotal: TextField
+
     private lateinit var updatedCallback: () -> Unit
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         firstPhaseStagger.limitToInt()
         otherPhaseStagger.limitToInt()
         staticStagger.limitToInt()
+        maxTotal.limitToInt()
         firstPhaseStagger.text = Prefs.firstStagger.toString()
         otherPhaseStagger.text = Prefs.otherStagger.toString()
+
         staticStagger.text = Prefs.staticStagger.toString()
     }
 
@@ -62,6 +67,7 @@ class StaggerSettingsView : Initializable {
         Prefs.firstStagger = firstPhaseStagger.text.ifBlank { "0" }.toInt()
         Prefs.otherStagger = otherPhaseStagger.text.ifBlank { "0" }.toInt()
         Prefs.staticStagger = staticStagger.text.ifBlank { "0" }.toInt()
+        Prefs.maxTotal = maxTotal.text.ifBlank { "0" }.toInt()
         updatedCallback()
         val stage = firstPhaseStagger.scene.window as Stage
         stage.close()

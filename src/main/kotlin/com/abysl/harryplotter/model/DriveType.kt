@@ -17,14 +17,14 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.util
+package com.abysl.harryplotter.model
 
-import javafx.scene.control.TextField
+import kotlinx.serialization.Serializable
 
-fun TextField.limitToInt() {
-    textProperty().addListener { observable, oldValue, newValue ->
-        if (newValue != null && !newValue.matches(Regex("\\d*"))) {
-            text = newValue.replace("[^\\d]".toRegex(), "")
-        }
-    }
+@Serializable
+enum class DriveType {
+    TEMP,
+//    DESTINATION,
+//    CACHE,
+//    TEMP2,
 }

@@ -18,8 +18,10 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
-import java.time.Duration
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class JobStatusView {
 
     @FXML
@@ -74,16 +76,16 @@ class JobStatusView {
         plotJob.statsFlow.onEach {
             fxBinding.launch {
                 totalPlotsCreated.text = it.plotsDone.toString()
-                lastPlotTime.text = Duration.ofSeconds(it.lastPlotTime.toLong()).formatted()
-                averagePlotTime.text = Duration.ofSeconds(it.averagePlotTime.toLong()).formatted()
+                lastPlotTime.text = Duration.seconds(it.lastPlotTime.toLong()).formatted()
+                averagePlotTime.text = Duration.seconds(it.averagePlotTime.toLong()).formatted()
                 estimatedPlotsDay.text = it.estimatedPlotsDay.toString()
                 val result = it.results.lastOrNull()
                 if (result != null) {
-                    p1Time.text = Duration.ofSeconds(result.phaseOneTime.toLong()).formatted()
-                    p2Time.text = Duration.ofSeconds(result.phaseTwoTime.toLong()).formatted()
-                    p3Time.text = Duration.ofSeconds(result.phaseThreeTime.toLong()).formatted()
-                    p4Time.text = Duration.ofSeconds(result.phaseFourTime.toLong()).formatted()
-                    copyTime.text = Duration.ofSeconds(result.copyTime.toLong()).formatted()
+                    p1Time.text = Duration.seconds(result.phaseOneTime.toLong()).formatted()
+                    p2Time.text = Duration.seconds(result.phaseTwoTime.toLong()).formatted()
+                    p3Time.text = Duration.seconds(result.phaseThreeTime.toLong()).formatted()
+                    p4Time.text = Duration.seconds(result.phaseFourTime.toLong()).formatted()
+                    copyTime.text = Duration.seconds(result.copyTime.toLong()).formatted()
                 }
             }
         }.launchIn(jobBinding)
@@ -141,5 +143,6 @@ class JobStatusView {
         if (job.isRunning() && showConfirmation("Stop Process", "Are you sure you want to stop $job?")) {
             job.stop()
         }
+        job.manageSelf = !job.manageSelf
     }
 }

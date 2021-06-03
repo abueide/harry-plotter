@@ -27,7 +27,7 @@ import javafx.scene.control.ChoiceDialog
 object SimpleDialogs {
 
     fun showOptions(title: String, vararg options: String, callback: (String) -> Unit) {
-        val choice = ChoiceDialog(options.first(), options.drop(1))
+        val choice = ChoiceDialog(options.first(), options.toList())
         choice.title = title
         choice.show()
         choice.resultProperty().addListener { observable, oldValue, newValue ->
@@ -36,7 +36,7 @@ object SimpleDialogs {
     }
 
     fun showOptionsBlocking(title: String, vararg options: String): String? {
-        val choice = ChoiceDialog(options.first(), options.drop(1))
+        val choice = ChoiceDialog(options.first(), options.toList())
         choice.title = title
         val result = choice.showAndWait()
         return if (result.isPresent) result.get() else null

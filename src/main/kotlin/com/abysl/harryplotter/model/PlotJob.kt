@@ -22,7 +22,6 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.chia.ChiaCli
-import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.IOUtil
@@ -39,7 +38,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
-import java.io.File
 import java.util.Locale
 
 @Serializable
@@ -58,6 +56,9 @@ class PlotJob(
     @Transient
     var updateScope = CoroutineScope(Dispatchers.IO)
 
+    @Transient
+    var doneCallback: (() -> Unit)? = null
+
     var stats
         get() = statsFlow.value
         set(value) {
@@ -66,7 +67,8 @@ class PlotJob(
 
     val state get() = process()?.state?.value ?: JobState()
 
-    fun initialized() {
+    fun initialized(doneCallback: (() -> Unit)? = null) {
+        this.doneCallback = doneCallback
         process()?.let {
             it.initialized(::whenDone)
         }
@@ -79,11 +81,11 @@ class PlotJob(
         if (process()?.isRunning() != true) {
             process()?.dispose()
             this.manageSelf = manageSelf
-            val chia = ChiaCli(File(Prefs.exePath), File(Prefs.configPath))
+            val chia = ChiaCli()
             val proc = chia.createPlot(description, this::whenDone)
             process.value = proc
             updateScope.launch {
-                proc.update(REFRESH_DELAY)
+                proc?.update(REFRESH_DELAY)
             }
         } else {
             println("Trying to start job while job is running, ignoring request.")
@@ -126,15 +128,12 @@ class PlotJob(
 
     private fun whenDone() {
         val proc = process() ?: return
-        val state = proc.state().copy(completed = checkCompleted())
-        proc.state.value = state
+        val state = if (checkCompleted()) proc.state.value.setComplete() else proc.state.value
+        proc.state.value = state.copy()
         if (state.completed) {
             stats = stats.plotDone(state.currentResult)
             tempDone++
-            if (
-                manageSelf && state.running &&
-                (tempDone < description.plotsToFinish || description.plotsToFinish == 0)
-            ) {
+            if (manageSelf && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
                 stop()
                 start(manageSelf = manageSelf)
             } else {
@@ -143,11 +142,11 @@ class PlotJob(
         } else {
             stop()
         }
+        doneCallback?.invoke()
     }
 
     fun isReady(): Boolean {
-        val proc = process() ?: return true
-        return !proc.isRunning() && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
+        return !isRunning() && (description.plotsToFinish == 0 || tempDone < description.plotsToFinish)
     }
 
     fun percentDone(): Double {
