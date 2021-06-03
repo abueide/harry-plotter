@@ -2,10 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>ComplexCondition:ReleaseWindow.kt$ReleaseWindow$release != null &amp;&amp;
-      !release.version.contains("version.txt".getResource().readText()) &amp;&amp;
-      !release.version.contains(Prefs.lastReleaseShown) &amp;&amp; !release.version.contains("-RC")
-    </ID>
+    <ID>ComplexCondition:ReleaseWindow.kt$ReleaseWindow$release != null &amp;&amp; !release.version.contains("version.txt".getResource().readText()) &amp;&amp; !release.version.contains(Prefs.lastReleaseShown) &amp;&amp; !release.version.contains("-RC")</ID>
     <ID>MagicNumber:JobEditorViewModel.kt$JobEditorViewModel$100</ID>
     <ID>MagicNumber:JobEditorViewModel.kt$JobEditorViewModel$32</ID>
     <ID>MagicNumber:MainView.kt$MainView$13</ID>
@@ -21,10 +18,6 @@
     <ID>MagicNumber:TimeEnum.kt$TimeEnum.WEEKLY$7</ID>
     <ID>MagicNumber:TimeEnum.kt$TimeEnum.WEEKLY$90</ID>
     <ID>MagicNumber:UtilExtensions.kt$60</ID>
-    <ID>MaxLineLength:Config.kt$Config$SimpleDialogs.showAlert("Failed to decode drives", "Backing them up to
-      ~/.harryplotter/drives.bak and resetting drives.json")
-    </ID>
-    <ID>MaximumLineLength:com.abysl.harryplotter.config.Config.kt:87</ID>
     <ID>MayBeConst:PlotLogParser.kt$PlotLogParser$private val END_TIME_KEY = "Total time ="</ID>
     <ID>MultiLineIfElse:com.abysl.harryplotter.chia.ChiaCli.kt:94</ID>
     <ID>MultiLineIfElse:com.abysl.harryplotter.chia.ChiaCli.kt:96</ID>
@@ -36,25 +29,17 @@
     <ID>ReturnCount:ChiaKey.kt$ChiaKey$fun parseLine(line: String): ChiaKey</ID>
     <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getConfigFile(): File</ID>
     <ID>ReturnCount:ChiaLocator.kt$ChiaLocator$fun getExePath(): File</ID>
-    <ID>ReturnCount:JobEditorViewModel.kt$JobEditorViewModel$fun getJobDescription(defaultName: String = "Unnamed Job",
-      check: Boolean = true): JobDescription?
-    </ID>
+    <ID>ReturnCount:JobEditorViewModel.kt$JobEditorViewModel$fun getJobDescription(defaultName: String = "Unnamed Job", check: Boolean = true): JobDescription?</ID>
     <ID>ReturnCount:PlotLogParser.kt$PlotLogParser$fun parseResult(line: String): JobResult?</ID>
     <ID>SpreadOperator:ChiaCli.kt$ChiaCli$(outputFile, *args.toTypedArray())</ID>
     <ID>SpreadOperator:StaggerManager.kt$StaggerManager$(*mapValues.toTypedArray())</ID>
     <ID>SpreadOperator:StatsView.kt$StatsView$(*TimeEnum.values())</ID>
-    <ID>SwallowedException:Config.kt$Config$catch (e: Exception) { result = null SimpleDialogs.showAlert( "Failed to
-      decode jobs", "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json" ) backupFile(jobsFile)
-      savePlotJobs(emptyList()) }
-    </ID>
-    <ID>SwallowedException:Config.kt$Config$catch (e: Exception) { result = null SimpleDialogs.showAlert("Failed to
-      decode drives", "Backing them up to ~/.harryplotter/drives.bak and resetting drives.json") backupFile(drivesFile)
-      saveDrives(emptyList()) }
-    </ID>
+    <ID>SwallowedException:Config.kt$Config$catch (e: Exception) { result = null SimpleDialogs.showAlert( "Failed to decode drives", "Backing them up to ~/.harryplotter/drives.bak and resetting drives.json" ) backupFile(drivesFile) saveDrives(emptyList()) }</ID>
+    <ID>SwallowedException:Config.kt$Config$catch (e: Exception) { result = null SimpleDialogs.showAlert( "Failed to decode jobs", "Backing them up to ~/.harryplotter/jobs.bak and resetting jobs.json" ) backupFile(jobsFile) savePlotJobs(emptyList()) }</ID>
     <ID>TooGenericExceptionCaught:Config.kt$Config$e: Exception</ID>
     <ID>TooGenericExceptionCaught:PlotLogParser.kt$PlotLogParser$e: Exception</ID>
     <ID>TooGenericExceptionCaught:PlotProcess.kt$PlotProcess$e: Exception</ID>
-    <ID>TopLevelPropertyNaming:StatsViewModel.kt$private const val fakeData = false</ID>
+    <ID>TopLevelPropertyNaming:StatsViewModel.kt$private const val fakeData = true</ID>
     <ID>TopLevelPropertyNaming:StatsViewModel.kt$private const val numFakePoints = 10000</ID>
     <ID>UnnecessaryAbstractClass:Window.kt$Window&lt;T&gt;</ID>
     <ID>UnusedPrivateMember:TimeEnum.kt$private const val WEEKS_IN_QUARTER = 12</ID>
