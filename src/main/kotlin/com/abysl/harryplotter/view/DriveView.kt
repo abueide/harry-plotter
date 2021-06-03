@@ -27,6 +27,7 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.viewmodel.DriveViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs
+import javafx.application.Platform
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -36,6 +37,10 @@ import javafx.scene.control.ContextMenu
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
 import javafx.scene.control.TextField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.net.URL
 import java.util.ResourceBundle
 
@@ -92,7 +97,12 @@ class DriveView: Initializable {
         maxOther.textProperty().bindBidirectional(viewModel.maxOther)
         maxConcurrent.textProperty().bindBidirectional(viewModel.maxConcurrent)
 
-        driveList.items = viewModel.drives
+        viewModel.drives.onEach { drives ->
+            Platform.runLater {
+                driveList.items.setAll(drives)
+                driveList.selectionModel.select(viewModel.selectedDrive.get())
+            }
+        }.launchIn(CoroutineScope(Dispatchers.IO))
         driveList.selectionModel.selectedItemProperty().addListener { _, old, new ->
             if(old != new) viewModel.selectedDrive.set(new)
         }
@@ -116,7 +126,6 @@ class DriveView: Initializable {
 
     fun onSave(){
         viewModel.save()
-        driveList.refresh()
     }
 
     val drivesMenu = ContextMenu()
@@ -124,8 +133,8 @@ class DriveView: Initializable {
     val duplicate = MenuItem("Duplicate").also {
         it.setOnAction {
             val drive = viewModel.selectedDrive.get() ?: return@setOnAction
-            viewModel.drives.add(drive.deepCopy())
-            Config.saveDrives(viewModel.drives)
+            viewModel.drives.value += (drive.deepCopy())
+            Config.saveDrives(viewModel.drives())
         }
         drivesMenu.items.add(it)
     }
@@ -134,8 +143,8 @@ class DriveView: Initializable {
         it.setOnAction {
             val drive = viewModel.selectedDrive.get() ?: return@setOnAction
             if (SimpleDialogs.showConfirmation("Delete Job?", "Are you sure you want to delete ${drive.name}")) {
-                viewModel.drives.remove(drive)
-                Config.saveDrives(viewModel.drives)
+                viewModel.drives.value -= (drive)
+                Config.saveDrives(viewModel.drives())
             }
         }
         drivesMenu.items.add(it)

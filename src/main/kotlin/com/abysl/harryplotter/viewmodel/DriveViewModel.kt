@@ -23,16 +23,18 @@ import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.model.DriveType
 import com.abysl.harryplotter.model.records.Drive
 import com.abysl.harryplotter.model.records.StaggerSettings
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.windows.SimpleDialogs
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 
 class DriveViewModel {
 
-    val drives = FXCollections.observableArrayList<Drive>()
+    val drives = MutableStateFlow<List<Drive>>(emptyList())
 
     val selectedDrive = SimpleObjectProperty<Drive?>(null)
 
@@ -46,14 +48,16 @@ class DriveViewModel {
     val ignoreStatic = SimpleBooleanProperty(false)
 
     init {
-        selectedDrive.addListener { _, _, new -> loadDrive(new) }
+        selectedDrive.addListener { _, old, new ->
+            if(old != new) loadDrive(new)
+        }
     }
 
     fun new(){
         val drive = Drive(name = "Unnamed Drive")
-        drives.add(drive)
+        drives.value += drive
         selectedDrive.set(drive)
-        Config.saveDrives(drives)
+        Config.saveDrives(drives())
     }
 
     fun cancel(){
@@ -63,13 +67,15 @@ class DriveViewModel {
     fun save(){
         val drive = selectedDrive.get()
         if(drive == null){
-            drives.add(getDrive())
+            drives.value += getDrive()
         }else{
-            val index = drives.indexOf(drive)
-            drives[index] = getDrive()
+            val drivesList = drives().toMutableList()
+            val index = drivesList.indexOf(drive)
+            drivesList[index] = getDrive()
+            drives.value = drivesList.toList()
+            selectedDrive.set(drivesList[index])
         }
-        Config.saveDrives(drives)
-        selectedDrive.set(drive)
+        Config.saveDrives(drives.value)
     }
 
     fun loadDrive(someDrive: Drive?){

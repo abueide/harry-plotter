@@ -40,7 +40,7 @@ class MainViewModel {
             savedCallback = jobsListViewModel::saveJob,
             selectCallback = jobsListViewModel::clearSelected
         )
-        driveViewModel.drives.addAll(Config.getDrives())
+        driveViewModel.drives.value += (Config.getDrives())
         val jobs = Config.getPlotJobs()
         jobs.forEach{ it.initialized(statsViewModel::update) }
         jobsListViewModel.plotJobs.value += jobs

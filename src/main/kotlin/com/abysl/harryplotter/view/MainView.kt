@@ -23,6 +23,7 @@ import HarryPlotterSettingsWindow
 import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.viewmodel.MainViewModel
 import com.abysl.harryplotter.windows.ChiaSettingsWindow
 import com.abysl.harryplotter.windows.ReleaseWindow
@@ -130,7 +131,7 @@ class MainView {
             }
         }
         Config.savePlotJobs(jobs)
-        Config.saveDrives(viewModel.driveViewModel.drives)
+        Config.saveDrives(viewModel.driveViewModel.drives())
         (mainBox.scene.window as Stage).close()
     }
 
