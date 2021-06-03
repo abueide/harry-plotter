@@ -59,6 +59,20 @@
                   </TextField>
                </children>
             </HBox>
+            <Label layoutX="222.0" layoutY="201.0" text="Maximum Total Plots">
+               <tooltip>
+                  <Tooltip text="The next plot job won't start until at least this number of minutes has passed. This does not override the other 2 settings." />
+               </tooltip>
+            </Label>
+            <HBox alignment="CENTER" layoutX="10.0" layoutY="246.0">
+               <children>
+                  <TextField fx:id="maxTotal" alignment="CENTER">
+                     <tooltip>
+                        <Tooltip text="The next plot job won't start until at least this number of minutes has passed. This does not override the other 2 settings." />
+                     </tooltip>
+                  </TextField>
+               </children>
+            </HBox>
             <Label text="Static Stagger Time (Minutes)">
                <tooltip>
                   <Tooltip text="The next plot job won't start until at least this number of minutes has passed. This does not override the other 2 settings." />

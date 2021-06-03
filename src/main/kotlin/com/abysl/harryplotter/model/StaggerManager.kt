@@ -22,6 +22,7 @@ package com.abysl.harryplotter.model
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.Drive
 import com.abysl.harryplotter.model.records.StaggerSettings
+import com.abysl.harryplotter.util.IOUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -32,6 +33,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 private const val DELAY = 1000L // milliseconds
+
 class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: MutableStateFlow<List<Drive>>) {
     private var managerScope = CoroutineScope(Dispatchers.IO)
     private val globalStagger = MutableStateFlow(StaggerSettings())
@@ -43,6 +45,7 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
     }
 
     fun start() {
+        clearTempDirs()
         updateGlobalStagger()
         cancelManager()
         Prefs.startStaggerManager = true
@@ -53,7 +56,7 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
                     // Maps the drives to the list of jobs that have temp dirs corresponding to them
                     val driveMap = drivesToJobs()
                     driveMap.keys
-                            // Get only the drives that are ready to start a job
+                        // Get only the drives that are ready to start a job
                         .filter { checkDrive(it, driveMap[it]) }
                         .forEach { drive ->
                             // Start one job for each drive that is ready
@@ -87,7 +90,6 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
     }
 
 
-
     private fun managedJobs(): List<PlotJob> {
         return jobs.value.filter { !it.manageSelf }
     }
@@ -114,5 +116,22 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
             }
         }
         return mapOf(*mapValues.toTypedArray())
+    }
+
+    private fun clearTempDirs() {
+        val plotJobs = jobs.value
+        val plotIds = plotJobs.filter {
+            it.state.plotId.isNotBlank()
+        }.map { it.state.plotId }
+        val dirs = plotJobs.map { it.description.tempDir }
+        dirs.forEach { dir ->
+            val files = dir.listFiles() ?: return@forEach
+            files.filter { file ->
+                file.extension == "tmp" &&
+                        plotIds.none {
+                            file.name.contains(it)
+                        }
+            }.forEach(IOUtil::deleteFile)
+        }
     }
 }

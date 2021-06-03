@@ -27,6 +27,7 @@ import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
 import com.abysl.harryplotter.viewmodel.DriveViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs
+import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.application.Platform
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
@@ -41,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
 
@@ -78,7 +80,6 @@ class DriveView: Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         driveTypes.items.addAll(DriveType.values())
         driveTypes.selectionModel.selectFirst()
-
     }
 
     fun initialized(viewModel: DriveViewModel){
@@ -114,7 +115,13 @@ class DriveView: Initializable {
         staticIgnore.selectedProperty().bindBidirectional(viewModel.ignoreStatic)
     }
 
-
+    fun onBrowse(){
+        val startingPath = viewModel.drivePath.get()
+        val startingFile = if(File(startingPath).exists()) File(startingPath) else null
+        SimpleFileChooser(drivePath).chooseDir("Select Drive Dir", false, startingFile)?.let {
+            viewModel.drivePath.set(it.absolutePath)
+        }
+    }
 
     fun onNew(){
         viewModel.new()

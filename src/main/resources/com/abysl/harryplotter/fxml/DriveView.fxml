@@ -27,7 +27,7 @@
                         <VBox minWidth="150.0" spacing="18.0">
                            <children>
                               <Label text="Drive Name" />
-                              <Label text="Drive Path" />
+                              <Label text="* Drive Path" />
                               <Label text="Drive Type" />
                               <Label text="Min Time Between Plots" />
                               <Label text="Max Phase 1 Plots" />
@@ -41,7 +41,12 @@
                         <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                            <children>
                               <TextField fx:id="driveName" />
-                              <TextField fx:id="drivePath" />
+                              <HBox spacing="10.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#onBrowse" text="Browse" />
+                                    <TextField fx:id="drivePath" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
                               <HBox>
                                  <children>
                                     <ComboBox fx:id="driveTypes" maxWidth="200.0" HBox.hgrow="ALWAYS" />
@@ -51,7 +56,7 @@
                                  <children>
                                     <TextField fx:id="staticStagger" maxWidth="30.0" />
                                     <Label text="Minutes" />
-                                    <CheckBox fx:id="staticIgnore" mnemonicParsing="false" text="Ignore min time if no plots are running on the drive" />
+                                    <CheckBox fx:id="staticIgnore" disable="true" mnemonicParsing="false" text="Ignore min time if no plots are running on the drive" visible="false" />
                                  </children>
                               </HBox>
                               <TextField fx:id="maxP1" maxWidth="30.0" />
