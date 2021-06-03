@@ -46,14 +46,14 @@ import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-private const val fakeData = false
+private const val fakeData = true
 private const val numFakePoints = 10000
 
 @OptIn(ExperimentalTime::class)
 class StatsViewModel(initialResults: List<JobResult> = listOf()) {
     private val updateScope = CoroutineScope(Dispatchers.Default)
     private val loadedPlots: MutableStateFlow<Set<String>> = MutableStateFlow(setOf())
-    private fun randRange(): Duration = Duration.days(1)
+    private fun randRange(): Duration = Duration.hours(1)
     private val fakePoints = generateSequence(Clock.System.now()) {
         val randTime = Duration.seconds(Random.nextLong(0, randRange().inWholeSeconds))
         it - randTime

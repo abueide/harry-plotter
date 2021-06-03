@@ -8,6 +8,7 @@ work on ARM devices as well, but you'll have to compile from source (see below) 
 Have a question or suggestion? Join the discord https://discord.gg/Uxh5ZqJVsS
 
 ![demo.png](wiki/demo.png)
+![statsdemo.png](wiki/statsdemo.png)
 
 ## Support
 
