@@ -89,7 +89,6 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
         managerScope = CoroutineScope(Dispatchers.IO)
     }
 
-
     private fun managedJobs(): List<PlotJob> {
         return jobs.value.filter { !it.manageSelf }
     }
@@ -128,9 +127,9 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
             val files = dir.listFiles() ?: return@forEach
             files.filter { file ->
                 file.extension == "tmp" &&
-                        plotIds.none {
-                            file.name.contains(it)
-                        }
+                    plotIds.none {
+                        file.name.contains(it)
+                    }
             }.forEach(IOUtil::deleteFile)
         }
     }

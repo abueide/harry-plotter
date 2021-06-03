@@ -30,7 +30,6 @@ import java.util.TimeZone
 object PlotLogParser {
     private const val START_TIME_KEY = "Starting phase 1/4: Forward Propagation into tmp files... "
 
-
     fun parseLine(jobState: JobState = JobState(), line: String): JobState {
         val result = parseResult(line) ?: jobState.currentResult
         return try {
@@ -72,26 +71,26 @@ object PlotLogParser {
     }
 
     fun parseResult(line: String): JobResult? {
-            when {
-                line.contains("Time for phase") -> {
-                    return when (parsePhaseTime(line)) {
-                        1 -> JobResult(phaseOneTime = parseSeconds(line))
-                        2 -> JobResult(phaseTwoTime = parseSeconds(line))
-                        3 -> JobResult(phaseThreeTime = parseSeconds(line))
-                        4 -> JobResult(phaseFourTime = parseSeconds(line))
-                        else -> null
-                    }
+        when {
+            line.contains("Time for phase") -> {
+                return when (parsePhaseTime(line)) {
+                    1 -> JobResult(phaseOneTime = parseSeconds(line))
+                    2 -> JobResult(phaseTwoTime = parseSeconds(line))
+                    3 -> JobResult(phaseThreeTime = parseSeconds(line))
+                    4 -> JobResult(phaseFourTime = parseSeconds(line))
+                    else -> null
                 }
-                line.contains("Copy time") -> {
-                    return JobResult(copyTime = parseSeconds(line))
-                }
-                line.contains("Total time") -> {
-                    return JobResult(totalTime = parseSeconds(line), timeCompleted = parseEnd(line))
-                }
-                line.contains(START_TIME_KEY) -> return JobResult(timeStarted = parseStart(line))
-                else -> return null
             }
+            line.contains("Copy time") -> {
+                return JobResult(copyTime = parseSeconds(line))
+            }
+            line.contains("Total time") -> {
+                return JobResult(totalTime = parseSeconds(line), timeCompleted = parseEnd(line))
+            }
+            line.contains(START_TIME_KEY) -> return JobResult(timeStarted = parseStart(line))
+            else -> return null
         }
+    }
 
     fun parseSeconds(line: String): Double {
         return line
@@ -118,7 +117,7 @@ object PlotLogParser {
         return try {
             val result = Instant.fromEpochSeconds(sdf.parse(time).toInstant().epochSecond)
             result
-        }catch (exception: NumberFormatException){
+        } catch (exception: NumberFormatException) {
             exception.printStackTrace()
             null
         }
@@ -136,10 +135,9 @@ object PlotLogParser {
         return try {
             val result = Instant.fromEpochSeconds(sdf.parse(time).toInstant().epochSecond)
             result
-        }catch (exception: NumberFormatException){
+        } catch (exception: NumberFormatException) {
             exception.printStackTrace()
             null
         }
     }
-
 }

@@ -28,7 +28,6 @@ import com.abysl.harryplotter.windows.SimpleDialogs
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
-import javafx.collections.FXCollections
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 
@@ -49,26 +48,26 @@ class DriveViewModel {
 
     init {
         selectedDrive.addListener { _, old, new ->
-            if(old != new) loadDrive(new)
+            if (old != new) loadDrive(new)
         }
     }
 
-    fun new(){
+    fun new() {
         val drive = Drive(name = "Unnamed Drive")
         drives.value += drive
         selectedDrive.set(drive)
         Config.saveDrives(drives())
     }
 
-    fun cancel(){
+    fun cancel() {
         selectedDrive.set(null)
     }
 
-    fun save(){
+    fun save() {
         val drive = selectedDrive.get()
-        if(drive == null){
+        if (drive == null) {
             drives.value += getDrive()
-        }else{
+        } else {
             val drivesList = drives().toMutableList()
             val index = drivesList.indexOf(drive)
             drivesList[index] = getDrive()
@@ -78,7 +77,7 @@ class DriveViewModel {
         Config.saveDrives(drives.value)
     }
 
-    fun loadDrive(someDrive: Drive?){
+    fun loadDrive(someDrive: Drive?) {
         val drive = someDrive ?: Drive()
         driveName.set(drive.name)
         drivePath.set(drive.drivePath.path)
@@ -86,7 +85,7 @@ class DriveViewModel {
         loadStagger(drive.staggerSettings)
     }
 
-    fun loadStagger(staggerSettings: StaggerSettings){
+    fun loadStagger(staggerSettings: StaggerSettings) {
         maxP1.set(staggerSettings.maxFirstStagger.toString())
         maxOther.set(staggerSettings.maxOtherStagger.toString())
         maxConcurrent.set(staggerSettings.maxTotal.toString())

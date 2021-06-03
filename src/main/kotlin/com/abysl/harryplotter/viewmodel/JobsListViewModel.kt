@@ -35,7 +35,6 @@ class JobsListViewModel {
     lateinit var startStaggerManager: () -> Unit
     lateinit var stopStaggerManager: () -> Unit
 
-
     fun onStartAll() {
         startStaggerManager()
     }

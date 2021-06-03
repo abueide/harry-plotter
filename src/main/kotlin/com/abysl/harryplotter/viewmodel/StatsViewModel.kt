@@ -27,7 +27,6 @@ import com.abysl.harryplotter.model.TimeEnum
 import com.abysl.harryplotter.model.TimeEnum.Companion.SECONDS_IN_DAY
 import com.abysl.harryplotter.util.formatted
 import com.abysl.harryplotter.util.pmap
-import javafx.application.Platform
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -71,19 +70,19 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
     val recentAveragePlots = SimpleDoubleProperty()
     val recentAveragePlotTime = SimpleStringProperty()
 
-
-
     init {
         selectedTime.addListener { observable, old, new ->
-                update()
-        }
-        shownResults.addListener(ListChangeListener {
-                update()
-        })
             update()
+        }
+        shownResults.addListener(
+            ListChangeListener {
+                update()
+            }
+        )
+        update()
     }
 
-    fun update()  {
+    fun update() {
         updateScope.launch {
             loadLogs()
             withContext(Dispatchers.JavaFx) {
@@ -100,12 +99,12 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
 
     suspend fun loadLogs() = coroutineScope {
         val results = Config.plotLogsFinished.listFiles()?.asList()
-        ?.filter { it.nameWithoutExtension.replace("log-", "") !in loadedPlots.value }
-        ?.pmap {
-            val job = JobState.parseFile(it)
-            loadedPlots.value += job.plotId
-            return@pmap job.currentResult
-        } ?: listOf()
+            ?.filter { it.nameWithoutExtension.replace("log-", "") !in loadedPlots.value }
+            ?.pmap {
+                val job = JobState.parseFile(it)
+                loadedPlots.value += job.plotId
+                return@pmap job.currentResult
+            } ?: listOf()
 
         withContext(Dispatchers.JavaFx) {
             shownResults.addAll(results)

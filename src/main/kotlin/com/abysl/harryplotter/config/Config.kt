@@ -78,11 +78,11 @@ object Config {
     }
 
     fun getDrives(): List<Drive> {
-        if(!drivesFile.exists()) return emptyList()
+        if (!drivesFile.exists()) return emptyList()
         var result: List<Drive>?
         try {
             result = Json.decodeFromString(drivesFile.readText())
-        }catch(e: Exception){
+        } catch (e: Exception) {
             result = null
             SimpleDialogs.showAlert("Failed to decode drives", "Backing them up to ~/.harryplotter/drives.bak and resetting drives.json")
             backupFile(drivesFile)
@@ -91,7 +91,7 @@ object Config {
         return result ?: emptyList()
     }
 
-    fun backupFile(file: File){
+    fun backupFile(file: File) {
         val backupFile = File(file.parent + "/${file.nameWithoutExtension}.bak")
         backupFile.delete()
         file.renameTo(backupFile)

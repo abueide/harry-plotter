@@ -26,16 +26,15 @@ import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-
 @Serializable
 @JvmRecord
-data class StaggerSettings (
+data class StaggerSettings(
     val maxFirstStagger: Int = 0,
     val maxOtherStagger: Int = 0,
     val maxTotal: Int = 0,
     val staticStagger: Int = 0,
     val ignoreStatic: Boolean = false
-){
+) {
     @OptIn(ExperimentalTime::class)
     fun check(lastStart: Instant?, jobs: List<PlotJob>): Boolean {
         val runningJobs by lazy { jobs.filter(PlotJob::isRunning) }
@@ -48,15 +47,15 @@ data class StaggerSettings (
         }
 
         val firstPhaseCheck by lazy {
-            maxFirstStagger == 0 || runningJobs.filter {  it.state.phase == 1 }.size < maxFirstStagger
+            maxFirstStagger == 0 || runningJobs.filter { it.state.phase == 1 }.size < maxFirstStagger
         }
         val otherPhaseCheck by lazy {
             maxOtherStagger == 0 || runningJobs.filter { it.state.phase != 1 }.size < maxOtherStagger
         }
-        val totalCheck by lazy { maxTotal == 0 || runningJobs.size < maxTotal}
-        return totalCheck
-                && staticCheck
-                && firstPhaseCheck
-                && otherPhaseCheck
+        val totalCheck by lazy { maxTotal == 0 || runningJobs.size < maxTotal }
+        return totalCheck &&
+            staticCheck &&
+            firstPhaseCheck &&
+            otherPhaseCheck
     }
 }

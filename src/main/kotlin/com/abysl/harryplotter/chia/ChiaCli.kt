@@ -40,11 +40,11 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
     val chiaHome = config.parentFile.parentFile
 
     init {
-        if(!exe.exists()){
+        if (!exe.exists()) {
             Prefs.exePath = "NOT FOUND"
             exitProcess(1)
         }
-        if(!config.exists()){
+        if (!config.exists()) {
             Prefs.configPath = "NOT FOUND"
             exitProcess(1)
         }

@@ -21,7 +21,6 @@ package com.abysl.harryplotter.view
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.model.DriveType
-import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.Drive
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
@@ -29,7 +28,6 @@ import com.abysl.harryplotter.viewmodel.DriveViewModel
 import com.abysl.harryplotter.windows.SimpleDialogs
 import com.abysl.harryplotter.windows.SimpleFileChooser
 import javafx.application.Platform
-import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.CheckBox
@@ -46,7 +44,7 @@ import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
 
-class DriveView: Initializable {
+class DriveView : Initializable {
 
     @FXML
     lateinit var driveList: ListView<Drive>
@@ -82,7 +80,7 @@ class DriveView: Initializable {
         driveTypes.selectionModel.selectFirst()
     }
 
-    fun initialized(viewModel: DriveViewModel){
+    fun initialized(viewModel: DriveViewModel) {
         this.viewModel = viewModel
         staticStagger.limitToInt()
         maxP1.limitToInt()
@@ -105,33 +103,33 @@ class DriveView: Initializable {
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
         driveList.selectionModel.selectedItemProperty().addListener { _, old, new ->
-            if(old != new) viewModel.selectedDrive.set(new)
+            if (old != new) viewModel.selectedDrive.set(new)
         }
         viewModel.selectedDrive.addListener { _, old, new ->
-            if(old != new) driveList.selectionModel.select(new)
+            if (old != new) driveList.selectionModel.select(new)
         }
         driveList.contextMenu = drivesMenu
 
         staticIgnore.selectedProperty().bindBidirectional(viewModel.ignoreStatic)
     }
 
-    fun onBrowse(){
+    fun onBrowse() {
         val startingPath = viewModel.drivePath.get()
-        val startingFile = if(File(startingPath).exists()) File(startingPath) else null
+        val startingFile = if (File(startingPath).exists()) File(startingPath) else null
         SimpleFileChooser(drivePath).chooseDir("Select Drive Dir", false, startingFile)?.let {
             viewModel.drivePath.set(it.absolutePath)
         }
     }
 
-    fun onNew(){
+    fun onNew() {
         viewModel.new()
     }
 
-    fun onCancel(){
+    fun onCancel() {
         viewModel.cancel()
     }
 
-    fun onSave(){
+    fun onSave() {
         viewModel.save()
     }
 

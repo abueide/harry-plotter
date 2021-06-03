@@ -65,7 +65,7 @@ enum class TimeEnum(val readableName: String, val titleName: String, val unit: D
 
     abstract fun getLabel(time: Instant): String
 
-    override fun toString(): String{
+    override fun toString(): String {
         return readableName
     }
 

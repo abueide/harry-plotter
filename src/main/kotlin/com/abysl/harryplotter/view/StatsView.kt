@@ -33,7 +33,6 @@ import javafx.scene.control.Label
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.URL
 import java.util.ResourceBundle
@@ -77,10 +76,12 @@ class StatsView : Initializable {
     fun initialized(viewModel: StatsViewModel) {
         this.viewModel = viewModel
         timeCombo.valueProperty().bindBidirectional(viewModel.selectedTime)
-        viewModel.selectedTime.addListener { _, old, new -> updateTime()}
-        viewModel.shownResults.addListener(ListChangeListener{
-            update()
-        })
+        viewModel.selectedTime.addListener { _, old, new -> updateTime() }
+        viewModel.shownResults.addListener(
+            ListChangeListener {
+                update()
+            }
+        )
 
         totalPlots.textProperty().bind(viewModel.totalPlots.asString())
         averagePlotsDay.textProperty().bind(viewModel.averagePlotsDay.asString())
@@ -92,7 +93,7 @@ class StatsView : Initializable {
         updateTime()
     }
 
-    fun update(){
+    fun update() {
         CoroutineScope(Dispatchers.IO).launch {
             updateChart()
         }
@@ -108,18 +109,17 @@ class StatsView : Initializable {
         }
     }
 
-    fun onLoadLogs(){
+    fun onLoadLogs() {
         CoroutineScope(Dispatchers.Default).launch {
             viewModel.loadLogs()
         }
     }
 
-    fun updateTime(){
+    fun updateTime() {
         val time = viewModel.selectedTime.get()
         plotsPerXChart.title = "Plots Per ${time.titleName}"
         recentLabel.text = "Past ${time.titleName}"
         Prefs.selectedTime = time.name
         update()
     }
-
 }

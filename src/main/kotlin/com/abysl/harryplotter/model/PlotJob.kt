@@ -22,7 +22,6 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.chia.ChiaCli
-import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.JobDescription
 import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.IOUtil
@@ -39,7 +38,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
-import java.io.File
 import java.util.Locale
 
 @Serializable
@@ -130,7 +128,7 @@ class PlotJob(
 
     private fun whenDone() {
         val proc = process() ?: return
-        val state = if(checkCompleted()) proc.state.value.setComplete() else proc.state.value
+        val state = if (checkCompleted()) proc.state.value.setComplete() else proc.state.value
         proc.state.value = state.copy()
         if (state.completed) {
             stats = stats.plotDone(state.currentResult)

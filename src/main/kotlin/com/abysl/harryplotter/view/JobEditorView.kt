@@ -121,7 +121,7 @@ class JobEditorView {
 
     fun onTempBrowse() {
         val startingPath = viewModel.tempDir.get()
-        val startingFile = if(File(startingPath).exists()) File(startingPath) else null
+        val startingFile = if (File(startingPath).exists()) File(startingPath) else null
         fileChooser.chooseDir("Select Temp Dir", false, startingFile)?.let {
             viewModel.tempDir.value = it.absolutePath
         }
@@ -129,7 +129,7 @@ class JobEditorView {
 
     fun onDestBrowse() {
         val startingPath = viewModel.tempDir.get()
-        val startingFile = if(File(startingPath).exists()) File(startingPath) else null
+        val startingFile = if (File(startingPath).exists()) File(startingPath) else null
         fileChooser.chooseDir("Select Destination Dir", false, startingFile)?.let {
             viewModel.destDir.value = it.absolutePath
         }

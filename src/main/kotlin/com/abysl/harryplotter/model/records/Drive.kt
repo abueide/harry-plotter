@@ -32,7 +32,7 @@ class Drive(
     val drivePath: File = File(""),
     val type: DriveType = DriveType.TEMP,
     val staggerSettings: StaggerSettings = StaggerSettings()
-){
+) {
     override fun toString(): String {
         return name
     }

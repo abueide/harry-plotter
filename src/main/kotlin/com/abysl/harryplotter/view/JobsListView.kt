@@ -57,7 +57,7 @@ class JobsListView {
         }
         jobsView.contextMenu = jobsMenu
 
-        if(Prefs.startStaggerManager){
+        if (Prefs.startStaggerManager) {
             onStartAll()
         }
     }

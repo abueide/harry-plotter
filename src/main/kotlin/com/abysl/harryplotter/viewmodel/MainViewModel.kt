@@ -45,7 +45,7 @@ class MainViewModel {
         )
         driveViewModel.drives.value += (Config.getDrives())
         val jobs = Config.getPlotJobs()
-        jobs.forEach{ it.initialized(statsViewModel::update) }
+        jobs.forEach { it.initialized(statsViewModel::update) }
         jobsListViewModel.plotJobs.value += jobs
 
         jobEditorViewModel.chiaKeys.value += ChiaCli().readKeys()
@@ -65,6 +65,6 @@ class MainViewModel {
         jobsListViewModel.startStaggerManager = staggerManager::start
         jobsListViewModel.stopStaggerManager = staggerManager::stop
 
-        if(Prefs.startStaggerManager) staggerManager.start()
+        if (Prefs.startStaggerManager) staggerManager.start()
     }
 }

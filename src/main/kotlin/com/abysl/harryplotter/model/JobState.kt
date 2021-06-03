@@ -20,7 +20,6 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.logparser.PlotLogParser
-import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -43,7 +42,7 @@ data class JobState(
         }
     }
 
-    fun setComplete(): JobState{
+    fun setComplete(): JobState {
         return this.copy(completed = true, currentResult = currentResult.copy(timeCompleted = Clock.System.now()))
     }
 
@@ -63,7 +62,7 @@ data class JobState(
         private const val RUNNING = "Running"
         private const val STOPPED = "Stopped"
 
-        fun parseFile(file: File): JobState  {
+        fun parseFile(file: File): JobState {
             var result = JobState()
             file.forEachLine { result = result.parse(it) }
             return result

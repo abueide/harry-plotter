@@ -50,5 +50,4 @@ data class JobStats(
     fun plotDone(result: JobResult): JobStats {
         return copy(plotsDone = plotsDone + 1, results = results + result)
     }
-
 }
