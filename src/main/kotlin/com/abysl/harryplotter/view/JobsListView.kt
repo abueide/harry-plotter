@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 private const val GRACEFUL_STOP = "Graceful Stop"
 private const val FORCE_STOP = "Force Stop"
 private const val PERCENTAGE_REFRESH_DELAY = 100L
+
 class JobsListView {
 
     @FXML

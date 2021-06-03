@@ -84,7 +84,10 @@ object Config {
             result = Json.decodeFromString(drivesFile.readText())
         } catch (e: Exception) {
             result = null
-            SimpleDialogs.showAlert("Failed to decode drives", "Backing them up to ~/.harryplotter/drives.bak and resetting drives.json")
+            SimpleDialogs.showAlert(
+                "Failed to decode drives",
+                "Backing them up to ~/.harryplotter/drives.bak and resetting drives.json"
+            )
             backupFile(drivesFile)
             saveDrives(emptyList())
         }

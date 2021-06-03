@@ -20,7 +20,6 @@
 package com.abysl.harryplotter.viewmodel
 
 import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class JobStatusViewModel {

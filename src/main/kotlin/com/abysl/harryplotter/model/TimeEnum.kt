@@ -29,6 +29,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 private const val WEEKS_IN_QUARTER = 12
+
 @OptIn(ExperimentalTime::class)
 enum class TimeEnum(val readableName: String, val titleName: String, val unit: Duration, val zoom: Duration) {
     // Graphs a single day at a time
@@ -37,6 +38,7 @@ enum class TimeEnum(val readableName: String, val titleName: String, val unit: D
             return time.toLocalDateTime(TimeZone.currentSystemDefault()).hour.toString() + ":00"
         }
     },
+
     // Use weekly view for half days
     DAILY("Daily", "Day", Duration.days(1), Duration.days(7)) {
         override fun getLabel(time: Instant): String {
@@ -46,6 +48,7 @@ enum class TimeEnum(val readableName: String, val titleName: String, val unit: D
             )
         }
     },
+
     // Use a quarterly view
     WEEKLY("Weekly", "Week", Duration.days(7), Duration.days(90)) {
         override fun getLabel(time: Instant): String {

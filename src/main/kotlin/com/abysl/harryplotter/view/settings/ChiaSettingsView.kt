@@ -31,6 +31,7 @@ import java.util.ResourceBundle
 class ChiaSettingsView : Initializable {
     @FXML
     private lateinit var exePath: TextField
+
     @FXML
     private lateinit var configPath: TextField
 

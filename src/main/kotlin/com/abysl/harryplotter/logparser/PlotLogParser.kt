@@ -22,7 +22,6 @@ package com.abysl.harryplotter.logparser
 import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.JobState
 import kotlinx.datetime.Instant
-import java.lang.NumberFormatException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone

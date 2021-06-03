@@ -18,6 +18,7 @@
  */
 
 @file:UseSerializers(FileSerializer::class)
+
 package com.abysl.harryplotter.model.records
 
 import com.abysl.harryplotter.model.DriveType

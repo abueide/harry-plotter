@@ -34,6 +34,7 @@ class FlowToObservableBinding<T>(
             }
         }
     }
+
     init {
         start()
     }

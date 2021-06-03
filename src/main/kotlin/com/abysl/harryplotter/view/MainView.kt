@@ -47,6 +47,7 @@ import org.kordamp.ikonli.javafx.FontIcon
 
 private const val GRACEFUL_STOP = "Graceful Stop"
 private const val FORCE_STOP = "Force Stop"
+
 class MainView {
     // UI Components ---------------------------------------------------------------------------------------------------
     @FXML

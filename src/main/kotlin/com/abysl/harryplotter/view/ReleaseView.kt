@@ -30,6 +30,7 @@ class ReleaseView {
 
     @FXML
     lateinit var releaseVersion: Label
+
     @FXML
     lateinit var changeLog: TextArea
 
