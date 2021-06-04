@@ -95,7 +95,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         else
             return null
 
-        if (desc.ram > JobDescription.MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
+        if (desc.ram >= JobDescription.MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
         if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
         args.addAll(listOf("-t", desc.tempDir.toString(), "-d", desc.destDir.toString()))
         desc.additionalParams.forEach { if (it.isNotBlank()) args.add(it) }

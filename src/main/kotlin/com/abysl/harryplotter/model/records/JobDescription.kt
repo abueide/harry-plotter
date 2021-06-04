@@ -43,6 +43,6 @@ data class JobDescription(
     }
 
     companion object {
-        const val MINIMUM_RAM = 2500 // MiB
+        const val MINIMUM_RAM = 900 // MiB
     }
 }
