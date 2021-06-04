@@ -23,12 +23,8 @@ import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.records.Drive
 import com.abysl.harryplotter.model.records.StaggerSettings
 import com.abysl.harryplotter.util.IOUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -49,24 +45,20 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
         updateGlobalStagger()
         cancelManager()
         Prefs.startStaggerManager = true
-        managedJobs().forEach { it.tempDone = 0 }
+        jobs.value.filter { !it.isRunning() }.forEach {
+            it.tempDone = 0
+            it.manageSelf = false
+        }
         managerScope.launch {
             while (true) {
                 if (checkGlobal()) {
-                    // Maps the drives to the list of jobs that have temp dirs corresponding to them
-                    val driveMap = drivesToJobs()
-                    driveMap.keys
-                        // Get only the drives that are ready to start a job
-                        .filter { checkDrive(it, driveMap[it]) }
-                        .forEach { drive ->
-                            // Start one job for each drive that is ready
-                            val job = driveMap.getOrDefault(drive, emptyList()).firstOrNull { it.isReady() }
-                            job?.let {
-                                it.start()
-                                // Record what time that drive last started a job to keep track for the static stagger
-                                driveStartMap.value += drive to Clock.System.now()
-                            }
-                        }
+                    // If no drives are added, just start plots normally
+                    if (drives.value.isEmpty()) {
+                        managedJobs().firstOrNull { it.isReady() }?.start()
+                        lastStart.value = Clock.System.now()
+                    } else {
+                        startJobPerReadyDrive()
+                    }
                 }
                 delay(DELAY)
             }
@@ -75,6 +67,24 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
 
     fun stop() {
         cancelManager()
+    }
+
+    fun startJobPerReadyDrive() {
+        // Maps the drives to the list of jobs that have temp dirs corresponding to them
+        val driveMap = drivesToJobs()
+        driveMap.keys
+            // Get only the drives that are ready to start a job
+            .filter { checkDrive(it, driveMap[it]) }
+            .forEach { drive ->
+                // Start one job for each drive that is ready
+                val job = driveMap.getOrDefault(drive, emptyList())
+                    .firstOrNull { it.isReady() }
+                job?.let {
+                    it.start()
+                    // Record what time that drive last started a job to keep track for the static stagger
+                    driveStartMap.value += drive to Clock.System.now()
+                }
+            }
     }
 
     fun updateGlobalStagger() {

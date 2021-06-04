@@ -50,8 +50,8 @@ class StaggerSettingsView : Initializable {
         maxTotal.limitToInt()
         firstPhaseStagger.text = Prefs.firstStagger.toString()
         otherPhaseStagger.text = Prefs.otherStagger.toString()
-
         staticStagger.text = Prefs.staticStagger.toString()
+        maxTotal.text = Prefs.maxTotal.toString()
     }
 
     fun initialized(updatedCallback: () -> Unit) {
