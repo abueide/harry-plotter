@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import java.io.File
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -52,7 +53,7 @@ private const val numFakePoints = 10000
 @OptIn(ExperimentalTime::class)
 class StatsViewModel(initialResults: List<JobResult> = listOf()) {
     private val updateScope = CoroutineScope(Dispatchers.Default)
-    private val loadedPlots: MutableStateFlow<Set<String>> = MutableStateFlow(setOf())
+    private val processedFiles: MutableStateFlow<Set<String>> = MutableStateFlow(setOf())
     private fun randRange(): Duration = Duration.hours(1)
     private val fakePoints = generateSequence(Clock.System.now()) {
         val randTime = Duration.seconds(Random.nextLong(0, randRange().inWholeSeconds))
@@ -99,11 +100,13 @@ class StatsViewModel(initialResults: List<JobResult> = listOf()) {
 
     suspend fun loadLogs() = coroutineScope {
         val results = Config.plotLogsFinished.listFiles()?.asList()
-            ?.filter { it.nameWithoutExtension.replace("log-", "") !in loadedPlots.value }
+            ?.filter { it.path !in processedFiles.value }
             ?.pmap {
                 val job = JobState.parseFile(it)
-                loadedPlots.value += job.plotId
+                processedFiles.value += it.path
                 return@pmap job.currentResult
+            }?.filter {
+                it.timeStarted != null && it.timeCompleted != null && it.totalTime != 0.0
             } ?: listOf()
 
         withContext(Dispatchers.JavaFx) {
