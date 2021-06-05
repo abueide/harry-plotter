@@ -30,7 +30,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
 
-val jvmOptions = listOf<String>()
+val jvmOptions = listOf("-Dprism.order=sw")
 val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
@@ -92,7 +92,6 @@ runtime {
     )
     launcher {
         noConsole = !console
-        // jvmArgs.addAll(jvmOptions)
     }
 
     jpackage {
