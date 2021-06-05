@@ -1,4 +1,4 @@
-Hello, thanks for trying out the new version of Harry Plotter! I spent 30 hours in the past 3 days working on this release, so if you like any of the features in it, please consider sending a tip! In addition you can post your transaction ID on a github issue (feature, bug or setup question) and I'll work through them by order of tip amount. You can also feel free to shoot me an email. However: it is still a tip and I cannot guarantee I will be able to solve your problem in a reasonable amount of time
+Hello, thanks for trying out the new version of Harry Plotter! I spend a lot of time updating & maintaining harry plotter, so if you like any of the features in it, please consider sending a tip! In addition you can post your transaction ID on a github issue (feature, bug or setup question) and I'll work through them by order of tip amount. You can also feel free to shoot me an email. However: it is still a tip and I cannot guarantee I will be able to solve your problem in a reasonable amount of time
 
 Chia Address: xch1ktqlc03wpetne9e0e6frz497xhhx4yx08gzn63tvjwlrlg2cg2ksf7ls24
 
@@ -14,3 +14,4 @@ is the only OFFICIAL source of updates. As Harry Plotter is open source under th
 
 1.1.14
 * Fix a stats bug that caused it to infinitely add data points eating up a lot of cpu/ram.
+* Fix an issue where using the "start" button stopped after the 2nd plot.

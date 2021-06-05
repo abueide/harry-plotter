@@ -28,17 +28,12 @@ import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
-import java.util.Locale
+import java.util.*
 
 @Serializable
 class PlotJob(
@@ -65,7 +60,8 @@ class PlotJob(
             statsFlow.value = value
         }
 
-    val state get() = process()?.state?.value ?: JobState()
+    val state
+        get() = process()?.state?.value ?: JobState()
 
     fun initialized(doneCallback: (() -> Unit)? = null) {
         this.doneCallback = doneCallback
@@ -129,13 +125,13 @@ class PlotJob(
     private fun whenDone() {
         val proc = process() ?: return
         val state = if (checkCompleted()) proc.state.value.setComplete() else proc.state.value
-        proc.state.value = state.copy()
+        proc.state.value = state
         if (state.completed) {
             stats = stats.plotDone(state.currentResult)
             tempDone++
             if (manageSelf && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
                 stop()
-                start(manageSelf = manageSelf)
+                start(manageSelf = true)
             } else {
                 stop()
             }
