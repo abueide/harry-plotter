@@ -31,29 +31,13 @@ Download the installer for your platform here: https://github.com/abueide/harry-
 
 ## Usage
 
-When you first open Harry Plotter, you may be prompted to locate your Chia executable and/or your chia config file. This
-will happen if you compiled from source (usually on linux) or if you installed chia to a nonstandard location.
+Check out the wiki 
 
-If this happens, consult the Chia CLI wiki to find directory paths for your specific platform.
+[Getting Started](https://github.com/abueide/harry-plotter/wiki/Getting-Started)
 
-https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference
+[Commonly Asked Questions](https://github.com/abueide/harry-plotter/wiki/Commonly-Asked-Questions)
 
-After Harry Plotter starts up, it will automatically import your public keys (it does not read or touch your private
-keys, nor does it need access to them in order to do its job). If you'd like to use Harry Plotter on a machine without
-any imported keys, then simply click on the Add Key button and paste in your 2 public keys (only the farmer & pool
-public key is needed at this time).
-
-Once you've imported your keys then simply fill out the info in the top right panel & click save to create your plot
-job. Create multiple plot jobs for each plot you want to make in parallel. If you want to stagger the plots, then create
-them in the order you want them to run, set the stagger timer at the bottom left, and then click start all.
-
-Upon closing the application it will prompt you if you want to let your plot jobs finish or if you want to cancel them.
-
-When stopping a plot job (or closing out of the application and not letting them finish), then Harry Plotter will
-attempt to clean up all the generated tmp files automatically.
-
-You can also toggle dark/light mode by clicking the opposite colored button at the top right (an icon will be added
-eventually).
+[Optimization Guide](https://github.com/abueide/harry-plotter/wiki/Optimization-Guide)
 
 ## Compiling
 
@@ -97,7 +81,7 @@ harry-plotter/build/jpackage/
 
 [ ] Logs & Harvester monitoring
 
-[ ] Cool dashboard with stats
+[x] Cool dashboard with stats
 
 [ ] Alerts/Notifications when harvester or plotter is having problems
 
