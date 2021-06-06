@@ -19,8 +19,8 @@
 
 package com.abysl.harryplotter.config
 
+import com.abysl.harryplotter.HarryPlotter
 import com.abysl.harryplotter.chia.ChiaLocator
-import com.abysl.harryplotter.util.getResource
 import javafx.scene.Node
 import java.util.prefs.Preferences
 
@@ -39,7 +39,6 @@ object Prefs {
     private const val LAST_RELEASE_SHOWN = "LAST_RELEASE_SHOWN"
     private const val SELECTED_TIME = "SELECTED_TIME"
 
-    private val version = "version.txt".getResource().readText()
     private val prefNode = Preferences.userRoot().node("com.abysl.harryplotter")
 
     fun resetPrefs(node: Node) {
@@ -62,9 +61,9 @@ object Prefs {
         }
 
     var versionPrompt: Boolean
-        get() = prefNode.getBoolean(VERSION_PROMPT + version, true)
+        get() = prefNode.getBoolean(VERSION_PROMPT + Config.version, true)
         set(value) {
-            prefNode.putBoolean(VERSION_PROMPT + version, value)
+            prefNode.putBoolean(VERSION_PROMPT + Config.version, value)
         }
 
     var darkMode: Boolean
@@ -85,7 +84,7 @@ object Prefs {
     var lastReleaseShown: String
         get() = prefNode.get(
             LAST_RELEASE_SHOWN,
-            "version.txt".getResource().readText()
+            Config.version
         )
         set(value) {
             prefNode.put(LAST_RELEASE_SHOWN, value)

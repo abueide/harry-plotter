@@ -20,9 +20,9 @@
 package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
-import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
-import com.abysl.harryplotter.windows.SimpleFileChooser
+import com.abysl.harryplotter.ui.all.SimpleDialogs.showAlert
+import com.abysl.harryplotter.ui.all.SimpleDialogs.showConfirmation
+import com.abysl.harryplotter.ui.all.SimpleFileChooser
 import javafx.scene.Node
 import javafx.stage.FileChooser
 import java.io.File

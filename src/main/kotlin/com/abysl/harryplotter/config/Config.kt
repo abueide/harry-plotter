@@ -19,10 +19,12 @@
 
 package com.abysl.harryplotter.config
 
+import com.abysl.harryplotter.HarryPlotter
 import com.abysl.harryplotter.model.PlotJob
 import com.abysl.harryplotter.model.records.ChiaKey
 import com.abysl.harryplotter.model.records.Drive
-import com.abysl.harryplotter.windows.SimpleDialogs
+import com.abysl.harryplotter.ui.all.SimpleDialogs
+import com.abysl.harryplotter.util.getResource
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,6 +35,7 @@ object Config {
     val plotLogsRunning = plotterHome.resolve("plotlogs/running")
     val plotLogsFinished = plotterHome.resolve("plotlogs/finished")
     val plotLogsFailed = plotterHome.resolve("plotlogs/failed")
+    val version by lazy { "version.txt".getResource()?.readText() ?: throw Exception("Version file not found") }
 
     private val jobsFile = File(plotterHome.path + "/jobs.json")
     private val drivesFile = File(plotterHome.path + "/drives.json")
@@ -101,7 +104,7 @@ object Config {
     }
 
     fun resetConfig() {
-        jobsFile.delete()
+        plotterHome.deleteRecursively()
     }
 
 //    fun saveTime(desc: JobDescription, result: JobResult) {
