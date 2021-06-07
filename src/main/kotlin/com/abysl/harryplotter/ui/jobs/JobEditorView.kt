@@ -41,10 +41,10 @@ class JobEditorView {
     private lateinit var jobName: TextField
 
     @FXML
-    private lateinit var tempDir: TextField
+    private var tempDir: TextField = TextField()
 
     @FXML
-    private lateinit var destDir: TextField
+    private var destDir: TextField = TextField()
 
     @FXML
     private lateinit var threads: TextField
