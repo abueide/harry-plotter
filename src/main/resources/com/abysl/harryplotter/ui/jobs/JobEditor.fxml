@@ -46,12 +46,12 @@
     <VBox prefHeight="260.0" prefWidth="108.0" spacing="10.0" HBox.hgrow="ALWAYS">
       <children>
         <TextField fx:id="jobName" promptText="My Plot 1" />
-        <HBox>
-          <children>
-            <ComboBox fx:id="tempDrive" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-          </children>
+        <HBox spacing="10.0">
+               <children>
+                  <Button mnemonicParsing="false" text="Browse" />
+                  <TextField HBox.hgrow="ALWAYS" />
+               </children>
         </HBox>
-        <ComboBox maxWidth="1.7976931348623157E308" />
             <CheckBox minHeight="25.0" mnemonicParsing="false" text="Use Cache Drive(s)" />
       <ComboBox fx:id="keysCombo" maxWidth="1.7976931348623157E308" />
         <HBox alignment="CENTER" spacing="10.0">
