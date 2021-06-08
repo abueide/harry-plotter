@@ -17,32 +17,13 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.model.records
+package com.abysl.harryplotter.ui.drives
 
-import com.abysl.harryplotter.util.serializers.FileSerializer
-import kotlinx.serialization.Serializable
-import java.io.File
+import com.abysl.harryplotter.model.drives.CacheDrive
 
-@JvmRecord
-@Serializable
-data class JobDescription(
-    val name: String,
-    @Serializable(with = FileSerializer::class)
-    val tempDir: File,
-    @Serializable(with = FileSerializer::class)
-    val destDir: File,
-    val threads: Int,
-    val ram: Int,
-    val key: ChiaKey,
-    val plotsToFinish: Int,
-    val kSize: Int = 32,
-    val additionalParams: List<String> = listOf()
-) {
-    override fun toString(): String {
-        return name
-    }
+class CacheDriveView {
 
-    companion object {
-        const val MINIMUM_RAM = 900 // MiB
+    fun loadDrive(drive: CacheDrive){
+        // Nothing to load yet
     }
 }

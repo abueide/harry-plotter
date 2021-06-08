@@ -17,7 +17,7 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.model
+package com.abysl.harryplotter.model.jobs
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable

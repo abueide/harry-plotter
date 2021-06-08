@@ -17,9 +17,9 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.model.records
+package com.abysl.harryplotter.model
 
-import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.model.jobs.PlotJob
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -33,7 +33,7 @@ data class StaggerSettings(
     val maxOtherStagger: Int = 0,
     val maxTotal: Int = 0,
     val staticStagger: Int = 0,
-    val ignoreStatic: Boolean = false
+    val staticIgnore: Boolean = false
 ) {
     @OptIn(ExperimentalTime::class)
     fun check(lastStart: Instant?, jobs: List<PlotJob>): Boolean {

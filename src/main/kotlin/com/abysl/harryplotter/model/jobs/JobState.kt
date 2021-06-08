@@ -17,7 +17,7 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.model
+package com.abysl.harryplotter.model.jobs
 
 import com.abysl.harryplotter.logparser.PlotLogParser
 import kotlinx.datetime.Clock

@@ -17,21 +17,33 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.ui.jobs
+package com.abysl.harryplotter.model.jobs
 
-import com.abysl.harryplotter.model.jobs.PlotJob
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.abysl.harryplotter.util.serializers.FileSerializer
+import kotlinx.serialization.Serializable
+import java.io.File
 
-class JobStatusViewModel {
-    val shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
-
-    fun loadJob(job: PlotJob) {
-        clearJob()
-        shownJob.value = job
+@JvmRecord
+@Serializable
+data class JobDescription(
+    val name: String,
+    @Serializable(with = FileSerializer::class)
+    val tempDir: File,
+    @Serializable(with = FileSerializer::class)
+    val destDir: File,
+    val useCacheDrive: Boolean = false,
+    val threads: Int,
+    val ram: Int,
+    val key: ChiaKey,
+    val plotsToFinish: Int,
+    val kSize: Int = 32,
+    val additionalParams: List<String> = listOf()
+) {
+    override fun toString(): String {
+        return name
     }
 
-    fun clearJob() {
-//        shownJob()?.process?.cache = false
-        shownJob.value = null
+    companion object {
+        const val MINIMUM_RAM = 900 // MiB
     }
 }

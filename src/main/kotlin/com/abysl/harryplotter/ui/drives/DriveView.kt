@@ -20,21 +20,28 @@
 package com.abysl.harryplotter.ui.drives
 
 import com.abysl.harryplotter.config.Config
-import com.abysl.harryplotter.model.DriveType
-import com.abysl.harryplotter.model.records.Drive
-import com.abysl.harryplotter.util.invoke
-import com.abysl.harryplotter.util.limitToInt
+import com.abysl.harryplotter.model.drives.CacheDrive
+import com.abysl.harryplotter.model.drives.DestDrive
+import com.abysl.harryplotter.model.drives.Drive
+import com.abysl.harryplotter.model.drives.DriveType
+import com.abysl.harryplotter.model.drives.TempDrive
 import com.abysl.harryplotter.ui.all.SimpleDialogs
 import com.abysl.harryplotter.ui.all.SimpleFileChooser
+import com.abysl.harryplotter.util.getResource
+import com.abysl.harryplotter.util.invoke
+import com.abysl.harryplotter.util.limitToInt
 import javafx.application.Platform
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
+import javafx.scene.Node
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
 import javafx.scene.control.TextField
+import javafx.scene.layout.VBox
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -49,6 +56,9 @@ class DriveView : Initializable {
     lateinit var driveList: ListView<Drive>
 
     @FXML
+    lateinit var driveBox: VBox
+
+    @FXML
     lateinit var driveName: TextField
 
     @FXML
@@ -57,22 +67,22 @@ class DriveView : Initializable {
     @FXML
     lateinit var driveTypes: ComboBox<DriveType>
 
-    @FXML
-    lateinit var staticStagger: TextField
 
-    @FXML
-    lateinit var staticIgnore: CheckBox
-
-    @FXML
-    lateinit var maxP1: TextField
-
-    @FXML
-    lateinit var maxOther: TextField
-
-    @FXML
-    lateinit var maxConcurrent: TextField
 
     lateinit var viewModel: DriveViewModel
+
+    val tempDriveLoader = FXMLLoader("ui/drives/TempDriveView.fxml".getResource()).also { it.load() }
+    val tempDriveView = tempDriveLoader.getRoot<Node>()
+    val tempDriveController = tempDriveLoader.getController<TempDriveView>()
+
+    val destDriveLoader = FXMLLoader("ui/drives/DestDriveView.fxml".getResource()).also { it.load() }
+    val destDriveView = destDriveLoader.getRoot<Node>()
+    val destDriveController = destDriveLoader.getController<DestDriveView>()
+
+
+    val cacheDriveLoader = FXMLLoader("ui/drives/CacheDriveView.fxml".getResource()).also { it.load() }
+    val cacheDriveView = destDriveLoader.getRoot<Node>()
+    val cacheDriveController = destDriveLoader.getController<CacheDriveView>()
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         driveTypes.items.addAll(DriveType.values())
@@ -81,19 +91,12 @@ class DriveView : Initializable {
 
     fun initialized(viewModel: DriveViewModel) {
         this.viewModel = viewModel
-        staticStagger.limitToInt()
-        maxP1.limitToInt()
-        maxOther.limitToInt()
-        maxConcurrent.limitToInt()
+
         driveName.textProperty().bindBidirectional(viewModel.driveName)
         drivePath.textProperty().bindBidirectional(viewModel.drivePath)
 
         driveTypes.selectionModel.selectedItemProperty().addListener { _, _, new -> viewModel.driveType.set(new) }
         viewModel.driveType.addListener { _, _, new -> driveTypes.selectionModel.select(new) }
-        staticStagger.textProperty().bindBidirectional(viewModel.staticStagger)
-        maxP1.textProperty().bindBidirectional(viewModel.maxP1)
-        maxOther.textProperty().bindBidirectional(viewModel.maxOther)
-        maxConcurrent.textProperty().bindBidirectional(viewModel.maxConcurrent)
 
         viewModel.drives.onEach { drives ->
             Platform.runLater {
@@ -108,8 +111,6 @@ class DriveView : Initializable {
             if (old != new) driveList.selectionModel.select(new)
         }
         driveList.contextMenu = drivesMenu
-
-        staticIgnore.selectedProperty().bindBidirectional(viewModel.ignoreStatic)
     }
 
     fun onBrowse() {
@@ -121,7 +122,7 @@ class DriveView : Initializable {
     }
 
     fun onNew() {
-        viewModel.new()
+        viewModel.newDrive(driveTypes.selectionModel.selectedItem!!)
     }
 
     fun onCancel() {
@@ -129,7 +130,47 @@ class DriveView : Initializable {
     }
 
     fun onSave() {
-        viewModel.save()
+        viewModel.save(getDrive())
+    }
+
+
+    private fun loadDrive(drive: Drive) {
+        when (drive) {
+            is TempDrive -> loadTempDrive(drive)
+            is CacheDrive -> loadCacheDrive(drive)
+            is DestDrive -> loadDestDrive(drive)
+            else -> throw IllegalArgumentException("Drive View not defined for drive type ${drive::class.qualifiedName}")
+        }
+    }
+
+    private fun loadTempDrive(drive: TempDrive) {
+        driveBox.children[1] = tempDriveView
+        tempDriveController.loadDrive(drive)
+    }
+
+    private fun loadDestDrive(drive: DestDrive) {
+        driveBox.children[1] = destDriveView
+        destDriveController.loadDrive(drive)
+    }
+
+    private fun loadCacheDrive(drive: CacheDrive) {
+        driveBox.children[1] = cacheDriveView
+        cacheDriveController.loadDrive(drive)
+    }
+
+    private fun getDrive(): Drive {
+        val name = driveName.text
+        val drivePath = File(drivePath.text)
+        val drive = when (driveTypes.selectionModel.selectedItem!!) {
+            DriveType.TEMP -> TempDrive(name, drivePath, staggerSettings = tempDriveController.getStagger())
+            DriveType.DESTINATION -> DestDrive(
+                name,
+                drivePath,
+                maxPlotTransfer = destDriveController.maxPlotTransfer.text.toInt()
+            )
+            DriveType.CACHE -> CacheDrive(name, drivePath)
+        }
+        return drive
     }
 
     val drivesMenu = ContextMenu()

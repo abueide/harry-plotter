@@ -17,14 +17,13 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.model
+package com.abysl.harryplotter.model.drives
 
 import kotlinx.serialization.Serializable
 
 @Serializable
 enum class DriveType {
     TEMP,
-//    DESTINATION,
-//    CACHE,
-//    TEMP2,
+    DESTINATION,
+    CACHE,
 }

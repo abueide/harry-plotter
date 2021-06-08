@@ -17,26 +17,25 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-@file:UseSerializers(FileSerializer::class)
+package com.abysl.harryplotter.ui.drives
 
-package com.abysl.harryplotter.model.records
+import com.abysl.harryplotter.model.drives.DestDrive
+import com.abysl.harryplotter.util.limitToInt
+import javafx.fxml.FXML
+import javafx.fxml.Initializable
+import javafx.scene.control.TextField
+import java.net.URL
+import java.util.ResourceBundle
 
-import com.abysl.harryplotter.model.DriveType
-import com.abysl.harryplotter.util.serializers.FileSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
-import java.io.File
+class DestDriveView: Initializable {
+    @FXML
+    lateinit var maxPlotTransfer: TextField
 
-@Serializable
-class Drive(
-    val name: String = "",
-    val drivePath: File = File(""),
-    val type: DriveType = DriveType.TEMP,
-    val staggerSettings: StaggerSettings = StaggerSettings()
-) {
-    override fun toString(): String {
-        return name
+    override fun initialize(location: URL?, resources: ResourceBundle?) {
+        maxPlotTransfer.limitToInt()
     }
 
-    fun deepCopy(): Drive = Drive(this.name, this.drivePath, this.type, this.staggerSettings)
+    fun loadDrive(drive: DestDrive){
+        maxPlotTransfer.text = drive.maxPlotTransfer.toString()
+    }
 }

@@ -19,9 +19,8 @@
 
 @file:UseSerializers(MutableStateFlowSerializer::class)
 
-package com.abysl.harryplotter.model.records
+package com.abysl.harryplotter.model.jobs
 
-import com.abysl.harryplotter.model.JobResult
 import com.abysl.harryplotter.model.TimeEnum.Companion.SECONDS_IN_DAY
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
 import kotlinx.serialization.Serializable

@@ -17,7 +17,7 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.model.records
+package com.abysl.harryplotter.model
 
 import kotlinx.serialization.Serializable
 

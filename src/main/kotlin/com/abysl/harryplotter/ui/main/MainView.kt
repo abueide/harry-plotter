@@ -99,12 +99,21 @@ class MainView {
 
     // Calls after the JavaFX vars are populated so they aren't null
 
-    fun onAbout() {
-        VersionPromptWindow.show()
+
+    fun onGettingStarted(){
+        hostServices.showDocument("https://github.com/abueide/harry-plotter/wiki/Getting-Started")
+    }
+
+    fun onOptimizationGuide(){
+        hostServices.showDocument("https://github.com/abueide/harry-plotter/wiki/Optimization-Guide")
     }
 
     fun onBugReport() {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/issues/new")
+    }
+
+    fun onAbout() {
+        VersionPromptWindow.show()
     }
 
     fun onHarrySettings() {

@@ -20,8 +20,8 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.records.Drive
-import com.abysl.harryplotter.model.records.StaggerSettings
+import com.abysl.harryplotter.model.jobs.PlotJob
+import com.abysl.harryplotter.model.drives.Drive
 import com.abysl.harryplotter.util.IOUtil
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow

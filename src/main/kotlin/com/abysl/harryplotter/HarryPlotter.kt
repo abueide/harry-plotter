@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter
 
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.ui.main.MainView
 import com.abysl.harryplotter.util.fx.FxUtil
@@ -42,6 +43,7 @@ class HarryPlotter : Application() {
 
         stage.icons.add(Image(this::class.java.getResourceAsStream("icons/snitch.png")))
         stage.scene = scene
+        stage.title = "Version ${Config.version}"
         FxUtil.setTheme(stage)
         stage.show()
         view.toggleTheme = ::toggleTheme

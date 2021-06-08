@@ -19,7 +19,7 @@
 
 package com.abysl.harryplotter.ui.jobs
 
-import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.model.jobs.ChiaKey
 import com.abysl.harryplotter.util.bindings.bindBidirectional
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
@@ -41,10 +41,13 @@ class JobEditorView {
     private lateinit var jobName: TextField
 
     @FXML
-    private var tempDir: TextField = TextField()
+    private lateinit var tempDir: TextField
 
     @FXML
-    private var destDir: TextField = TextField()
+    private lateinit var destDir: TextField
+
+    @FXML
+    private lateinit var useCacheDrive: CheckBox
 
     @FXML
     private lateinit var threads: TextField
@@ -85,11 +88,15 @@ class JobEditorView {
         viewModel.jobName.bindBidirectional(jobName.textProperty())
         viewModel.tempDir.bindBidirectional(tempDir.textProperty())
         viewModel.destDir.bindBidirectional(destDir.textProperty())
+        viewModel.useCacheDrive.bindBidirectional(useCacheDrive.selectedProperty())
         viewModel.threads.bindBidirectional(threads.textProperty())
         viewModel.ram.bindBidirectional(ram.textProperty())
         viewModel.plotsToFinish.bindBidirectional(plotsToFinish.textProperty())
         viewModel.kSize.bindBidirectional(kSize.textProperty())
         viewModel.additionalParams.bindBidirectional(additionalParams.textProperty())
+        viewModel.useCacheDrive.addListener { _, _, new ->
+            destDir.isDisable = new
+        }
         viewModel.stopAfterCheck.bindBidirectional(stopAfterCheck.selectedProperty())
         viewModel.stopAfterCheck.onEach {
             plotsToFinish.disableProperty().set(!it)

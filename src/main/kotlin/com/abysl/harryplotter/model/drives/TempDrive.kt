@@ -17,21 +17,23 @@
  *     along with Harry Plotter.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.abysl.harryplotter.ui.jobs
+@file:UseSerializers(FileSerializer::class)
+package com.abysl.harryplotter.model.drives
 
-import com.abysl.harryplotter.model.jobs.PlotJob
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.abysl.harryplotter.model.StaggerSettings
+import com.abysl.harryplotter.util.serializers.FileSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
+import java.io.File
 
-class JobStatusViewModel {
-    val shownJob: MutableStateFlow<PlotJob?> = MutableStateFlow(null)
+@Serializable
+class TempDrive(
+    override val name: String = "Unnamed Temp Drive",
+    override val drivePath: File = File(""),
+    @Transient
+    override val type: DriveType = DriveType.TEMP,
+    val staggerSettings: StaggerSettings = StaggerSettings(),
+): Drive() {
 
-    fun loadJob(job: PlotJob) {
-        clearJob()
-        shownJob.value = job
-    }
-
-    fun clearJob() {
-//        shownJob()?.process?.cache = false
-        shownJob.value = null
-    }
 }

@@ -21,8 +21,8 @@
     <ID>MayBeConst:PlotLogParser.kt$PlotLogParser$private val END_TIME_KEY = "Total time ="</ID>
     <ID>MultiLineIfElse:com.abysl.harryplotter.chia.ChiaCli.kt:94</ID>
     <ID>MultiLineIfElse:com.abysl.harryplotter.chia.ChiaCli.kt:96</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.model.records.StaggerSettings.kt:44</ID>
-    <ID>MultiLineIfElse:com.abysl.harryplotter.model.records.StaggerSettings.kt:46</ID>
+    <ID>MultiLineIfElse:com.abysl.harryplotter.model.StaggerSettings.kt:44</ID>
+    <ID>MultiLineIfElse:com.abysl.harryplotter.model.StaggerSettings.kt:46</ID>
     <ID>PrintStackTrace:PlotLogParser.kt$PlotLogParser$exception</ID>
     <ID>PrintStackTrace:PlotProcess.kt$PlotProcess$e</ID>
     <ID>PrintStackTrace:Window.kt$Window$ex</ID>

@@ -19,7 +19,7 @@
 
 package com.abysl.harryplotter.ui.main
 
-import com.abysl.harryplotter.model.records.GithubRelease
+import com.abysl.harryplotter.model.GithubRelease
 import javafx.application.HostServices
 import javafx.fxml.FXML
 import javafx.scene.control.Label

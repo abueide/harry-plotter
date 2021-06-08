@@ -19,10 +19,9 @@
 
 package com.abysl.harryplotter.config
 
-import com.abysl.harryplotter.HarryPlotter
-import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.model.records.Drive
+import com.abysl.harryplotter.model.jobs.PlotJob
+import com.abysl.harryplotter.model.jobs.ChiaKey
+import com.abysl.harryplotter.model.drives.Drive
 import com.abysl.harryplotter.ui.all.SimpleDialogs
 import com.abysl.harryplotter.util.getResource
 import kotlinx.serialization.decodeFromString

@@ -21,9 +21,8 @@ package com.abysl.harryplotter.ui.main
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.records.GithubRelease
+import com.abysl.harryplotter.model.GithubRelease
 import com.abysl.harryplotter.ui.all.Window
-import com.abysl.harryplotter.util.getResource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.java.Java
 import io.ktor.client.request.get

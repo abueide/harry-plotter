@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox maxHeight="280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.ui.drives.DestDriveView">
+   <children>
+      <VBox minWidth="150.0" spacing="18.0">
+         <children>
+            <Label text="Max Plot Transfer">
+               <tooltip>
+                  <Tooltip text="The maximum number of plots that can be transferred to this drive at once. Set this to 1 for hard drives to minimize seek times." />
+               </tooltip></Label>
+         </children>
+         <padding>
+            <Insets top="5.0" />
+         </padding>
+      </VBox>
+      <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+         <children>
+            <TextField fx:id="staticStagger" maxWidth="30.0" />
+         </children>
+      </VBox>
+   </children>
+</HBox>

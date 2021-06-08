@@ -21,9 +21,9 @@ package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.PlotProcess
-import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.model.jobs.PlotProcess
+import com.abysl.harryplotter.model.jobs.ChiaKey
+import com.abysl.harryplotter.model.jobs.JobDescription
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx

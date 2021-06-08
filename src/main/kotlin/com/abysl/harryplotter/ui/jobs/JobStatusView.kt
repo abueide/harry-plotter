@@ -19,7 +19,7 @@
 
 package com.abysl.harryplotter.ui.jobs
 
-import com.abysl.harryplotter.model.PlotJob
+import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.util.formatted
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.unlines

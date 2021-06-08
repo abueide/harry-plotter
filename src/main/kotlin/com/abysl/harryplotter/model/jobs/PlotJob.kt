@@ -19,11 +19,9 @@
 
 @file:UseSerializers(MutableStateFlowSerializer::class, FileSerializer::class)
 
-package com.abysl.harryplotter.model
+package com.abysl.harryplotter.model.jobs
 
 import com.abysl.harryplotter.chia.ChiaCli
-import com.abysl.harryplotter.model.records.JobDescription
-import com.abysl.harryplotter.model.records.JobStats
 import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.serializers.FileSerializer

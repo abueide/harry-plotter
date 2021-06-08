@@ -19,7 +19,7 @@
 
 package com.abysl.harryplotter.ui.jobs
 
-import com.abysl.harryplotter.model.records.ChiaKey
+import com.abysl.harryplotter.model.jobs.ChiaKey
 import javafx.fxml.FXML
 import javafx.scene.control.TextField
 import javafx.stage.Stage

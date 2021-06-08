@@ -21,8 +21,8 @@ package com.abysl.harryplotter.ui.stats
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.JobResult
-import com.abysl.harryplotter.model.JobState
+import com.abysl.harryplotter.model.jobs.JobResult
+import com.abysl.harryplotter.model.jobs.JobState
 import com.abysl.harryplotter.model.TimeEnum
 import com.abysl.harryplotter.model.TimeEnum.Companion.SECONDS_IN_DAY
 import com.abysl.harryplotter.util.formatted
@@ -42,7 +42,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import java.io.File
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime

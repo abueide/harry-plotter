@@ -20,102 +20,50 @@
 package com.abysl.harryplotter.ui.drives
 
 import com.abysl.harryplotter.config.Config
-import com.abysl.harryplotter.model.DriveType
-import com.abysl.harryplotter.model.records.Drive
-import com.abysl.harryplotter.model.records.StaggerSettings
-import com.abysl.harryplotter.util.invoke
+import com.abysl.harryplotter.model.drives.CacheDrive
+import com.abysl.harryplotter.model.drives.DestDrive
+import com.abysl.harryplotter.model.drives.Drive
+import com.abysl.harryplotter.model.drives.DriveType
+import com.abysl.harryplotter.model.drives.TempDrive
 import com.abysl.harryplotter.ui.all.SimpleDialogs
-import javafx.beans.property.SimpleBooleanProperty
+import com.abysl.harryplotter.util.invoke
 import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.SimpleStringProperty
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
+import java.lang.NullPointerException
 
 class DriveViewModel {
 
     val drives = MutableStateFlow<List<Drive>>(emptyList())
-
     val selectedDrive = SimpleObjectProperty<Drive?>(null)
 
-    val driveName = SimpleStringProperty("")
-    val drivePath = SimpleStringProperty("")
-    val driveType = SimpleObjectProperty(DriveType.TEMP)
-    val maxP1 = SimpleStringProperty("")
-    val maxOther = SimpleStringProperty("")
-    val maxConcurrent = SimpleStringProperty("")
-    val staticStagger = SimpleStringProperty("")
-    val ignoreStatic = SimpleBooleanProperty(false)
-
-    init {
-        selectedDrive.addListener { _, old, new ->
-            if (old != new) loadDrive(new)
+    fun newDrive(type: DriveType): Drive {
+        val drive = when (type) {
+            DriveType.TEMP -> TempDrive()
+            DriveType.DESTINATION -> DestDrive()
+            DriveType.CACHE -> CacheDrive()
         }
-    }
-
-    fun new() {
-        val drive = Drive(name = "Unnamed Drive")
         drives.value += drive
         selectedDrive.set(drive)
         Config.saveDrives(drives())
+        return drive
     }
 
     fun cancel() {
         selectedDrive.set(null)
     }
 
-    fun save() {
-        val drive = selectedDrive.get()
-        if (drive == null) {
-            drives.value += getDrive()
-        } else {
-            val drivesList = drives().toMutableList()
-            val index = drivesList.indexOf(drive)
-            drivesList[index] = getDrive()
+    fun save(drive: Drive) {
+        val selected = selectedDrive.get() ?: newDrive(drive.type)
+        val drivesList = drives().toMutableList()
+        val index = drivesList.indexOf(selected)
+        if(index != -1) {
+            drivesList[index] = drive
             drives.value = drivesList.toList()
             selectedDrive.set(drivesList[index])
+            Config.saveDrives(drives.value)
+        }else {
+            println("Selected drive not found in drives list!")
         }
-        Config.saveDrives(drives.value)
-    }
-
-    fun loadDrive(someDrive: Drive?) {
-        val drive = someDrive ?: Drive()
-        driveName.set(drive.name)
-        drivePath.set(drive.drivePath.path)
-        driveType.set(drive.type)
-        loadStagger(drive.staggerSettings)
-    }
-
-    fun loadStagger(staggerSettings: StaggerSettings) {
-        maxP1.set(staggerSettings.maxFirstStagger.toString())
-        maxOther.set(staggerSettings.maxOtherStagger.toString())
-        maxConcurrent.set(staggerSettings.maxTotal.toString())
-        staticStagger.set(staggerSettings.staticStagger.toString())
-        ignoreStatic.set(staggerSettings.ignoreStatic)
-    }
-
-    fun getDrive(): Drive {
-        val driveFolder = File(drivePath.get())
-        if (!driveFolder.exists()) {
-            SimpleDialogs.showAlert(
-                "Drive Path Not Selected",
-                "Please select the folder where your drive is mounted"
-            )
-        }
-        return Drive(
-            driveName.get(),
-            driveFolder,
-            driveType.get(),
-            getStagger()
-        )
-    }
-
-    fun getStagger(): StaggerSettings {
-        return StaggerSettings(
-            maxP1.get().ifBlank { "0" }.toInt(),
-            maxOther.get().ifBlank { "0" }.toInt(),
-            maxConcurrent.get().ifBlank { "0" }.toInt(),
-            staticStagger.get().ifBlank { "0" }.toInt(),
-            ignoreStatic.get()
-        )
     }
 }

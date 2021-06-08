@@ -19,12 +19,13 @@
 
 package com.abysl.harryplotter.ui.jobs
 
-import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.model.jobs.PlotJob
+import com.abysl.harryplotter.model.jobs.ChiaKey
+import com.abysl.harryplotter.model.jobs.JobDescription
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.unwords
 import com.abysl.harryplotter.ui.all.SimpleDialogs
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ class JobEditorViewModel {
     val jobName = SimpleStringProperty("")
     val tempDir = SimpleStringProperty("")
     val destDir = SimpleStringProperty("")
+    val useCacheDrive = SimpleBooleanProperty(false)
     val threads = SimpleStringProperty("")
     val kSize = SimpleStringProperty("")
     val additionalParams = SimpleStringProperty("")
@@ -60,6 +62,7 @@ class JobEditorViewModel {
         jobName.value = desc.name
         tempDir.value = desc.tempDir.path
         destDir.value = desc.destDir.path
+        useCacheDrive.set(desc.useCacheDrive)
         kSize.value = if (desc.kSize == 32) "" else desc.kSize.toString()
         additionalParams.value = desc.additionalParams.unwords()
         threads.value = if (desc.threads == 0) "2" else desc.threads.toString()
@@ -150,7 +153,7 @@ class JobEditorViewModel {
         val name = jobName.value.ifBlank { defaultName }
         val numPlots = if (stopAfterCheck.value) plotsToFinish.value.ifBlank { "0" }.toInt() else 0
         val newDescription = JobDescription(
-            name, File(tempDirPath), File(destDirPath),
+            name, File(tempDirPath), File(destDirPath), useCacheDrive.get(),
             threads.value.ifBlank { "0" }.toInt(),
             ram.value.ifBlank { "0" }.toInt(),
             key,
