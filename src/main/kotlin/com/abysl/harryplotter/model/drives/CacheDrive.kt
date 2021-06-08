@@ -32,4 +32,9 @@ class CacheDrive(
     override val name: String = "Unnamed Cache Drive",
     override val drivePath: File = File(""),
     override val type: DriveType = DriveType.CACHE
-) : Drive() {}
+) : Drive() {
+
+    override fun deepCopy(): Drive {
+        return CacheDrive(name, drivePath, type)
+    }
+}

@@ -92,9 +92,9 @@ class DriveView : Initializable {
     fun initialized(viewModel: DriveViewModel) {
         this.viewModel = viewModel
 
+        viewModel.selectedDrive.addListener { _, _, new -> loadDrive(new) }
         driveName.textProperty().bindBidirectional(viewModel.driveName)
         drivePath.textProperty().bindBidirectional(viewModel.drivePath)
-
         driveTypes.selectionModel.selectedItemProperty().addListener { _, _, new -> viewModel.driveType.set(new) }
         viewModel.driveType.addListener { _, _, new -> driveTypes.selectionModel.select(new) }
 
@@ -134,14 +134,16 @@ class DriveView : Initializable {
     }
 
 
-    private fun loadDrive(drive: Drive) {
+    private fun loadDrive(drive: Drive?) {
         when (drive) {
+            null -> return
             is TempDrive -> loadTempDrive(drive)
             is CacheDrive -> loadCacheDrive(drive)
             is DestDrive -> loadDestDrive(drive)
             else -> throw IllegalArgumentException("Drive View not defined for drive type ${drive::class.qualifiedName}")
         }
     }
+
 
     private fun loadTempDrive(drive: TempDrive) {
         driveBox.children[1] = tempDriveView

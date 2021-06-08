@@ -33,11 +33,8 @@ abstract class Drive {
     abstract val drivePath: File
     abstract val type: DriveType
 
-    override fun toString(): String {
-        val freeSpaceFormatted = String.format(Locale.US, "%.2f", getFreeSpaceGiB())
-        val totalSpaceFormatted = String.format(Locale.US, "%.2f", getTotalSpaceGiB())
-        return "name - $freeSpaceFormatted GiB / $totalSpaceFormatted GiB"
-    }
+    abstract fun deepCopy(): Drive
+
     fun getTotalSpaceGiB(): Double {
         return (drivePath.totalSpace / BYTES_TO_GB_FACTOR).toDouble()
     }
@@ -53,6 +50,13 @@ abstract class Drive {
     fun getHoldablePlots(k: Int = 32){
 
     }
+
+    override fun toString(): String {
+        val freeSpaceFormatted = String.format(Locale.US, "%.2f", getFreeSpaceGiB())
+        val totalSpaceFormatted = String.format(Locale.US, "%.2f", getTotalSpaceGiB())
+        return "name - $freeSpaceFormatted GiB / $totalSpaceFormatted GiB"
+    }
+
 
     companion object {
         const val BYTES_TO_GB_FACTOR = 1_073_741_824L

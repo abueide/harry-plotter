@@ -32,4 +32,8 @@ class DestDrive(
     override val type: DriveType = DriveType.DESTINATION,
     val maxPlotTransfer: Int = 1
     ) : Drive() {
+
+    override fun deepCopy(): Drive {
+
+    }
 }
