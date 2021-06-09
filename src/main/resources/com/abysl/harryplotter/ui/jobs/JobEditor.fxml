@@ -15,6 +15,7 @@
       <children>
         <Label text="Name" />
         <Label text="* Temp Directory" />
+            <Label text="Secondary Temp Directory" />
         <Label text="* Destination Directory" />
         <Label text="Number of Threads" />
         <Label text="Chia Key to Use" />
@@ -31,11 +32,14 @@
           <children>
             <Button mnemonicParsing="false" onAction="#onTempBrowse" text="Browse" />
             <TextField fx:id="tempDir" promptText="C:\Path\To\SSD\" HBox.hgrow="ALWAYS" />
-                  <Label text="Secondary Temp Directory" />
-                  <Button mnemonicParsing="false" onAction="#onTemp2Browse" text="Browse" />
-                  <TextField fx:id="temp2Dir" promptText="C:\Path\To\SSD2\" HBox.hgrow="ALWAYS" />
           </children>
         </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onTemp2Browse" text="Browse" />
+                  <TextField fx:id="temp2Dir" promptText="C:\Path\To\SSD2\" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
         <HBox alignment="CENTER" spacing="10.0">
           <children>
             <Button mnemonicParsing="false" onAction="#onDestBrowse" text="Browse" />

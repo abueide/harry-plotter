@@ -28,7 +28,7 @@ import java.io.File
 import java.util.Locale
 
 @Serializable
-abstract class Drive {
+sealed class Drive {
     abstract val name: String
     abstract val drivePath: File
     abstract val type: DriveType
@@ -54,12 +54,10 @@ abstract class Drive {
     override fun toString(): String {
         val freeSpaceFormatted = String.format(Locale.US, "%.2f", getFreeSpaceGiB())
         val totalSpaceFormatted = String.format(Locale.US, "%.2f", getTotalSpaceGiB())
-        return "name - $freeSpaceFormatted GiB / $totalSpaceFormatted GiB"
+        return "$name - $freeSpaceFormatted GiB / $totalSpaceFormatted GiB"
     }
-
 
     companion object {
         const val BYTES_TO_GB_FACTOR = 1_073_741_824L
     }
-//    fun deepCopy(): Drive = Drive(this.name, this.drivePath, this.type, this.staggerSettings)
 }

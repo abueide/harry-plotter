@@ -33,7 +33,5 @@ class DestDrive(
     val maxPlotTransfer: Int = 1
     ) : Drive() {
 
-    override fun deepCopy(): Drive {
-
-    }
+    override fun deepCopy(): Drive = DestDrive(name, drivePath, type, maxPlotTransfer)
 }

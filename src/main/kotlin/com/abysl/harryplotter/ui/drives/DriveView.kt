@@ -67,8 +67,6 @@ class DriveView : Initializable {
     @FXML
     lateinit var driveTypes: ComboBox<DriveType>
 
-
-
     lateinit var viewModel: DriveViewModel
 
     val tempDriveLoader = FXMLLoader("ui/drives/TempDriveView.fxml".getResource()).also { it.load() }
@@ -81,8 +79,8 @@ class DriveView : Initializable {
 
 
     val cacheDriveLoader = FXMLLoader("ui/drives/CacheDriveView.fxml".getResource()).also { it.load() }
-    val cacheDriveView = destDriveLoader.getRoot<Node>()
-    val cacheDriveController = destDriveLoader.getController<CacheDriveView>()
+    val cacheDriveView = cacheDriveLoader.getRoot<Node>()
+    val cacheDriveController = cacheDriveLoader.getController<CacheDriveView>()
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         driveTypes.items.addAll(DriveType.values())
@@ -93,10 +91,6 @@ class DriveView : Initializable {
         this.viewModel = viewModel
 
         viewModel.selectedDrive.addListener { _, _, new -> loadDrive(new) }
-        driveName.textProperty().bindBidirectional(viewModel.driveName)
-        drivePath.textProperty().bindBidirectional(viewModel.drivePath)
-        driveTypes.selectionModel.selectedItemProperty().addListener { _, _, new -> viewModel.driveType.set(new) }
-        viewModel.driveType.addListener { _, _, new -> driveTypes.selectionModel.select(new) }
 
         viewModel.drives.onEach { drives ->
             Platform.runLater {
@@ -114,10 +108,10 @@ class DriveView : Initializable {
     }
 
     fun onBrowse() {
-        val startingPath = viewModel.drivePath.get()
+        val startingPath = drivePath.text
         val startingFile = if (File(startingPath).exists()) File(startingPath) else null
         SimpleFileChooser(drivePath).chooseDir("Select Drive Dir", false, startingFile)?.let {
-            viewModel.drivePath.set(it.absolutePath)
+            drivePath.text = it.absolutePath
         }
     }
 
@@ -135,8 +129,11 @@ class DriveView : Initializable {
 
 
     private fun loadDrive(drive: Drive?) {
+        if(drive == null) return
+        driveTypes.selectionModel.select(drive.type)
+        driveName.text = drive.name
+        drivePath.text = drive.drivePath.absolutePath
         when (drive) {
-            null -> return
             is TempDrive -> loadTempDrive(drive)
             is CacheDrive -> loadCacheDrive(drive)
             is DestDrive -> loadDestDrive(drive)

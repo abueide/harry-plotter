@@ -22,6 +22,7 @@ package com.abysl.harryplotter.model
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.model.drives.Drive
+import com.abysl.harryplotter.model.drives.TempDrive
 import com.abysl.harryplotter.util.IOUtil
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,7 +75,7 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
         val driveMap = drivesToJobs()
         driveMap.keys
             // Get only the drives that are ready to start a job
-            .filter { checkDrive(it, driveMap[it]) }
+            .filter { it is TempDrive && checkDrive(it, driveMap[it]) }
             .forEach { drive ->
                 // Start one job for each drive that is ready
                 val job = driveMap.getOrDefault(drive, emptyList())
@@ -107,7 +108,7 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
         return jobs.value.filter { !it.manageSelf && it.isRunning() }
     }
 
-    private fun checkDrive(drive: Drive, driveJobs: List<PlotJob>?): Boolean {
+    private fun checkDrive(drive: TempDrive, driveJobs: List<PlotJob>?): Boolean {
         val runningJobs = driveJobs?.filter(PlotJob::isRunning) ?: emptyList()
         val lastTime = driveStartMap.value[drive]
         return drive.staggerSettings.check(lastTime, runningJobs)

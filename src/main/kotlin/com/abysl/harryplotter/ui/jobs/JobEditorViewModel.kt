@@ -35,6 +35,7 @@ import java.io.File
 class JobEditorViewModel {
     val jobName = SimpleStringProperty("")
     val tempDir = SimpleStringProperty("")
+    val temp2Dir = SimpleStringProperty("")
     val destDir = SimpleStringProperty("")
     val useCacheDrive = SimpleBooleanProperty(false)
     val threads = SimpleStringProperty("")

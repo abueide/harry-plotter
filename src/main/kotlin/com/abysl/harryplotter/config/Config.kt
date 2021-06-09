@@ -24,6 +24,7 @@ import com.abysl.harryplotter.model.jobs.ChiaKey
 import com.abysl.harryplotter.model.drives.Drive
 import com.abysl.harryplotter.ui.all.SimpleDialogs
 import com.abysl.harryplotter.util.getResource
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -55,7 +56,12 @@ object Config {
     }
 
     fun savePlotJobs(jobs: List<PlotJob>) {
-        jobsFile.writeText(Json.encodeToString(jobs))
+        try {
+            jobsFile.writeText(Json.encodeToString(jobs))
+        } catch(e: SerializationException) {
+            SimpleDialogs.showAlert("Failed to save drives.", "Please report this to the developer.")
+            e.printStackTrace()
+        }
     }
 
     fun getPlotJobs(): List<PlotJob> {
@@ -76,7 +82,12 @@ object Config {
     }
 
     fun saveDrives(drives: List<Drive>) {
-        drivesFile.writeText(Json.encodeToString(drives))
+        try {
+            drivesFile.writeText(Json.encodeToString(drives))
+        }catch (e: SerializationException){
+            SimpleDialogs.showAlert("Failed to save drives.", "Please report this to the developer.")
+            e.printStackTrace()
+        }
     }
 
     fun getDrives(): List<Drive> {

@@ -44,6 +44,9 @@ class JobEditorView {
     private lateinit var tempDir: TextField
 
     @FXML
+    private lateinit var temp2Dir: TextField
+
+    @FXML
     private lateinit var destDir: TextField
 
     @FXML
@@ -87,6 +90,7 @@ class JobEditorView {
         // Bind JobDescription to viewmodel bidirectionally
         viewModel.jobName.bindBidirectional(jobName.textProperty())
         viewModel.tempDir.bindBidirectional(tempDir.textProperty())
+        viewModel.temp2Dir.bindBidirectional(temp2Dir.textProperty())
         viewModel.destDir.bindBidirectional(destDir.textProperty())
         viewModel.useCacheDrive.bindBidirectional(useCacheDrive.selectedProperty())
         viewModel.threads.bindBidirectional(threads.textProperty())
@@ -130,6 +134,14 @@ class JobEditorView {
         val startingFile = if (File(startingPath).exists()) File(startingPath) else null
         fileChooser.chooseDir("Select Temp Dir", false, startingFile)?.let {
             viewModel.tempDir.value = it.absolutePath
+        }
+    }
+
+    fun onTemp2Browse(){
+        val startingPath = viewModel.temp2Dir.get()
+        val startingFile = if (File(startingPath).exists()) File(startingPath) else null
+        fileChooser.chooseDir("Select Temp Dir", false, startingFile)?.let {
+            viewModel.temp2Dir.value = it.absolutePath
         }
     }
 
