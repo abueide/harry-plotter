@@ -21,8 +21,10 @@
 
 package com.abysl.harryplotter.model.drives
 
+import com.abysl.harryplotter.model.StaggerSettings
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import java.io.File
 import java.util.Locale
@@ -60,4 +62,38 @@ sealed class Drive {
     companion object {
         const val BYTES_TO_GB_FACTOR = 1_073_741_824L
     }
+}
+
+@Serializable
+class CacheDrive(
+    override val name: String = "Unnamed Cache Drive",
+    override val drivePath: File = File(""),
+    override val type: DriveType = DriveType.CACHE
+) : Drive() {
+
+    override fun deepCopy(): Drive {
+        return CacheDrive(name, drivePath, type)
+    }
+}
+
+@Serializable
+class DestDrive(
+    override val name: String = "Unnamed Destination Drive",
+    override val drivePath: File = File(""),
+    override val type: DriveType = DriveType.DESTINATION,
+    val maxPlotTransfer: Int = 1
+) : Drive() {
+
+    override fun deepCopy(): Drive = DestDrive(name, drivePath, type, maxPlotTransfer)
+}
+
+@Serializable
+class TempDrive(
+    override val name: String = "Unnamed Temp Drive",
+    override val drivePath: File = File(""),
+    @Transient
+    override val type: DriveType = DriveType.TEMP,
+    val staggerSettings: StaggerSettings = StaggerSettings(),
+): Drive() {
+    override fun deepCopy(): Drive = TempDrive(name, drivePath, type, staggerSettings)
 }
