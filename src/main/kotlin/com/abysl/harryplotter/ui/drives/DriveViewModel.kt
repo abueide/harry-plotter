@@ -54,7 +54,7 @@ class DriveViewModel {
     }
 
     fun save(drive: Drive) {
-        val selected = selectedDrive.get() ?: newDrive(drive.type)
+        val selected = selectedDrive.get() ?: newDrive(drive.driveType)
         val drivesList = drives().toMutableList()
         val index = drivesList.indexOf(selected)
         if(index != -1) {

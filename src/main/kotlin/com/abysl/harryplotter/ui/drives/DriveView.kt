@@ -98,13 +98,17 @@ class DriveView : Initializable {
                 driveList.selectionModel.select(viewModel.selectedDrive.get())
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
-        driveList.selectionModel.selectedItemProperty().addListener { _, old, new ->
-            if (old != new) viewModel.selectedDrive.set(new)
-        }
         viewModel.selectedDrive.addListener { _, old, new ->
             if (old != new) driveList.selectionModel.select(new)
         }
+
         driveList.contextMenu = drivesMenu
+        driveList.selectionModel.selectedItemProperty().addListener { _, old, new ->
+            if (old != new) viewModel.selectedDrive.set(new)
+        }
+        driveTypes.selectionModel.selectedItemProperty().addListener { _, _, _ ->
+            loadDrive(getDrive())
+        }
     }
 
     fun onBrowse() {
@@ -130,14 +134,13 @@ class DriveView : Initializable {
 
     private fun loadDrive(drive: Drive?) {
         if(drive == null) return
-        driveTypes.selectionModel.select(drive.type)
+        driveTypes.selectionModel.select(drive.driveType)
         driveName.text = drive.name
         drivePath.text = drive.drivePath.absolutePath
         when (drive) {
             is TempDrive -> loadTempDrive(drive)
             is CacheDrive -> loadCacheDrive(drive)
             is DestDrive -> loadDestDrive(drive)
-            else -> throw IllegalArgumentException("Drive View not defined for drive type ${drive::class.qualifiedName}")
         }
     }
 
@@ -165,7 +168,7 @@ class DriveView : Initializable {
             DriveType.DESTINATION -> DestDrive(
                 name,
                 drivePath,
-                maxPlotTransfer = destDriveController.maxPlotTransfer.text.toInt()
+                maxPlotTransfer = destDriveController.maxPlotTransfer.text.ifBlank { "1" }.toInt()
             )
             DriveType.CACHE -> CacheDrive(name, drivePath)
         }
