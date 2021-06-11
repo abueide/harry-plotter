@@ -20,6 +20,7 @@
 package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.config.Prefs
+import com.abysl.harryplotter.model.drives.CacheDrive
 import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.model.drives.Drive
 import com.abysl.harryplotter.model.drives.TempDrive
@@ -55,7 +56,9 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
                 if (checkGlobal()) {
                     // If no drives are added, just start plots normally
                     if (drives.value.isEmpty()) {
-                        managedJobs().firstOrNull { it.isReady() }?.start()
+                        managedJobs()
+                            .firstOrNull { it.isReady() }
+                            ?.start(cache = randomCacheDrive()?.drivePath)
                         lastStart.value = Clock.System.now()
                     } else {
                         startJobPerReadyDrive()
@@ -70,6 +73,10 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
         cancelManager()
     }
 
+    fun randomCacheDrive(): CacheDrive?{
+        return drives.value.filterIsInstance<CacheDrive>().randomOrNull()
+    }
+
     fun startJobPerReadyDrive() {
         // Maps the drives to the list of jobs that have temp dirs corresponding to them
         val driveMap = drivesToJobs()
@@ -81,7 +88,7 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
                 val job = driveMap.getOrDefault(drive, emptyList())
                     .firstOrNull { it.isReady() }
                 job?.let {
-                    it.start()
+                    it.start(cache = randomCacheDrive()?.drivePath)
                     // Record what time that drive last started a job to keep track for the static stagger
                     driveStartMap.value += drive to Clock.System.now()
                 }

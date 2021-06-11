@@ -25,10 +25,13 @@ import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.serializers.FileSerializer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -85,7 +88,7 @@ class PlotProcess(
 
     private fun updateLogs() {
         var lineNum = 0
-        var tempCache = listOf<String>()
+        val tempCache = mutableListOf<String>()
         if (logFile.exists()) {
             logFile.forEachLine {
                 if (lineNum >= oldLogCounter) {
@@ -124,8 +127,12 @@ class PlotProcess(
         }
     }
 
-    fun readLogs(): String {
-        return if (logFile.exists()) logFile.readText() else ""
+    fun readLogs(callback: (String) -> Unit): CoroutineScope {
+        val scope = CoroutineScope(Dispatchers.IO)
+         scope.launch {
+            callback(if (logFile.exists()) logFile.readText() else "")
+        }
+        return scope
     }
 
     private fun moveTo(file: File, destination: File) {

@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
+import java.io.File
 import java.util.*
 
 @Serializable
@@ -45,6 +46,9 @@ class PlotJob(
 
     @Transient
     var manageSelf = false
+
+    @Transient
+    var cacheDir = description.destDir
 
     @Transient
     var updateScope = CoroutineScope(Dispatchers.IO)
@@ -63,20 +67,21 @@ class PlotJob(
 
     fun initialized(doneCallback: (() -> Unit)? = null) {
         this.doneCallback = doneCallback
-        process()?.let {
-            it.initialized(::whenDone)
-        }
+        process()?.initialized(::whenDone)
         updateScope.launch {
             process()?.update(REFRESH_DELAY)
         }
     }
 
-    fun start(manageSelf: Boolean = false) {
+    fun start(manageSelf: Boolean = false, cache: File?) {
+        if(cache != null){
+            this.cacheDir = cache
+        }
         if (process()?.isRunning() != true) {
             process()?.dispose()
             this.manageSelf = manageSelf
             val chia = ChiaCli()
-            val proc = chia.createPlot(description, this::whenDone)
+            val proc = chia.createPlot(description, cacheDir, this::whenDone)
             process.value = proc
             updateScope.launch {
                 proc?.update(REFRESH_DELAY)
@@ -129,7 +134,7 @@ class PlotJob(
             tempDone++
             if (manageSelf && (tempDone < description.plotsToFinish || description.plotsToFinish == 0)) {
                 stop()
-                start(manageSelf = true)
+                start(manageSelf = true, cache = cacheDir)
             } else {
                 stop()
             }

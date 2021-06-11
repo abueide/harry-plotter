@@ -19,18 +19,21 @@
 
 package com.abysl.harryplotter.ui.jobs
 
+import com.abysl.harryplotter.model.drives.CacheDrive
+import com.abysl.harryplotter.model.drives.Drive
 import com.abysl.harryplotter.model.jobs.PlotJob
+import com.abysl.harryplotter.ui.all.SimpleDialogs.showAlert
+import com.abysl.harryplotter.ui.all.SimpleDialogs.showConfirmation
 import com.abysl.harryplotter.util.formatted
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.unlines
-import com.abysl.harryplotter.ui.all.SimpleDialogs.showAlert
-import com.abysl.harryplotter.ui.all.SimpleDialogs.showConfirmation
 import javafx.fxml.FXML
 import javafx.scene.control.Label
 import javafx.scene.control.TextArea
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
@@ -80,11 +83,15 @@ class JobStatusView {
 
     lateinit var viewModel: JobStatusViewModel
 
+    lateinit var drives: MutableStateFlow<List<Drive>>
+
+    var loadLogScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     var jobBinding: CoroutineScope = CoroutineScope(Dispatchers.IO)
     var fxBinding: CoroutineScope = CoroutineScope(Dispatchers.JavaFx)
 
-    fun initialized(jobStatusViewModel: JobStatusViewModel) {
+    fun initialized(jobStatusViewModel: JobStatusViewModel, drives: MutableStateFlow<List<Drive>>) {
         this.viewModel = jobStatusViewModel
+        this.drives = drives
         viewModel.shownJob.mapLatest(::bind).launchIn(CoroutineScope(Dispatchers.IO))
     }
 
@@ -117,10 +124,9 @@ class JobStatusView {
             process?.newLogs?.onEach {
                 fxBinding.launch { logsWindow.appendText(it.unlines()) }
             }?.launchIn(jobBinding)
-            fxBinding.launch {
-                val logs = process?.readLogs() ?: ""
-                logsWindow.appendText(logs)
-            }
+            loadLogScope.cancel()
+            loadLogScope = process?.readLogs { logs -> fxBinding.launch { logsWindow.appendText(logs) } }
+                ?: CoroutineScope(Dispatchers.IO)
         }.launchIn(jobBinding)
     }
 
@@ -151,7 +157,8 @@ class JobStatusView {
                 showAlert("No job selected!", "You must save & select your plot job before you run it.")
             }
             else -> {
-                viewModel.shownJob()?.also { it.tempDone = 0 }?.start(true)
+                val cacheDrive = drives.value.filterIsInstance<CacheDrive>().randomOrNull()
+                viewModel.shownJob()?.also { it.tempDone = 0 }?.start(true, cacheDrive?.drivePath)
             }
         }
     }

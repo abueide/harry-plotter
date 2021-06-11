@@ -44,12 +44,15 @@ import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
 
+private const val DRIVE_REFRESH = 10000L
 class DriveView : Initializable {
 
     @FXML
@@ -108,6 +111,13 @@ class DriveView : Initializable {
         }
         driveTypes.selectionModel.selectedItemProperty().addListener { _, _, _ ->
             loadDrive(getDrive())
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            while(true){
+                Platform.runLater { driveList.refresh() }
+                delay(DRIVE_REFRESH)
+            }
         }
     }
 

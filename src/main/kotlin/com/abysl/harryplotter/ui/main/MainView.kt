@@ -83,7 +83,7 @@ class MainView {
         viewModel = MainViewModel()
         jobsListViewController.initialized(viewModel.jobsListViewModel)
         jobEditorViewController.initialized(viewModel.jobEditorViewModel)
-        jobStatusViewController.initialized(viewModel.jobStatusViewModel)
+        jobStatusViewController.initialized(viewModel.jobStatusViewModel, viewModel.driveViewModel.drives)
         statsViewController.initialized(viewModel.statsViewModel)
         driveViewController.initialized(viewModel.driveViewModel)
         setButtonTheme()

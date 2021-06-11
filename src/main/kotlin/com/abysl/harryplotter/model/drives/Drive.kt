@@ -23,6 +23,9 @@ package com.abysl.harryplotter.model.drives
 
 import com.abysl.harryplotter.model.StaggerSettings
 import com.abysl.harryplotter.util.serializers.FileSerializer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -38,6 +41,15 @@ sealed class Drive {
 
     abstract fun deepCopy(): Drive
 
+    var usedSpace = getUsedSpaceGiB()
+    var totalSpace = getTotalSpaceGiB()
+    
+    init {
+        CoroutineScope(Dispatchers.IO).launch { 
+            while(true)
+        }
+    }
+
     fun getTotalSpaceGiB(): Double {
         return (drivePath.totalSpace / BYTES_TO_GB_FACTOR).toDouble()
     }
@@ -46,18 +58,15 @@ sealed class Drive {
         return (drivePath.freeSpace / BYTES_TO_GB_FACTOR).toDouble()
     }
 
-    fun getTotalPlots(){
-
-    }
-
-    fun getHoldablePlots(k: Int = 32){
-
+    fun getUsedSpaceGiB(): Double {
+        return getTotalSpaceGiB() - getFreeSpaceGiB()
     }
 
     override fun toString(): String {
-        val freeSpaceFormatted = String.format(Locale.US, "%.2f", getFreeSpaceGiB())
-        val totalSpaceFormatted = String.format(Locale.US, "%.2f", getTotalSpaceGiB())
-        return "$name - $freeSpaceFormatted GiB / $totalSpaceFormatted GiB"
+        val usedSpaceFormatted = String.format(Locale.US, "%.2f", usedSpace)
+        val totalSpaceFormatted = String.format(Locale.US, "%.2f", totalSpace)
+        val percentageUsed = (usedSpace / totalSpace * 100).toInt()
+        return "$name ($percentageUsed%) - $usedSpaceFormatted GiB / $totalSpaceFormatted GiB"
     }
 
     companion object {
@@ -75,6 +84,10 @@ class CacheDrive(
     override fun deepCopy(): Drive {
         return CacheDrive(name, drivePath, driveType)
     }
+
+    fun getPlotFiles(): List<File> {
+        return drivePath.listFiles()?.filter { !it.name.startsWith(".") && it.extension == "plot" } ?: emptyList()
+    }
 }
 
 @Serializable
@@ -85,7 +98,6 @@ class DestDrive(
     override val driveType: DriveType = DriveType.DESTINATION,
     val maxPlotTransfer: Int = 1
 ) : Drive() {
-
     override fun deepCopy(): Drive = DestDrive(name, drivePath, driveType, maxPlotTransfer)
 }
 

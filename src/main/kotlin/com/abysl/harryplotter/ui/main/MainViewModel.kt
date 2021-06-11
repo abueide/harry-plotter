@@ -23,6 +23,7 @@ import com.abysl.harryplotter.chia.ChiaCli
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.StaggerManager
+import com.abysl.harryplotter.model.drives.CacheManager
 import com.abysl.harryplotter.ui.drives.DriveViewModel
 import com.abysl.harryplotter.ui.jobs.JobEditorViewModel
 import com.abysl.harryplotter.ui.jobs.JobStatusViewModel
@@ -42,6 +43,7 @@ class MainViewModel {
     val jobStatusViewModel = JobStatusViewModel()
     val statsViewModel: StatsViewModel = StatsViewModel()
     val staggerManager: StaggerManager
+    val cacheManager: CacheManager
 
     init {
         jobEditorViewModel.initialized(
@@ -67,6 +69,7 @@ class MainViewModel {
         }.launchIn(CoroutineScope(Dispatchers.IO))
 
         staggerManager = StaggerManager(jobsListViewModel.plotJobs, driveViewModel.drives)
+        cacheManager = CacheManager(driveViewModel.drives).also { it.start()  }
         jobsListViewModel.startStaggerManager = staggerManager::start
         jobsListViewModel.stopStaggerManager = staggerManager::stop
 
