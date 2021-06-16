@@ -44,12 +44,6 @@ sealed class Drive {
     var usedSpace = getUsedSpaceGiB()
     var totalSpace = getTotalSpaceGiB()
     
-    init {
-        CoroutineScope(Dispatchers.IO).launch { 
-            while(true)
-        }
-    }
-
     fun getTotalSpaceGiB(): Double {
         return (drivePath.totalSpace / BYTES_TO_GB_FACTOR).toDouble()
     }
