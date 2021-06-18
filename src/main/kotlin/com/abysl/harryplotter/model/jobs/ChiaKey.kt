@@ -21,7 +21,6 @@ package com.abysl.harryplotter.model.jobs
 
 import kotlinx.serialization.Serializable
 
-@JvmRecord
 @Serializable
 data class ChiaKey(
     val nickname: String = "",

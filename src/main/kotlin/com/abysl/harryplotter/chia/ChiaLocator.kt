@@ -61,6 +61,9 @@ class ChiaLocator(node: Node) {
         if (checkExe(macChiaExe)) return macChiaExe
         val linuxChiaExe = File(LINUX_CHIA_PATH)
         if (checkExe(linuxChiaExe)) return linuxChiaExe
+        findChiaNixOS()?.let {
+            return it
+        }
 
         val chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
 
@@ -82,6 +85,11 @@ class ChiaLocator(node: Node) {
         return file.exists() && (file.name.equals("chia") || file.name.equals("chia.exe"))
     }
 
+    private fun findChiaNixOS(): File? {
+        val store = File("/home/andrew/.nix-profile/bin/chia")
+        return if(store.exists()) store else null
+    }
+
     companion object {
         private const val MAC_CHIA_PATH = "/Applications/Chia.app/Contents/Resources/app.asar.unpacked/daemon/chia"
         private const val LINUX_CHIA_PATH = "/usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia"
@@ -96,4 +104,5 @@ class ChiaLocator(node: Node) {
         private const val EXE_NOT_FOUND =
             "Looking for the chia cli executable (\"chia.exe\" or \"chia\" lowercase). Try again?"
     }
+
 }
