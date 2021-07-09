@@ -41,9 +41,7 @@ sealed class Drive {
 
     abstract fun deepCopy(): Drive
 
-    var usedSpace = getUsedSpaceGiB()
-    var totalSpace = getTotalSpaceGiB()
-    
+
     fun getTotalSpaceGiB(): Double {
         return (drivePath.totalSpace / BYTES_TO_GB_FACTOR).toDouble()
     }
@@ -57,6 +55,8 @@ sealed class Drive {
     }
 
     override fun toString(): String {
+        val usedSpace  = getUsedSpaceGiB()
+        val totalSpace = getTotalSpaceGiB()
         val usedSpaceFormatted = String.format(Locale.US, "%.2f", usedSpace)
         val totalSpaceFormatted = String.format(Locale.US, "%.2f", totalSpace)
         val percentageUsed = (usedSpace / totalSpace * 100).toInt()
@@ -68,40 +68,7 @@ sealed class Drive {
     }
 }
 
-@Serializable
-class CacheDrive(
-    override val name: String = "Unnamed Cache Drive",
-    override val drivePath: File = File(""),
-    override val driveType: DriveType = DriveType.CACHE
-) : Drive() {
 
-    override fun deepCopy(): Drive {
-        return CacheDrive(name, drivePath, driveType)
-    }
 
-    fun getPlotFiles(): List<File> {
-        return drivePath.listFiles()?.filter { !it.name.startsWith(".") && it.extension == "plot" } ?: emptyList()
-    }
-}
 
-@Serializable
-@SerialName("DestinationDrive")
-class DestDrive(
-    override val name: String = "Unnamed Destination Drive",
-    override val drivePath: File = File(""),
-    override val driveType: DriveType = DriveType.DESTINATION,
-    val maxPlotTransfer: Int = 1
-) : Drive() {
-    override fun deepCopy(): Drive = DestDrive(name, drivePath, driveType, maxPlotTransfer)
-}
 
-@Serializable
-class TempDrive(
-    override val name: String = "Unnamed Temp Drive",
-    override val drivePath: File = File(""),
-    @Transient
-    override val driveType: DriveType = DriveType.TEMP,
-    val staggerSettings: StaggerSettings = StaggerSettings(),
-): Drive() {
-    override fun deepCopy(): Drive = TempDrive(name, drivePath, driveType, staggerSettings)
-}

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
-    kotlin("jvm") version "1.5.10"
-    kotlin("plugin.serialization") version "1.5.10"
+    kotlin("jvm") version "1.5.20"
+    kotlin("plugin.serialization") version "1.5.20"
     id("org.openjfx.javafxplugin") version "0.0.10"
     id("org.beryx.runtime") version "1.12.5"
     id("io.gitlab.arturbosch.detekt") version "1.17.0-RC2"
