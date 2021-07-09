@@ -27,7 +27,6 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @Serializable
-@JvmRecord
 data class StaggerSettings(
     val maxFirstStagger: Int = 0,
     val maxOtherStagger: Int = 0,

@@ -23,7 +23,6 @@ import com.abysl.harryplotter.util.serializers.FileSerializer
 import kotlinx.serialization.Serializable
 import java.io.File
 
-@JvmRecord
 @Serializable
 data class JobDescription(
     val name: String,

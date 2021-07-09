@@ -1,30 +1,11 @@
-{   mkDerivation, fetchFromGitHub,
-    console ? false,
-    softwareRender ? false
-}:
-mkDerivation rec {
-  pname = "harry-plotter";
-  version = "1.1.14";
-
-  src = pkgs.fetchFromGitHub {
-    owner = "abueide";
-    repo = "harry-plotter";
-    rev = version;
-    sha256 = "1yycdzbgsz3jsd1jgcm49igdd2f5cvi30xfaij9ac9liyi4b5h5p";
-  };
-
-  buildInputs = with pkgs; [
-    jdk
-  ];
-
-  configurePhase = ''
-  '';
-
-  buildPhase = ''
-    ./gradlew jpackage
-  '';
-
-  installPhase = ''
-        
-  '';
+{ pkgs ? import <nixpkgs> {} }:
+  pkgs.mkShell {
+    # nativeBuildInputs is usually what you want -- tools you need to run
+    nativeBuildInputs = with pkgs; [
+        jdk16 chia
+        ((pkgs.gradleGen.override { java = jdk16; }).gradle_latest)
+    ];
+    shellHook = ''
+        export JAVA_HOME=${pkgs.jdk16.home}
+    '';
 }
