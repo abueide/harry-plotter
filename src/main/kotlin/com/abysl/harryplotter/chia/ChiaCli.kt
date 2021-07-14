@@ -89,7 +89,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         val args = mutableListOf<String>()
         args.addAll(listOf("plots", "create", "-k", desc.kSize.toString()))
         if (desc.key.farmerKey.isNotBlank() && desc.key.poolKey.isNotBlank()) {
-            args.addAll(listOf("-f", desc.key.farmerKey, "-p", desc.key.poolKey))
+            args.addAll(listOf("-f", desc.key.farmerKey, "-c", desc.key.poolKey))
         } else if (desc.key.fingerprint.isNotBlank())
             args.addAll(listOf("-a", desc.key.fingerprint))
         else

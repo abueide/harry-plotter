@@ -45,7 +45,7 @@ object Config {
         fingerprint = "3639606261",
         publicKey = "821ac77d286b5a9008f6354d36d600d00cc7be8e5058aac391421a16895522eb7c55e5088d0beabccf82018831caf18e",
         farmerKey = "a24411f3ed5fc2d5a6e3eaefb73aefea30fa7f3b64f065046186ca8191d53fd0c15ca8994ee587ec2a9f85d72e11c7b8",
-        poolKey = "967bb4d1bfc97c1960cdefa6b41ed8751fee9cba7b2ee8e8a02f922289edece5337d14c426d953e3bdcb7d093494d7cb"
+        poolKey = "xch1hx7e90gm7ag7525t9wlcwc67r2jcvgqym8mu0t9l8rtgckpxrsfs4utw9z"
     )
 
     init {

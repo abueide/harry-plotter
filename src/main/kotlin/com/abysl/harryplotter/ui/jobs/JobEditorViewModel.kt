@@ -19,6 +19,7 @@
 
 package com.abysl.harryplotter.ui.jobs
 
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.model.jobs.ChiaKey
 import com.abysl.harryplotter.model.jobs.JobDescription
@@ -44,7 +45,7 @@ class JobEditorViewModel {
     val ram = SimpleStringProperty("")
     val plotsToFinish = SimpleStringProperty("")
 
-    val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf())
+    val chiaKeys: MutableStateFlow<List<ChiaKey>> = MutableStateFlow(listOf(Config.devkey))
     val selectedKey: MutableStateFlow<ChiaKey?> = MutableStateFlow(null)
     val stopAfterCheck: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -120,7 +121,7 @@ class JobEditorViewModel {
         val tempDirPath = tempDir.value
         val destDirPath = destDir.value
         if (check) {
-            if (tempDirPath.isBlank() || destDirPath.isBlank()) {
+            if (tempDirPath.isBlank() || (destDirPath.isBlank() && !useCacheDrive.get())) {
                 SimpleDialogs.showAlert(
                     "Directory Not Selected",
                     "Please make sure to select a destination & temporary directory."
@@ -133,7 +134,7 @@ class JobEditorViewModel {
                 SimpleDialogs.showAlert("Temp Directory Does Not Exist", "Please select a valid directory.")
                 return null
             }
-            if (!dest.exists()) {
+            if (!dest.exists() && !useCacheDrive.get()) {
                 SimpleDialogs.showAlert("Destination Directory Does Not Exist", "Please select a valid directory.")
                 return null
             }
@@ -141,7 +142,7 @@ class JobEditorViewModel {
                 SimpleDialogs.showAlert("Selected Temp Is Not A Directory", "Please select a valid directory.")
                 return null
             }
-            if (!dest.isDirectory) {
+            if (!dest.isDirectory && !useCacheDrive.get()) {
                 SimpleDialogs.showAlert("Selected Destination Is Not A Directory", "Please select a valid directory.")
                 return null
             }

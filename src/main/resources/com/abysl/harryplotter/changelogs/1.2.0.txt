@@ -13,7 +13,5 @@ https://github.com/abueide/harry-plotter/releases
 is the only OFFICIAL source of updates. As Harry Plotter is open source under the GPL v3 License, please be wary of malicious forks!
 
 1.2.0
-* Easy harvester setup & monitoring
-* Implement the use of adding an ssd cache to reduce copy times & increase throughput
-* Ability to auto balance plots across destination drives
-* Re-plot drives 1 plot at a time.
+* Updated to support the official Pooling Protocol (make sure to update your pool key to your plot nft's contract address by clicking edit on your key in the harry plotter gui)
+* Implement ssd caching mechanism to allow reducing copy times & fill up multiple destination directories
