@@ -19,10 +19,12 @@
 
 package com.abysl.harryplotter.config
 
-import com.abysl.harryplotter.model.PlotJob
-import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.model.records.Drive
-import com.abysl.harryplotter.windows.SimpleDialogs
+import com.abysl.harryplotter.model.drives.Drive
+import com.abysl.harryplotter.model.jobs.ChiaKey
+import com.abysl.harryplotter.model.jobs.PlotJob
+import com.abysl.harryplotter.ui.all.SimpleDialogs
+import com.abysl.harryplotter.util.getResource
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,6 +35,7 @@ object Config {
     val plotLogsRunning = plotterHome.resolve("plotlogs/running")
     val plotLogsFinished = plotterHome.resolve("plotlogs/finished")
     val plotLogsFailed = plotterHome.resolve("plotlogs/failed")
+    val version by lazy { "version.txt".getResource()?.readText() ?: throw Exception("Version file not found") }
 
     private val jobsFile = File(plotterHome.path + "/jobs.json")
     private val drivesFile = File(plotterHome.path + "/drives.json")
@@ -42,7 +45,7 @@ object Config {
         fingerprint = "3639606261",
         publicKey = "821ac77d286b5a9008f6354d36d600d00cc7be8e5058aac391421a16895522eb7c55e5088d0beabccf82018831caf18e",
         farmerKey = "a24411f3ed5fc2d5a6e3eaefb73aefea30fa7f3b64f065046186ca8191d53fd0c15ca8994ee587ec2a9f85d72e11c7b8",
-        poolKey = "967bb4d1bfc97c1960cdefa6b41ed8751fee9cba7b2ee8e8a02f922289edece5337d14c426d953e3bdcb7d093494d7cb"
+        poolKey = "xch1hx7e90gm7ag7525t9wlcwc67r2jcvgqym8mu0t9l8rtgckpxrsfs4utw9z"
     )
 
     init {
@@ -53,7 +56,12 @@ object Config {
     }
 
     fun savePlotJobs(jobs: List<PlotJob>) {
-        jobsFile.writeText(Json.encodeToString(jobs))
+        try {
+            jobsFile.writeText(Json.encodeToString(jobs))
+        } catch (e: SerializationException) {
+            SimpleDialogs.showAlert("Failed to save drives.", "Please report this to the developer.")
+            e.printStackTrace()
+        }
     }
 
     fun getPlotJobs(): List<PlotJob> {
@@ -74,7 +82,12 @@ object Config {
     }
 
     fun saveDrives(drives: List<Drive>) {
-        drivesFile.writeText(Json.encodeToString(drives))
+        try {
+            drivesFile.writeText(Json.encodeToString(drives))
+        } catch (e: SerializationException) {
+            SimpleDialogs.showAlert("Failed to save drives.", "Please report this to the developer.")
+            e.printStackTrace()
+        }
     }
 
     fun getDrives(): List<Drive> {
@@ -101,7 +114,7 @@ object Config {
     }
 
     fun resetConfig() {
-        jobsFile.delete()
+        plotterHome.deleteRecursively()
     }
 
 //    fun saveTime(desc: JobDescription, result: JobResult) {

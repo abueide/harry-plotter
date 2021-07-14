@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<HBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+         <children>
+            <Label layoutX="10.0" layoutY="64.0" text="Used / Total" />
+            <Label layoutX="10.0" layoutY="10.0" text="Total Space" />
+          <Label text="Used Space" />
+            <Label layoutX="10.0" layoutY="37.0" text="Free Space" />
+         </children>
+      </VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+         <children>
+            <Label fx:id="usedPercent" text="0%" />
+            <Label fx:id="totalSpace" text="0 GiB" />
+            <Label fx:id="usedSpace" text="0 GiB" />
+            <Label fx:id="freeSpace" text="0 GiB" />
+         </children>
+      </VBox>
+   </children>
+</HBox>

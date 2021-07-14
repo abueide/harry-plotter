@@ -20,9 +20,9 @@
 package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.windows.SimpleDialogs.showAlert
-import com.abysl.harryplotter.windows.SimpleDialogs.showConfirmation
-import com.abysl.harryplotter.windows.SimpleFileChooser
+import com.abysl.harryplotter.ui.all.SimpleDialogs.showAlert
+import com.abysl.harryplotter.ui.all.SimpleDialogs.showConfirmation
+import com.abysl.harryplotter.ui.all.SimpleFileChooser
 import javafx.scene.Node
 import javafx.stage.FileChooser
 import java.io.File
@@ -61,6 +61,9 @@ class ChiaLocator(node: Node) {
         if (checkExe(macChiaExe)) return macChiaExe
         val linuxChiaExe = File(LINUX_CHIA_PATH)
         if (checkExe(linuxChiaExe)) return linuxChiaExe
+        findChiaNixOS()?.let {
+            return it
+        }
 
         val chiaAppData = File(System.getProperty("user.home") + "/AppData/Local/chia-blockchain/")
 
@@ -80,6 +83,11 @@ class ChiaLocator(node: Node) {
 
     fun checkExe(file: File): Boolean {
         return file.exists() && (file.name.equals("chia") || file.name.equals("chia.exe"))
+    }
+
+    private fun findChiaNixOS(): File? {
+        val store = File("/home/andrew/.nix-profile/bin/chia")
+        return if (store.exists()) store else null
     }
 
     companion object {

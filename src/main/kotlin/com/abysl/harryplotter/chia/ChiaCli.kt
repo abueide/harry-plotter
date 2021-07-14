@@ -21,9 +21,9 @@ package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.PlotProcess
-import com.abysl.harryplotter.model.records.ChiaKey
-import com.abysl.harryplotter.model.records.JobDescription
+import com.abysl.harryplotter.model.jobs.ChiaKey
+import com.abysl.harryplotter.model.jobs.JobDescription
+import com.abysl.harryplotter.model.jobs.PlotProcess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
@@ -79,7 +79,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         return input.reader().readLines()
     }
 
-    fun createPlot(desc: JobDescription, onComplete: () -> Unit): PlotProcess? {
+    fun createPlot(desc: JobDescription, cacheDir: File = desc.destDir, onComplete: () -> Unit): PlotProcess? {
         var counter = 0
         var outputFile = Config.plotLogsRunning.resolve("${desc.name}.log")
         while (outputFile.exists()) {
@@ -89,15 +89,15 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
         val args = mutableListOf<String>()
         args.addAll(listOf("plots", "create", "-k", desc.kSize.toString()))
         if (desc.key.farmerKey.isNotBlank() && desc.key.poolKey.isNotBlank()) {
-            args.addAll(listOf("-f", desc.key.farmerKey, "-p", desc.key.poolKey))
+            args.addAll(listOf("-f", desc.key.farmerKey, "-c", desc.key.poolKey))
         } else if (desc.key.fingerprint.isNotBlank())
             args.addAll(listOf("-a", desc.key.fingerprint))
         else
             return null
-
         if (desc.ram >= JobDescription.MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
         if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
-        args.addAll(listOf("-t", desc.tempDir.toString(), "-d", desc.destDir.toString()))
+        val destDir = if (desc.useCacheDrive) cacheDir.toString() else desc.destDir.toString()
+        args.addAll(listOf("-t", desc.tempDir.toString(), "-d", destDir))
         desc.additionalParams.forEach { if (it.isNotBlank()) args.add(it) }
         val proc = runCommandAsync(outputFile, *args.toTypedArray())
         return PlotProcess(proc.pid(), outputFile).also { it.initialized(onComplete) }

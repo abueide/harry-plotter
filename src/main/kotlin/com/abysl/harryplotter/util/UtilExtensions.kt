@@ -20,6 +20,7 @@
 package com.abysl.harryplotter.util
 
 import com.abysl.harryplotter.HarryPlotter
+import com.abysl.harryplotter.config.ResourceNotFoundException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -31,11 +32,11 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 fun String.getResource(): URL {
-    return HarryPlotter::class.java.getResource(this)
+    return HarryPlotter::class.java.getResource(this) ?: throw ResourceNotFoundException(this)
 }
 
 fun String.getResourceAsStream(): InputStream {
-    return HarryPlotter::class.java.getResourceAsStream(this)
+    return HarryPlotter::class.java.getResourceAsStream(this) ?: throw ResourceNotFoundException(this)
 }
 
 fun String.asFile(): File {

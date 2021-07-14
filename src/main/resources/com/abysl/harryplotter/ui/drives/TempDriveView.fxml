@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox maxHeight="280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.abysl.harryplotter.ui.drives.TempDriveView">
+   <children>
+      <VBox minWidth="150.0" spacing="18.0">
+         <children>
+            <Label text="Min Time Between Plots" />
+            <Label text="Max Phase 1 Plots" />
+            <Label text="Max Phase 2-4 Plots" />
+            <Label text="Max Total Plots" />
+         </children>
+         <padding>
+            <Insets top="5.0" />
+         </padding>
+      </VBox>
+      <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <TextField fx:id="staticStagger" maxWidth="30.0" />
+                  <Label text="Minutes" />
+                  <CheckBox fx:id="staticIgnore" disable="true" mnemonicParsing="false" text="Ignore min time if no plots are running on the drive" visible="false" />
+               </children>
+            </HBox>
+            <TextField fx:id="maxP1" maxWidth="30.0" />
+            <TextField fx:id="maxOther" maxWidth="30.0" />
+            <TextField fx:id="maxConcurrent" maxWidth="30.0" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" right="10.0" top="10.0" />
+   </padding>
+</HBox>

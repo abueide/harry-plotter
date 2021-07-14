@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
-    kotlin("jvm") version "1.5.10"
-    kotlin("plugin.serialization") version "1.5.10"
+    kotlin("jvm") version "1.5.20"
+    kotlin("plugin.serialization") version "1.5.20"
     id("org.openjfx.javafxplugin") version "0.0.10"
     id("org.beryx.runtime") version "1.12.5"
     id("io.gitlab.arturbosch.detekt") version "1.17.0-RC2"
@@ -35,7 +35,7 @@ val currentOs: OperatingSystem = OperatingSystem.current()
 val console = false
 
 group = "com.abysl"
-version = "1.1.14"
+version = "1.2.0"
 // version = File("src/main/resources/com/abysl/harryplotter/version.txt").readText()
 
 repositories {
@@ -44,6 +44,7 @@ repositories {
 
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.0-RC2")
+    implementation("commons-io:commons-io:2.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")

@@ -19,12 +19,11 @@
 
 package com.abysl.harryplotter
 
+import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.util.FxUtil
-import com.abysl.harryplotter.util.getResource
-import com.abysl.harryplotter.util.getResourceAsStream
-import com.abysl.harryplotter.view.MainView
-import com.abysl.harryplotter.windows.VersionPromptWindow
+import com.abysl.harryplotter.ui.main.MainView
+import com.abysl.harryplotter.ui.main.VersionPromptWindow
+import com.abysl.harryplotter.util.fx.FxUtil
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -36,14 +35,15 @@ class HarryPlotter : Application() {
     lateinit var mainStage: Stage
     override fun start(stage: Stage) {
         mainStage = stage
-        val loader = FXMLLoader("fxml/MainView.fxml".getResource())
+        val loader = FXMLLoader(this::class.java.getResource("ui/main/MainView.fxml"))
         val root: Parent = loader.load()
         val view: MainView = loader.getController()
         val scene = Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT)
         view.initialized(hostServices)
 
-        stage.icons.add(Image("icons/snitch.png".getResourceAsStream()))
+        stage.icons.add(Image(this::class.java.getResourceAsStream("icons/snitch.png")))
         stage.scene = scene
+        stage.title = "Version ${Config.version}"
         FxUtil.setTheme(stage)
         stage.show()
         view.toggleTheme = ::toggleTheme

@@ -19,8 +19,8 @@
 
 package com.abysl.harryplotter.logparser
 
-import com.abysl.harryplotter.model.JobResult
-import com.abysl.harryplotter.model.JobState
+import com.abysl.harryplotter.model.jobs.JobResult
+import com.abysl.harryplotter.model.jobs.JobState
 import kotlinx.datetime.Instant
 import java.text.SimpleDateFormat
 import java.util.Locale
