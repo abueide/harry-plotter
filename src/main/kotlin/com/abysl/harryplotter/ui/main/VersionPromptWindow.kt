@@ -58,4 +58,3 @@ object VersionPromptWindow {
         }
     }
 }
-

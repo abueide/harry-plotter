@@ -26,13 +26,18 @@ import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.serializers.FileSerializer
 import com.abysl.harryplotter.util.serializers.MutableStateFlowSerializer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import java.io.File
-import java.util.*
+import java.util.Locale
 
 @Serializable
 class PlotJob(
@@ -74,7 +79,7 @@ class PlotJob(
     }
 
     fun start(manageSelf: Boolean = false, cache: File?) {
-        if(cache != null){
+        if (cache != null) {
             this.cacheDir = cache
         }
         if (process()?.isRunning() != true) {

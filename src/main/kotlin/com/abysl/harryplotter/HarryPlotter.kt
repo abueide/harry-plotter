@@ -22,8 +22,8 @@ package com.abysl.harryplotter
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.ui.main.MainView
-import com.abysl.harryplotter.util.fx.FxUtil
 import com.abysl.harryplotter.ui.main.VersionPromptWindow
+import com.abysl.harryplotter.util.fx.FxUtil
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent

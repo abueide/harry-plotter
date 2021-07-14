@@ -21,14 +21,8 @@
 
 package com.abysl.harryplotter.model.drives
 
-import com.abysl.harryplotter.model.StaggerSettings
 import com.abysl.harryplotter.util.serializers.FileSerializer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import java.io.File
 import java.util.Locale
@@ -40,7 +34,6 @@ sealed class Drive {
     abstract val driveType: DriveType
 
     abstract fun deepCopy(): Drive
-
 
     fun getTotalSpaceGiB(): Double {
         return (drivePath.totalSpace / BYTES_TO_GB_FACTOR).toDouble()
@@ -55,7 +48,7 @@ sealed class Drive {
     }
 
     override fun toString(): String {
-        val usedSpace  = getUsedSpaceGiB()
+        val usedSpace = getUsedSpaceGiB()
         val totalSpace = getTotalSpaceGiB()
         val usedSpaceFormatted = String.format(Locale.US, "%.2f", usedSpace)
         val totalSpaceFormatted = String.format(Locale.US, "%.2f", totalSpace)
@@ -67,8 +60,3 @@ sealed class Drive {
         const val BYTES_TO_GB_FACTOR = 1_073_741_824L
     }
 }
-
-
-
-
-

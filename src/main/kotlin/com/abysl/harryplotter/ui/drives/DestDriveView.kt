@@ -27,7 +27,7 @@ import javafx.scene.control.TextField
 import java.net.URL
 import java.util.ResourceBundle
 
-class DestDriveView: Initializable {
+class DestDriveView : Initializable {
     @FXML
     lateinit var maxPlotTransfer: TextField
 
@@ -35,7 +35,7 @@ class DestDriveView: Initializable {
         maxPlotTransfer.limitToInt()
     }
 
-    fun loadDrive(drive: DestDrive){
+    fun loadDrive(drive: DestDrive) {
         maxPlotTransfer.text = drive.maxPlotTransfer.toString()
     }
 }

@@ -129,7 +129,7 @@ class PlotProcess(
 
     fun readLogs(callback: (String) -> Unit): CoroutineScope {
         val scope = CoroutineScope(Dispatchers.IO)
-         scope.launch {
+        scope.launch {
             callback(if (logFile.exists()) logFile.readText() else "")
         }
         return scope

@@ -29,7 +29,7 @@ import javafx.scene.control.TextField
 import java.net.URL
 import java.util.ResourceBundle
 
-class TempDriveView: Initializable {
+class TempDriveView : Initializable {
     @FXML
     private lateinit var staticStagger: TextField
 
@@ -45,7 +45,6 @@ class TempDriveView: Initializable {
     @FXML
     private lateinit var maxConcurrent: TextField
 
-
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         staticStagger.limitToInt()
         maxP1.limitToInt()
@@ -53,8 +52,7 @@ class TempDriveView: Initializable {
         maxConcurrent.limitToInt()
     }
 
-
-    fun loadDrive(drive: TempDrive){
+    fun loadDrive(drive: TempDrive) {
         val stagger = drive.staggerSettings
         staticStagger.text = stagger.staticStagger.toString()
         staticIgnore.isSelected = stagger.staticIgnore

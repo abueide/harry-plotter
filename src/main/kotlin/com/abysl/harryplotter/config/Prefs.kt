@@ -19,7 +19,6 @@
 
 package com.abysl.harryplotter.config
 
-import com.abysl.harryplotter.HarryPlotter
 import com.abysl.harryplotter.chia.ChiaLocator
 import javafx.scene.Node
 import java.util.prefs.Preferences

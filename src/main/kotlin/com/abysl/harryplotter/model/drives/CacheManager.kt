@@ -51,9 +51,9 @@ class CacheManager(val drives: MutableStateFlow<List<Drive>>) {
         cancelManager()
     }
 
-    private fun startTransfer(drive: DestDrive)  {
+    private fun startTransfer(drive: DestDrive) {
         val plot = getCacheDrives().flatMap { it.getPlotFiles() }.firstOrNull() ?: return
-        if(drive.drivePath.freeSpace < plot.length()) {
+        if (drive.drivePath.freeSpace < plot.length()) {
             println("Not enough space on destination drive, skipping")
             return
         }
@@ -69,7 +69,7 @@ class CacheManager(val drives: MutableStateFlow<List<Drive>>) {
                     FileUtils.moveFile(renamedPlot, File(drive.drivePath, plot.name))
                     transfers = transferJobs.value[drive] ?: emptyList()
                     transferJobs.value += drive to transfers - scope
-                } catch (e: Exception){
+                } catch (e: Exception) {
                     println("Failed to transfer file from cache drive")
                     println("File: ${plot.path}")
                 }

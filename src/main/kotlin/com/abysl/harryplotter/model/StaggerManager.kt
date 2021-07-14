@@ -21,12 +21,16 @@ package com.abysl.harryplotter.model
 
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.drives.CacheDrive
-import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.model.drives.Drive
 import com.abysl.harryplotter.model.drives.TempDrive
+import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.util.IOUtil
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -73,7 +77,7 @@ class StaggerManager(val jobs: MutableStateFlow<List<PlotJob>>, val drives: Muta
         cancelManager()
     }
 
-    fun randomCacheDrive(): CacheDrive?{
+    fun randomCacheDrive(): CacheDrive? {
         return drives.value.filterIsInstance<CacheDrive>().randomOrNull()
     }
 

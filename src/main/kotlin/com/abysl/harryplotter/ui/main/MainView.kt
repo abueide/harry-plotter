@@ -19,19 +19,19 @@
 
 package com.abysl.harryplotter.ui.main
 
-import com.abysl.harryplotter.ui.settings.HarryPlotterSettingsWindow
 import com.abysl.harryplotter.chia.ChiaLocator
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.util.invoke
-import com.abysl.harryplotter.ui.settings.ChiaSettingsWindow
 import com.abysl.harryplotter.ui.all.SimpleDialogs
 import com.abysl.harryplotter.ui.drives.DriveView
 import com.abysl.harryplotter.ui.jobs.JobEditorView
 import com.abysl.harryplotter.ui.jobs.JobStatusView
 import com.abysl.harryplotter.ui.jobs.JobsListView
+import com.abysl.harryplotter.ui.settings.ChiaSettingsWindow
+import com.abysl.harryplotter.ui.settings.HarryPlotterSettingsWindow
 import com.abysl.harryplotter.ui.settings.StaggerSettingsWindow
 import com.abysl.harryplotter.ui.stats.StatsView
+import com.abysl.harryplotter.util.invoke
 import javafx.application.HostServices
 import javafx.application.Platform
 import javafx.fxml.FXML
@@ -99,12 +99,11 @@ class MainView {
 
     // Calls after the JavaFX vars are populated so they aren't null
 
-
-    fun onGettingStarted(){
+    fun onGettingStarted() {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/wiki/Getting-Started")
     }
 
-    fun onOptimizationGuide(){
+    fun onOptimizationGuide() {
         hostServices.showDocument("https://github.com/abueide/harry-plotter/wiki/Optimization-Guide")
     }
 

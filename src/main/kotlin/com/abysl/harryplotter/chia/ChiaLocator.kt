@@ -87,7 +87,7 @@ class ChiaLocator(node: Node) {
 
     private fun findChiaNixOS(): File? {
         val store = File("/home/andrew/.nix-profile/bin/chia")
-        return if(store.exists()) store else null
+        return if (store.exists()) store else null
     }
 
     companion object {
@@ -104,5 +104,4 @@ class ChiaLocator(node: Node) {
         private const val EXE_NOT_FOUND =
             "Looking for the chia cli executable (\"chia.exe\" or \"chia\" lowercase). Try again?"
     }
-
 }

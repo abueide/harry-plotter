@@ -23,7 +23,7 @@ import com.abysl.harryplotter.model.drives.CacheDrive
 
 class CacheDriveView {
 
-    fun loadDrive(drive: CacheDrive){
+    fun loadDrive(drive: CacheDrive) {
         // Nothing to load yet
     }
 }

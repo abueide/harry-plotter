@@ -21,8 +21,8 @@ package com.abysl.harryplotter.ui.jobs
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.model.jobs.JobDescription
+import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.util.IOUtil
 import com.abysl.harryplotter.util.invoke
 import kotlinx.coroutines.flow.MutableStateFlow

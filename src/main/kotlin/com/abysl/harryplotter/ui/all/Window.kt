@@ -19,7 +19,6 @@
 
 package com.abysl.harryplotter.ui.all
 
-import com.abysl.harryplotter.HarryPlotter
 import com.abysl.harryplotter.util.fx.FxUtil
 import com.abysl.harryplotter.util.getResource
 import javafx.fxml.FXMLLoader

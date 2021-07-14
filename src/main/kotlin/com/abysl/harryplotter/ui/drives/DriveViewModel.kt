@@ -25,12 +25,9 @@ import com.abysl.harryplotter.model.drives.DestDrive
 import com.abysl.harryplotter.model.drives.Drive
 import com.abysl.harryplotter.model.drives.DriveType
 import com.abysl.harryplotter.model.drives.TempDrive
-import com.abysl.harryplotter.ui.all.SimpleDialogs
 import com.abysl.harryplotter.util.invoke
 import javafx.beans.property.SimpleObjectProperty
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.io.File
-import java.lang.NullPointerException
 
 class DriveViewModel {
 
@@ -57,12 +54,12 @@ class DriveViewModel {
         val selected = selectedDrive.get() ?: newDrive(drive.driveType)
         val drivesList = drives().toMutableList()
         val index = drivesList.indexOf(selected)
-        if(index != -1) {
+        if (index != -1) {
             drivesList[index] = drive
             drives.value = drivesList.toList()
             selectedDrive.set(drivesList[index])
             Config.saveDrives(drives.value)
-        }else {
+        } else {
             println("Selected drive not found in drives list!")
         }
     }

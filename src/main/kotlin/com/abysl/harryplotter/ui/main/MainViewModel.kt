@@ -69,7 +69,7 @@ class MainViewModel {
         }.launchIn(CoroutineScope(Dispatchers.IO))
 
         staggerManager = StaggerManager(jobsListViewModel.plotJobs, driveViewModel.drives)
-        cacheManager = CacheManager(driveViewModel.drives).also { it.start()  }
+        cacheManager = CacheManager(driveViewModel.drives).also { it.start() }
         jobsListViewModel.startStaggerManager = staggerManager::start
         jobsListViewModel.stopStaggerManager = staggerManager::stop
 

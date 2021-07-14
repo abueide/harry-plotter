@@ -19,4 +19,4 @@
 
 package com.abysl.harryplotter.config
 
-class ResourceNotFoundException(resource: String): Exception("Resource not found: $resource")
+class ResourceNotFoundException(resource: String) : Exception("Resource not found: $resource")

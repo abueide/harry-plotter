@@ -1,4 +1,3 @@
 package com.abysl.harryplotter.chia
 
-interface PlotDir {
-}
+interface PlotDir

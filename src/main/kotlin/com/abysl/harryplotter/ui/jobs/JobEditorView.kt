@@ -20,10 +20,10 @@
 package com.abysl.harryplotter.ui.jobs
 
 import com.abysl.harryplotter.model.jobs.ChiaKey
+import com.abysl.harryplotter.ui.all.SimpleFileChooser
 import com.abysl.harryplotter.util.bindings.bindBidirectional
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.limitToInt
-import com.abysl.harryplotter.ui.all.SimpleFileChooser
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
@@ -137,7 +137,7 @@ class JobEditorView {
         }
     }
 
-    fun onTemp2Browse(){
+    fun onTemp2Browse() {
         val startingPath = viewModel.temp2Dir.get()
         val startingFile = if (File(startingPath).exists()) File(startingPath) else null
         fileChooser.chooseDir("Select Temp Dir", false, startingFile)?.let {

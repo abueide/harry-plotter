@@ -20,12 +20,12 @@
 package com.abysl.harryplotter.ui.jobs
 
 import com.abysl.harryplotter.config.Config
-import com.abysl.harryplotter.model.jobs.PlotJob
 import com.abysl.harryplotter.model.jobs.ChiaKey
 import com.abysl.harryplotter.model.jobs.JobDescription
+import com.abysl.harryplotter.model.jobs.PlotJob
+import com.abysl.harryplotter.ui.all.SimpleDialogs
 import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.util.unwords
-import com.abysl.harryplotter.ui.all.SimpleDialogs
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
 import kotlinx.coroutines.delay

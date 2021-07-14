@@ -22,9 +22,9 @@ package com.abysl.harryplotter.ui.jobs
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
 import com.abysl.harryplotter.model.jobs.PlotJob
-import com.abysl.harryplotter.util.invoke
 import com.abysl.harryplotter.ui.all.SimpleDialogs.showConfirmation
 import com.abysl.harryplotter.ui.all.SimpleDialogs.showOptions
+import com.abysl.harryplotter.util.invoke
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.ContextMenu

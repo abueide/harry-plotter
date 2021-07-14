@@ -29,13 +29,11 @@ import com.abysl.harryplotter.ui.all.SimpleDialogs
 import com.abysl.harryplotter.ui.all.SimpleFileChooser
 import com.abysl.harryplotter.util.getResource
 import com.abysl.harryplotter.util.invoke
-import com.abysl.harryplotter.util.limitToInt
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Node
-import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.ListView
@@ -80,7 +78,6 @@ class DriveView : Initializable {
     val destDriveView = destDriveLoader.getRoot<Node>()
     val destDriveController = destDriveLoader.getController<DestDriveView>()
 
-
     val cacheDriveLoader = FXMLLoader("ui/drives/CacheDriveView.fxml".getResource()).also { it.load() }
     val cacheDriveView = cacheDriveLoader.getRoot<Node>()
     val cacheDriveController = cacheDriveLoader.getController<CacheDriveView>()
@@ -114,7 +111,7 @@ class DriveView : Initializable {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            while(true){
+            while (true) {
                 Platform.runLater { driveList.refresh() }
                 delay(DRIVE_REFRESH)
             }
@@ -141,9 +138,8 @@ class DriveView : Initializable {
         viewModel.save(getDrive())
     }
 
-
     private fun loadDrive(drive: Drive?) {
-        if(drive == null) return
+        if (drive == null) return
         driveTypes.selectionModel.select(drive.driveType)
         driveName.text = drive.name
         drivePath.text = drive.drivePath.absolutePath
@@ -153,7 +149,6 @@ class DriveView : Initializable {
             is DestDrive -> loadDestDrive(drive)
         }
     }
-
 
     private fun loadTempDrive(drive: TempDrive) {
         driveBox.children[1] = tempDriveView

@@ -21,9 +21,9 @@ package com.abysl.harryplotter.chia
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.jobs.PlotProcess
 import com.abysl.harryplotter.model.jobs.ChiaKey
 import com.abysl.harryplotter.model.jobs.JobDescription
+import com.abysl.harryplotter.model.jobs.PlotProcess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
@@ -96,7 +96,7 @@ class ChiaCli(val exe: File = File(Prefs.exePath), val config: File = File(Prefs
             return null
         if (desc.ram >= JobDescription.MINIMUM_RAM) args.addAll(listOf("-b", desc.ram.toString()))
         if (desc.threads > 0) args.addAll(listOf("-r", desc.threads.toString()))
-        val destDir = if(desc.useCacheDrive) cacheDir.toString() else desc.destDir.toString()
+        val destDir = if (desc.useCacheDrive) cacheDir.toString() else desc.destDir.toString()
         args.addAll(listOf("-t", desc.tempDir.toString(), "-d", destDir))
         desc.additionalParams.forEach { if (it.isNotBlank()) args.add(it) }
         val proc = runCommandAsync(outputFile, *args.toTypedArray())

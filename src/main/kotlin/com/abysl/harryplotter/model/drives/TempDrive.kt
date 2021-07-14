@@ -15,6 +15,6 @@ class TempDrive(
     @Transient
     override val driveType: DriveType = DriveType.TEMP,
     val staggerSettings: StaggerSettings = StaggerSettings(),
-): Drive() {
+) : Drive() {
     override fun deepCopy(): Drive = TempDrive(name, drivePath, driveType, staggerSettings)
 }

@@ -21,10 +21,10 @@ package com.abysl.harryplotter.ui.stats
 
 import com.abysl.harryplotter.config.Config
 import com.abysl.harryplotter.config.Prefs
-import com.abysl.harryplotter.model.jobs.JobResult
-import com.abysl.harryplotter.model.jobs.JobState
 import com.abysl.harryplotter.model.TimeEnum
 import com.abysl.harryplotter.model.TimeEnum.Companion.SECONDS_IN_DAY
+import com.abysl.harryplotter.model.jobs.JobResult
+import com.abysl.harryplotter.model.jobs.JobState
 import com.abysl.harryplotter.util.formatted
 import com.abysl.harryplotter.util.pmap
 import javafx.beans.property.SimpleDoubleProperty
